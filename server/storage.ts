@@ -1,5 +1,6 @@
 import { db } from "./db";
 import { plans, type Plan, type InsertPlan } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getPlans(): Promise<Plan[]>;
@@ -13,14 +14,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPlan(id: number): Promise<Plan | undefined> {
-    // We don't really need individual plan fetch for a landing page, but good to have
-    const results = await db.select().from(plans).where(plans.id.eq(id) as any); // Type assertion for drizzle weirdness if any
+    const results = await db.select().from(plans).where(eq(plans.id, id));
     return results[0];
   }
 
   async seedPlans(): Promise<void> {
-    const count = await db.select().from(plans);
-    if (count.length === 0) {
+    const existing = await db.select().from(plans);
+    if (existing.length === 0) {
       await db.insert(plans).values([
         {
           name: "Básico",
@@ -31,7 +31,7 @@ export class DatabaseStorage implements IStorage {
           isHighlighted: false
         },
         {
-          name: "Popular",
+          name: "Intermediário",
           speed: "500 MEGA",
           price: "99,90",
           features: ["Wi-Fi 6 Grátis", "Instalação Grátis", "Suporte Prioritário", "Ideal para Streaming"],
@@ -39,12 +39,36 @@ export class DatabaseStorage implements IStorage {
           isHighlighted: true
         },
         {
-          name: "Gamer",
-          speed: "800 MEGA",
-          price: "129,90",
-          features: ["Wi-Fi 6 Mesh", "IP Fixo Opcional", "Latência Baixa", "Upload Simétrico"],
+          name: "Avançado",
+          speed: "700 MEGA",
+          price: "119,90",
+          features: ["Wi-Fi 6 Mesh", "Instalação Grátis", "Suporte VIP", "Ultra Velocidade"],
           category: "internet",
           isHighlighted: false
+        },
+        {
+          name: "Premium",
+          speed: "900 MEGA",
+          price: "139,90",
+          features: ["Wi-Fi 6 Mesh Plus", "IP Fixo Opcional", "Latência Baixa", "Upload Simétrico"],
+          category: "internet",
+          isHighlighted: false
+        },
+        {
+          name: "TV Light",
+          speed: "100 Canais",
+          price: "49,90",
+          features: ["Canais Abertos", "Canais Infantis", "Qualidade HD"],
+          category: "tv",
+          isHighlighted: false
+        },
+        {
+          name: "TV Premium",
+          speed: "200 Canais",
+          price: "89,90",
+          features: ["Canais de Filmes", "Esportes ao Vivo", "Qualidade 4K", "Playback 24h"],
+          category: "tv",
+          isHighlighted: true
         }
       ]);
     }
