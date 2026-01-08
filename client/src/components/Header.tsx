@@ -49,7 +49,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <a 
                 key={link.name} 
@@ -59,9 +59,23 @@ export function Header() {
                 {link.name}
               </a>
             ))}
-            <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-full px-6">
-              Assinar Agora
-            </Button>
+            <div className="flex items-center gap-3">
+              <a 
+                href="https://central.3dnetwork.hubsoft.com.br/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-semibold text-sm mr-2"
+              >
+                <User className="w-4 h-4" />
+                Área do Cliente
+              </a>
+              <Button 
+                className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-full px-6"
+                onClick={() => window.open('https://api.whatsapp.com/send?phone=5511999999999&text=Olá, gostaria de falar com um consultor.', '_blank')}
+              >
+                Assinar Agora
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Menu */}
