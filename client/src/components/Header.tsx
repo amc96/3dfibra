@@ -53,7 +53,7 @@ export function Header() {
                 className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-full px-6"
                 onClick={() => window.open('https://api.whatsapp.com/send?phone=5553999789222&text=Olá, gostaria de falar com um consultor.', '_blank')}
               >
-                Assinar Agora
+                Selecionar Plano
               </Button>
             </div>
           </div>

@@ -31,6 +31,14 @@ export class DatabaseStorage implements IStorage {
           isHighlighted: false
         },
         {
+          name: "Essencial",
+          speed: "400 MEGA",
+          price: "89,90",
+          features: ["Wi-Fi 6 Grátis", "Instalação Grátis", "Suporte 24h", "Fibra Óptica"],
+          category: "internet",
+          isHighlighted: false
+        },
+        {
           name: "Intermediário",
           speed: "500 MEGA",
           price: "99,90",
@@ -40,9 +48,25 @@ export class DatabaseStorage implements IStorage {
         },
         {
           name: "Avançado",
+          speed: "600 MEGA",
+          price: "109,90",
+          features: ["Wi-Fi 6 Mesh", "Instalação Grátis", "Suporte VIP", "Ultra Velocidade"],
+          category: "internet",
+          isHighlighted: false
+        },
+        {
+          name: "Ultra",
           speed: "700 MEGA",
           price: "119,90",
           features: ["Wi-Fi 6 Mesh", "Instalação Grátis", "Suporte VIP", "Ultra Velocidade"],
+          category: "internet",
+          isHighlighted: false
+        },
+        {
+          name: "Gamer",
+          speed: "800 MEGA",
+          price: "129,90",
+          features: ["Wi-Fi 6 Mesh", "IP Fixo Opcional", "Latência Baixa", "Upload Simétrico"],
           category: "internet",
           isHighlighted: false
         },

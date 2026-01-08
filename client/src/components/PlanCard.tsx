@@ -78,16 +78,8 @@ export function PlanCard({ plan, index }: PlanCardProps) {
             }`}
             onClick={() => window.open(`https://api.whatsapp.com/send?phone=5553999789222&text=Olá, tenho interesse no plano ${plan.speed}`, '_blank')}
           >
-            Assinar Agora
+            Selecionar Plano
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          
-          <Button 
-            variant="outline"
-            className="w-full py-6 text-base font-semibold rounded-xl border-primary/20 hover:border-primary/50 text-primary hover:bg-primary/5 transition-all duration-300"
-            onClick={() => window.open('https://api.whatsapp.com/send?phone=5553999789222&text=Olá, gostaria de falar com um consultor sobre os planos.', '_blank')}
-          >
-            Fale com Consultor
           </Button>
         </div>
       </div>
