@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Twitter, MapPin, Mail, Phone } from "lucide-react";
+import { Link } from "wouter";
 
 export function Footer() {
   return (
@@ -35,9 +36,9 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-foreground mb-6">Navegação</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Início</a></li>
-              <li><a href="#plans" className="hover:text-primary transition-colors">Planos Internet</a></li>
-              <li><a href="#about" className="hover:text-primary transition-colors">Sobre Nós</a></li>
+              <li><Link href="/" className="hover:text-primary transition-colors">Início</Link></li>
+              <li><Link href="/planos" className="hover:text-primary transition-colors">Planos Internet</Link></li>
+              <li><Link href="/planos" className="hover:text-primary transition-colors">Canais de TV</Link></li>
               <li><a href="https://central.3dnetwork.hubsoft.com.br/" className="hover:text-primary transition-colors">Área do Cliente</a></li>
             </ul>
           </div>

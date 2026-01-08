@@ -69,6 +69,14 @@ export class DatabaseStorage implements IStorage {
           features: ["Canais de Filmes", "Esportes ao Vivo", "Qualidade 4K", "Playback 24h"],
           category: "tv",
           isHighlighted: true
+        },
+        {
+          name: "Câmeras de Segurança",
+          speed: "Monitoramento 24h",
+          price: "49,90",
+          features: ["Acesso via App", "Gravação em Nuvem", "Detector de Movimento", "Visão Noturna"],
+          category: "adicionais",
+          isHighlighted: false
         }
       ]);
     }

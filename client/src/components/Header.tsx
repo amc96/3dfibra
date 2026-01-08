@@ -9,7 +9,7 @@ export function Header() {
 
   const navLinks = [
     { name: "Início", href: "/" },
-    { name: "Planos", href: "#plans" },
+    { name: "Planos", href: "/planos" },
     { name: "Sobre Nós", href: "#about" },
     { name: "Contato", href: "#contact" },
   ];
@@ -31,13 +31,13 @@ export function Header() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
-              <a 
+              <Link 
                 key={link.name} 
                 href={link.href}
                 className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
             <div className="flex items-center gap-3">
               <a 
@@ -68,14 +68,14 @@ export function Header() {
             <SheetContent side="right" className="w-[300px] bg-card border-l border-border">
               <div className="flex flex-col gap-8 mt-8">
                 {navLinks.map((link) => (
-                  <a
+                  <Link
                     key={link.name}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 ))}
                 <a 
                   href="https://central.3dnetwork.hubsoft.com.br/"
