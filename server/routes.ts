@@ -1,16 +1,28 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+import type { Server } from "http";
 import { storage } from "./storage";
+import { api } from "@shared/routes";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // put application routes here
-  // prefix all routes with /api
+  
+  app.get(api.plans.list.path, async (req, res) => {
+    const plans = await storage.getPlans();
+    res.json(plans);
+  });
 
-  // use storage to perform CRUD operations on the storage interface
-  // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+  app.get(api.plans.get.path, async (req, res) => {
+    const plan = await storage.getPlan(Number(req.params.id));
+    if (!plan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+    res.json(plan);
+  });
+
+  // Initialize seed data
+  await storage.seedPlans();
 
   return httpServer;
 }
