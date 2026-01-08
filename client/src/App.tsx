@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import Planos from "@/pages/Planos";
 import NotFound from "@/pages/not-found";
+import { SelectionProvider } from "@/hooks/use-selection";
+import { SelectionBar } from "@/components/SelectionBar";
 
 function Router() {
   return (
@@ -21,8 +23,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
+        <SelectionProvider>
+          <Toaster />
+          <Router />
+          <SelectionBar />
+        </SelectionProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
