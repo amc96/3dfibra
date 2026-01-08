@@ -55,9 +55,9 @@ export function Footer() {
                 </div>
               </div>
               <div className="space-y-3">
-                <a href="tel:+551199999999" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="tel:+5553999789222" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Phone className="w-5 h-5 text-primary" />
-                  (11) 99999-9999
+                  (53) 99978-9222
                 </a>
                 <a href="mailto:contato@3dfibra.com.br" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Mail className="w-5 h-5 text-primary" />

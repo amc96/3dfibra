@@ -76,7 +76,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
                 ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1" 
                 : "bg-secondary hover:bg-secondary/80 text-foreground hover:-translate-y-1"
             }`}
-            onClick={() => window.open(`https://api.whatsapp.com/send?phone=5511999999999&text=Olá, tenho interesse no plano ${plan.speed}`, '_blank')}
+            onClick={() => window.open(`https://api.whatsapp.com/send?phone=5553999789222&text=Olá, tenho interesse no plano ${plan.speed}`, '_blank')}
           >
             Assinar Agora
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -85,7 +85,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
           <Button 
             variant="outline"
             className="w-full py-6 text-base font-semibold rounded-xl border-primary/20 hover:border-primary/50 text-primary hover:bg-primary/5 transition-all duration-300"
-            onClick={() => window.open('https://api.whatsapp.com/send?phone=5511999999999&text=Olá, gostaria de falar com um consultor sobre os planos.', '_blank')}
+            onClick={() => window.open('https://api.whatsapp.com/send?phone=5553999789222&text=Olá, gostaria de falar com um consultor sobre os planos.', '_blank')}
           >
             Fale com Consultor
           </Button>

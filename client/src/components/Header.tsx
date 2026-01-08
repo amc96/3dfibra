@@ -16,26 +16,6 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
-      {/* Top Bar */}
-      <div className="bg-primary/10 py-2 border-b border-border/20">
-        <div className="container mx-auto px-4 flex justify-between items-center text-sm">
-          <a 
-            href="https://central.3dnetwork.hubsoft.com.br/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-semibold"
-          >
-            <User className="w-4 h-4" />
-            Área do Cliente
-          </a>
-          <div className="flex items-center gap-4 text-muted-foreground hidden sm:flex">
-            <span className="flex items-center gap-2">
-              <Phone className="w-3 h-3" /> (11) 99999-9999
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Header */}
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
@@ -71,7 +51,7 @@ export function Header() {
               </a>
               <Button 
                 className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-full px-6"
-                onClick={() => window.open('https://api.whatsapp.com/send?phone=5511999999999&text=Olá, gostaria de falar com um consultor.', '_blank')}
+                onClick={() => window.open('https://api.whatsapp.com/send?phone=5553999789222&text=Olá, gostaria de falar com um consultor.', '_blank')}
               >
                 Assinar Agora
               </Button>
