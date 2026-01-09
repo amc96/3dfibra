@@ -60,13 +60,19 @@ export default function Home() {
                     Ver Planos
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="border-primary/20 hover:bg-primary/5 text-primary rounded-full px-8 h-14 text-lg hover:-translate-y-1 transition-all"
+                  <a 
+                    href="https://wa.me/5553999789222" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
                   >
-                    Fale com Consultor
-                  </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="border-primary/20 hover:bg-primary/5 text-primary rounded-full px-8 h-14 text-lg hover:-translate-y-1 transition-all"
+                    >
+                      Fale com Consultor
+                    </Button>
+                  </a>
                 </div>
               </motion.div>
 
@@ -146,12 +152,18 @@ export default function Home() {
             <p className="text-blue-100 text-lg sm:text-xl max-w-2xl mx-auto mb-10">
               Não perca mais tempo com internet lenta. Migre agora para a 3D FIBRA e descubra o que é velocidade de verdade.
             </p>
-            <Button 
-              size="lg" 
-              className="bg-white text-primary hover:bg-white/90 font-bold px-10 h-16 rounded-full text-lg shadow-2xl shadow-black/20 hover:scale-105 transition-transform"
+            <a 
+              href="https://wa.me/5553999789222" 
+              target="_blank" 
+              rel="noopener noreferrer"
             >
-              Falar no WhatsApp
-            </Button>
+              <Button 
+                size="lg" 
+                className="bg-white text-primary hover:bg-white/90 font-bold px-10 h-16 rounded-full text-lg shadow-2xl shadow-black/20 hover:scale-105 transition-transform"
+              >
+                Falar no WhatsApp
+              </Button>
+            </a>
           </div>
         </section>
       </main>
