@@ -1,9 +1,11 @@
 import { Plan } from "@shared/schema";
-import { Check, Wifi, ArrowRight } from "lucide-react";
+import { Check, Wifi, ArrowRight, Tv } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
 import { useToast } from "@/hooks/use-toast";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { CHANNELS } from "@/lib/channels";
 
 interface PlanCardProps {
   plan: Plan;
@@ -91,14 +93,64 @@ export function PlanCard({ plan, index }: PlanCardProps) {
             <span className="text-sm font-medium">Fibra Óptica 100%</span>
           </div>
 
-          {plan.features.map((feature, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
-                <Check className="w-4 h-4" />
+          {plan.features.map((feature, i) => {
+            const isChannelList = feature.toLowerCase().includes("lista de canais") && plan.category === "tv";
+            
+            if (isChannelList) {
+              return (
+                <HoverCard key={i}>
+                  <HoverCardTrigger asChild>
+                    <div className="flex items-center gap-3 cursor-help group/feature">
+                      <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover/feature:bg-emerald-500/20 transition-colors">
+                        <Check className="w-4 h-4" />
+                      </div>
+                      <span className="text-sm text-muted-foreground underline decoration-dotted decoration-emerald-500/50 underline-offset-4">{feature}</span>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80 p-0 border-primary/20 shadow-2xl bg-card/95 backdrop-blur-md" side="right" align="start">
+                    <div className="p-4 border-b border-border/50 bg-primary/5">
+                      <div className="flex items-center gap-2 text-primary font-bold">
+                        <Tv className="w-4 h-4" />
+                        <span>Grade de Canais</span>
+                      </div>
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto p-4 custom-scrollbar">
+                      {Object.entries(
+                        CHANNELS.reduce((acc, channel) => {
+                          if (!acc[channel.category]) acc[channel.category] = [];
+                          acc[channel.category].push(channel.name);
+                          return acc;
+                        }, {} as Record<string, string[]>)
+                      ).map(([category, channels]) => (
+                        <div key={category} className="mb-4 last:mb-0">
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-primary/70 mb-2 border-l-2 border-primary/30 pl-2">
+                            {category}
+                          </h4>
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                            {channels.map(name => (
+                              <div key={name} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                                <div className="w-1 h-1 rounded-full bg-primary/30" />
+                                <span className="truncate">{name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              );
+            }
+
+            return (
+              <div key={i} className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
+                  <Check className="w-4 h-4" />
+                </div>
+                <span className="text-sm text-muted-foreground">{feature}</span>
               </div>
-              <span className="text-sm text-muted-foreground">{feature}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="flex flex-col gap-3">
