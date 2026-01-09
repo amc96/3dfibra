@@ -3,6 +3,7 @@ import { Check, Wifi, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
+import { useToast } from "@/hooks/use-toast";
 
 interface PlanCardProps {
   plan: Plan;
@@ -12,7 +13,22 @@ interface PlanCardProps {
 export function PlanCard({ plan, index }: PlanCardProps) {
   const isHighlighted = plan.isHighlighted;
   const { selectedPlans, togglePlan } = useSelection();
+  const { toast } = useToast();
   const isSelected = selectedPlans.some(p => p.id === plan.id);
+
+  const handleToggle = () => {
+    if (plan.name === "TV Box" && plan.category === "adicionais") {
+      toast({
+        title: "Produto Indisponível",
+        description: "A TV Box não está disponível no momento.",
+        variant: "destructive",
+      });
+      return;
+    }
+    togglePlan(plan);
+  };
+
+  const buttonText = plan.category === "adicionais" ? "Selecionar" : (isSelected ? "Remover" : "Selecionar Plano");
 
   return (
     <motion.div
@@ -83,9 +99,9 @@ export function PlanCard({ plan, index }: PlanCardProps) {
                   ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1" 
                   : "bg-secondary hover:bg-secondary/80 text-foreground hover:-translate-y-1"
             }`}
-            onClick={() => togglePlan(plan)}
+            onClick={handleToggle}
           >
-            {isSelected ? "Remover" : "Selecionar Plano"}
+            {buttonText}
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>

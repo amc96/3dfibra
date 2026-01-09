@@ -104,7 +104,7 @@ export class DatabaseStorage implements IStorage {
         },
         {
           name: "Roteador Extra",
-          speed: "Dual Band",
+          speed: "WIFI 6",
           price: "25,00",
           features: ["Maior Alcance", "Tecnologia Mesh", "Fácil Configuração", "Gigabit"],
           category: "adicionais",
@@ -113,7 +113,7 @@ export class DatabaseStorage implements IStorage {
         {
           name: "TV Box",
           speed: "Android TV",
-          price: "49,90",
+          price: "25,00",
           features: ["Transforma sua TV", "Acesso a Apps", "Resolução 4K", "Controle Remoto"],
           category: "adicionais",
           isHighlighted: false
