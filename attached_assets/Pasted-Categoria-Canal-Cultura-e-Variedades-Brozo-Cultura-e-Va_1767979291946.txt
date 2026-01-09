@@ -1,0 +1,113 @@
+Categoria,Canal
+Cultura e Variedades,Brozo
+Cultura e Variedades,TV Pampa
+Cultura e Variedades,SBT
+Cultura e Variedades,RECORD
+Cultura e Variedades,BAND
+Cultura e Variedades,TRAVEL
+Cultura e Variedades,TV BLITS
+Cultura e Variedades,Planalto Norte
+Cultura e Variedades,GAZETA
+Cultura e Variedades,VRT
+Cultura e Variedades,DOCS
+Cultura e Variedades,Unique
+Cultura e Variedades,Artel
+Cultura e Variedades,Trace Brazuca
+Cultura e Variedades,Trace Latina
+Cultura e Variedades,Trace Urban
+Cultura e Variedades,TV História
+Cultura e Variedades,Music Box Brazil
+Cultura e Variedades,Home & Health
+Cultura e Variedades,TLC
+Cultura e Variedades,Food Network
+Cultura e Variedades,Int Novelas
+Cultura e Variedades,Rai Italia
+Cultura e Variedades,Adult Swim
+Cultura e Variedades,Sabor & Arte
+Públicos,TV Justiça
+Públicos,TV Brasil
+Públicos,RESERVADO COMUNITÁRIO
+Públicos,TV Senado
+Públicos,TV Câmara
+Notícias,RedeTV
+Notícias,New
+Notícias,TVD News
+Notícias,Euro News
+Notícias,Band News
+Notícias,RN
+Notícias,CNN Brasil
+Notícias,Telesur
+Notícias,Exitosa
+Notícias,JP News
+Notícias,Fox News
+Notícias,Bloomberg
+Notícias,CNBC
+Notícias,Times Now
+Filmes e Séries,Mider
+Filmes e Séries,LMC
+Filmes e Séries,Retro
+Filmes e Séries,Ultra
+Filmes e Séries,Family Series
+Filmes e Séries,Movies
+Filmes e Séries,Prime Box Brazil
+Filmes e Séries,Film & Arts
+Filmes e Séries,AMC
+Filmes e Séries,ISTV
+Filmes e Séries,Canal Sony
+Filmes e Séries,TNT Series
+Filmes e Séries,Space
+Filmes e Séries,TCM HD
+Filmes e Séries,Cinemax
+Filmes e Séries,Lifetime HD
+Filmes e Séries,Top Action
+Infantil,Kios
+Infantil,ID
+Infantil,Otaku
+Infantil,Leo & Lully
+Infantil,Yupi
+Infantil,Hallo!
+Infantil,Discovery Kids
+Infantil,Cartoon Network
+Infantil,Tooncast
+Infantil,Cartoonito
+Esportes,Fish TV
+Esportes,Unique Sports
+Esportes,Cazé TV
+Esportes,Band Sports HD
+Esportes,Fuel TV
+Esportes,ESPN
+Esportes,ESPN 2
+Esportes,ESPN 3
+Esportes,ESPN 4
+Esportes,ESPN 5
+Esportes,TNT Sports
+Esportes,Trace Sport Stars
+Agronegócio,Canal Rural
+Agronegócio,AgroBrasil
+Agronegócio,Terra Viva
+Agronegócio,AgroCanal
+Agronegócio,Canal do Boi
+Documentários,Discovery
+Documentários,Animal Planet
+Documentários,Discovery Turbo
+Documentários,Discovery Science
+Documentários,Discovery Theater
+Documentários,Discovery World
+Documentários,HGTV
+Documentários,History
+Educativos,TV Cultura
+Educativos,Tvescala
+Educativos,RESERVADO UNIVERSITÁRIO
+Educativos,SescTV
+Religiosos / Outros,TV Mundo Maior
+Religiosos / Outros,Canção Nova
+Religiosos / Outros,Rede Vida
+Religiosos / Outros,RS21
+Religiosos / Outros,TV Evangelizar
+Religiosos / Outros,Novo Tempo
+Religiosos / Outros,EWTN
+Religiosos / Outros,Rede Gênesis
+Étnicos,NHK
+``` [cite: 1, 4, 19, 28, 79, 151, 152, 153, 155, 163, 165, 166, 168, 169, 177, 178, 188, 191, 193, 194, 202, 204, 232, 234, 247, 248, 253, 254, 255, 264, 266, 268, 269, 272, 281, 284, 286, 287, 290, 291, 293, 294, 295, 297, 299, 302, 303, 304, 305, 309, 311, 314, 318, 319, 322, 332, 333, 334, 336, 347, 348, 349, 352, 354, 363, 364, 365, 366, 367, 377, 378, 379, 387, 388, 396, 398, 399, 412, 420, 421, 422, 424, 431, 436, 440, 443, 444, 456, 457, 463]
+
+Deseja que eu verifique se algum canal específico ficou de fora ou prefere que eu ordene a lista por ordem alfabética de canal?
