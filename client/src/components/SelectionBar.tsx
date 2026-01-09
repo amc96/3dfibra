@@ -26,6 +26,24 @@ export function SelectionBar() {
     return 0;
   };
 
+  const calculateTotal = () => {
+    return selectedPlans.reduce((acc, plan) => {
+      let planPrice = parseFloat(plan.price.replace(',', '.'));
+      let total = planPrice;
+
+      if (plan.category === "adicionais") {
+        total = planPrice * plan.quantity;
+      } else if (plan.category === "tv") {
+        const pointPrice = getTvPointPrice(plan.name);
+        total = planPrice + (pointPrice * (plan.quantity - 1));
+      }
+
+      return acc + total;
+    }, 0);
+  };
+
+  const totalPrice = calculateTotal().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   return (
     <AnimatePresence>
       <motion.div
@@ -36,9 +54,15 @@ export function SelectionBar() {
       >
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 overflow-x-auto pb-2 md:pb-0 no-scrollbar w-full md:w-auto">
-            <div className="flex items-center gap-2 text-primary font-bold whitespace-nowrap">
-              <ShoppingCart className="w-5 h-5" />
-              <span>{selectedPlans.length} {selectedPlans.length === 1 ? 'item' : 'itens'}:</span>
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 shrink-0">
+              <div className="flex items-center gap-2 text-primary font-bold whitespace-nowrap">
+                <ShoppingCart className="w-5 h-5" />
+                <span>{selectedPlans.length} {selectedPlans.length === 1 ? 'item' : 'itens'}</span>
+              </div>
+              <div className="flex items-baseline gap-1 text-white whitespace-nowrap bg-primary/20 px-3 py-1 rounded-full border border-primary/30">
+                <span className="text-xs font-medium opacity-70 uppercase tracking-wider">Total:</span>
+                <span className="text-sm font-black">R$ {totalPrice}</span>
+              </div>
             </div>
             <div className="flex gap-4">
               {selectedPlans.map((plan) => {
