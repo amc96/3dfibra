@@ -28,6 +28,11 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
       if (plan.category === "internet") {
         return [...prev.filter(p => p.category !== "internet"), { ...plan, quantity: 1 }];
       }
+
+      // If selecting a TV plan, remove any other TV plan
+      if (plan.category === "tv") {
+        return [...prev.filter(p => p.category !== "tv"), { ...plan, quantity: 1 }];
+      }
       
       return [...prev, { ...plan, quantity: 1 }];
     });
