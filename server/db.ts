@@ -7,13 +7,13 @@ import path from "path";
 const { Pool } = pg;
 
 if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
+  console.warn(
+    "DATABASE_URL must be set. Please provision a database in your environment.",
   );
 }
 
 export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || "",
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
 });
 export const db = drizzle(pool, { schema });
@@ -21,12 +21,7 @@ export const db = drizzle(pool, { schema });
 // Auto-migrate on startup
 (async () => {
   try {
-    if (!process.env.DATABASE_URL) {
-      console.warn("DATABASE_URL not set, skipping migrations");
-      return;
-    }
-    
-    // In production/Railway, migrations should already be pushed
+    // In production/Railway, migrations might be handled externally
     // We only try to migrate if the folder exists and has content
     const migrationsPath = path.resolve(process.cwd(), "migrations");
     
