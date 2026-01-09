@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
 import { useToast } from "@/hooks/use-toast";
-import { CHANNELS } from "@/lib/channels";
+import { PLUS_CHANNELS, ULTRA_CHANNELS } from "@/lib/channels";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
@@ -19,6 +19,8 @@ export function PlanCard({ plan, index }: PlanCardProps) {
   const { toast } = useToast();
   const isSelected = selectedPlans.some(p => p.id === plan.id);
   const [isOpen, setIsOpen] = useState(false);
+
+  const channelsToShow = plan.name === "Canais Plus" ? PLUS_CHANNELS : ULTRA_CHANNELS;
 
   const handleToggle = () => {
     const isInternetPlanSelected = selectedPlans.some(p => p.category === "internet");
@@ -129,7 +131,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
                     <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
                         {Object.entries(
-                          CHANNELS.reduce((acc, channel) => {
+                          channelsToShow.reduce((acc, channel) => {
                             if (!acc[channel.category]) acc[channel.category] = [];
                             acc[channel.category].push(channel.name);
                             return acc;
