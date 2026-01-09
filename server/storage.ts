@@ -114,7 +114,7 @@ export class DatabaseStorage implements IStorage {
           name: "Câmera de Segurança",
           speed: "Câmera",
           price: "25,00",
-          features: ["Acesso via App", "Gravação em Nuvem", "Detector de Movimento", "Visão Noturna"],
+          features: ["Acesse de onde estiver", "Aplicativo para Android e iOS", "Visão Noturna", "Câmera Full HD"],
           category: "adicionais",
           isHighlighted: false
         },
