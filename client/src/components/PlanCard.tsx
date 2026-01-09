@@ -109,7 +109,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
                       <span className="text-sm text-muted-foreground underline decoration-dotted decoration-emerald-500/50 underline-offset-4">{feature}</span>
                     </div>
                   </DialogTrigger>
-                  <DialogContent className="max-w-[95vw] w-full md:max-w-[80vw] lg:max-w-[70vw] h-[85vh] p-0 border-primary/20 shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden flex flex-col rounded-3xl">
+                  <DialogContent className="max-w-[95vw] w-full md:max-w-[80vw] lg:max-w-[70vw] h-[85vh] p-0 border-primary/20 shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden flex flex-col rounded-3xl z-[100]">
                     <DialogHeader className="p-6 md:p-8 border-b border-border/50 bg-primary/5 flex flex-row items-center justify-between space-y-0">
                       <div className="flex items-center gap-4">
                         <div className="p-3 rounded-2xl bg-primary/10 text-primary">
