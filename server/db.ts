@@ -1,6 +1,8 @@
 import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
 import pg from "pg";
 import * as schema from "@shared/schema";
+import path from "path";
 
 const { Pool } = pg;
 
@@ -15,3 +17,18 @@ export const pool = new Pool({
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
 });
 export const db = drizzle(pool, { schema });
+
+// Auto-migrate on startup
+if (process.env.NODE_ENV === "production") {
+  (async () => {
+    try {
+      console.log("Running migrations...");
+      // In bundled environments, __dirname might point to dist
+      const migrationsPath = path.resolve(process.cwd(), "migrations");
+      await migrate(db, { migrationsFolder: migrationsPath });
+      console.log("Migrations completed.");
+    } catch (err) {
+      console.error("Migration failed:", err);
+    }
+  })();
+}

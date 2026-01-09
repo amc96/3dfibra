@@ -48,6 +48,7 @@ async function buildAll() {
   externals.push(
     "drizzle-orm/node-postgres",
     "drizzle-orm",
+    "drizzle-orm/node-postgres/migrator",
     "pg",
     "pg-pass",
     "express",

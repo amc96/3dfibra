@@ -13,6 +13,9 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Generate migrations
+RUN npx drizzle-kit generate
+
 # Production image
 FROM node:20-slim
 
@@ -22,8 +25,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
 
-# Copy built assets
+# Copy built assets and migrations
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/migrations ./migrations
 
 # Set environment variables
 ENV NODE_ENV=production
