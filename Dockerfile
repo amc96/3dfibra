@@ -18,7 +18,7 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Install dependencies first for better caching
+# Install dependencies
 COPY package*.json ./
 RUN npm install --omit=dev
 
@@ -32,5 +32,5 @@ ENV PORT=5000
 # Expose port
 EXPOSE 5000
 
-# Start command
+# Start command (running directly from node to avoid npm overhead and issues)
 CMD ["node", "dist/index.cjs"]
