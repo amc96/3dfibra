@@ -59,10 +59,16 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="outline" className="rounded-full border-primary/20 hover:border-primary/50 text-white gap-2">
-              <User className="w-4 h-4" />
-              Área do Cliente
-            </Button>
+            <a 
+              href="https://central.3dnetwork.hubsoft.com.br/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" className="rounded-full border-primary/20 hover:border-primary/50 text-white gap-2">
+                <User className="w-4 h-4" />
+                Área do Cliente
+              </Button>
+            </a>
             <Link href="/planos">
               <Button className="rounded-full bg-primary hover:bg-primary/90 text-white relative">
                 Assinar Agora
@@ -123,10 +129,17 @@ export function Navbar() {
               </div>
               
               <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
-                <Button variant="outline" className="w-full rounded-xl border-primary/20 text-white py-6 text-lg">
-                  <User className="w-5 h-5 mr-2" />
-                  Área do Cliente
-                </Button>
+                <a 
+                  href="https://central.3dnetwork.hubsoft.com.br/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button variant="outline" className="w-full rounded-xl border-primary/20 text-white py-6 text-lg">
+                    <User className="w-5 h-5 mr-2" />
+                    Área do Cliente
+                  </Button>
+                </a>
                 <Link href="/planos" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button className="w-full bg-primary text-white rounded-xl py-6 text-lg font-bold">
                     Assinar Agora

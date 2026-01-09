@@ -39,7 +39,7 @@ export function Footer() {
               <li><Link href="/" className="hover:text-primary transition-colors">Início</Link></li>
               <li><Link href="/planos" className="hover:text-primary transition-colors">Planos Internet</Link></li>
               <li><Link href="/planos" className="hover:text-primary transition-colors">Canais de TV</Link></li>
-              <li><a href="https://central.3dnetwork.hubsoft.com.br/" className="hover:text-primary transition-colors">Área do Cliente</a></li>
+              <li><a href="https://central.3dnetwork.hubsoft.com.br/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Área do Cliente</a></li>
             </ul>
           </div>
 
