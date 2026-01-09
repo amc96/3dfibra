@@ -94,11 +94,11 @@ export function PlanCard({ plan, index }: PlanCardProps) {
           </div>
 
           {plan.features.map((feature, i) => {
-            const isChannelList = feature.toLowerCase().includes("lista de canais") && plan.category === "tv";
+            const isChannelList = feature.toLowerCase().includes("lista de canais") && plan.category === "tv" && plan.name === "Canais Light";
             
             if (isChannelList) {
               return (
-                <HoverCard key={i}>
+                <HoverCard key={i} openDelay={100} closeDelay={100}>
                   <HoverCardTrigger asChild>
                     <div className="flex items-center gap-3 cursor-help group/feature">
                       <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover/feature:bg-emerald-500/20 transition-colors">
@@ -107,14 +107,14 @@ export function PlanCard({ plan, index }: PlanCardProps) {
                       <span className="text-sm text-muted-foreground underline decoration-dotted decoration-emerald-500/50 underline-offset-4">{feature}</span>
                     </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="w-80 p-0 border-primary/20 shadow-2xl bg-card/95 backdrop-blur-md" side="right" align="start">
+                  <HoverCardContent className="w-[500px] p-0 border-primary/20 shadow-2xl bg-card/95 backdrop-blur-md" side="right" align="start">
                     <div className="p-4 border-b border-border/50 bg-primary/5">
                       <div className="flex items-center gap-2 text-primary font-bold">
                         <Tv className="w-4 h-4" />
-                        <span>Grade de Canais</span>
+                        <span>Grade de Canais - {plan.name}</span>
                       </div>
                     </div>
-                    <div className="max-h-[400px] overflow-y-auto p-4 custom-scrollbar">
+                    <div className="max-h-[500px] overflow-y-auto p-6 custom-scrollbar">
                       {Object.entries(
                         CHANNELS.reduce((acc, channel) => {
                           if (!acc[channel.category]) acc[channel.category] = [];
@@ -122,14 +122,14 @@ export function PlanCard({ plan, index }: PlanCardProps) {
                           return acc;
                         }, {} as Record<string, string[]>)
                       ).map(([category, channels]) => (
-                        <div key={category} className="mb-4 last:mb-0">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest text-primary/70 mb-2 border-l-2 border-primary/30 pl-2">
+                        <div key={category} className="mb-6 last:mb-0">
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-primary/70 mb-3 border-l-2 border-primary/30 pl-2">
                             {category}
                           </h4>
-                          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2">
                             {channels.map(name => (
-                              <div key={name} className="text-[11px] text-muted-foreground flex items-center gap-1.5">
-                                <div className="w-1 h-1 rounded-full bg-primary/30" />
+                              <div key={name} className="text-[11px] text-muted-foreground flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0" />
                                 <span className="truncate">{name}</span>
                               </div>
                             ))}
