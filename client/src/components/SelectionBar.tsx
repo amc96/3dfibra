@@ -15,7 +15,8 @@ export function SelectionBar() {
       if (p.category === "tv" && p.quantity > 1) text += ` + ${p.quantity - 1} ponto(s) adicional(ais)`;
       return text;
     }).join("%0A");
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=5553999789222&text=Olá! Gostaria de assinar os seguintes planos:%0A${plansText}`;
+    
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=5553999789222&text=Olá! Gostaria de assinar os seguintes planos:%0A${plansText}%0A%0A*Total Estimado: R$ ${totalPrice}*`;
     window.open(whatsappUrl, '_blank');
   };
 
