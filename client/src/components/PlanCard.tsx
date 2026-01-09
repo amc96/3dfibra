@@ -96,7 +96,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
           </div>
 
           {plan.features.map((feature, i) => {
-            const isChannelList = feature.toLowerCase().includes("lista de canais") && plan.category === "tv" && plan.name === "Canais Light";
+            const isChannelList = feature.toLowerCase().includes("lista de canais") && plan.category === "tv";
             
             if (isChannelList) {
               return (
