@@ -18,10 +18,12 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Copy built assets and production dependencies
+# Install dependencies first for better caching
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Copy built assets
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -31,4 +33,4 @@ ENV PORT=5000
 EXPOSE 5000
 
 # Start command
-CMD ["npm", "start"]
+CMD ["node", "dist/index.cjs"]
