@@ -58,7 +58,10 @@ async function buildAll() {
     "connect-pg-simple",
     "memorystore",
     "passport",
-    "passport-local"
+    "passport-local",
+    "zod",
+    "zod-validation-error",
+    "@shared/schema"
   );
 
   await esbuild({
