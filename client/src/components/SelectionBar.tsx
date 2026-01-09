@@ -9,9 +9,21 @@ export function SelectionBar() {
   if (selectedPlans.length === 0) return null;
 
   const handleCheckout = () => {
-    const plansText = selectedPlans.map(p => `- ${p.name} (${p.speed}) x${p.quantity}`).join("%0A");
+    const plansText = selectedPlans.map(p => {
+      let text = `- ${p.name} (${p.speed})`;
+      if (p.category === "adicionais") text += ` x${p.quantity}`;
+      if (p.category === "tv" && p.quantity > 1) text += ` + ${p.quantity - 1} ponto(s) adicional(ais)`;
+      return text;
+    }).join("%0A");
     const whatsappUrl = `https://api.whatsapp.com/send?phone=5553999789222&text=Olá! Gostaria de assinar os seguintes planos:%0A${plansText}`;
     window.open(whatsappUrl, '_blank');
+  };
+
+  const getTvPointPrice = (planName: string) => {
+    if (planName.includes("Light")) return 9;
+    if (planName.includes("Plus")) return 20;
+    if (planName.includes("Ultra") && !planName.includes("HBO")) return 27;
+    return 0;
   };
 
   return (
@@ -29,39 +41,54 @@ export function SelectionBar() {
               <span>{selectedPlans.length} {selectedPlans.length === 1 ? 'item' : 'itens'}:</span>
             </div>
             <div className="flex gap-4">
-              {selectedPlans.map((plan) => (
-                <div 
-                  key={plan.id}
-                  className="flex items-center gap-3 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-bold">{plan.name}</span>
-                    <span className="text-xs opacity-70">{plan.speed}</span>
-                  </div>
+              {selectedPlans.map((plan) => {
+                const isTvWithPoints = plan.category === "tv" && !plan.name.includes("HBO");
+                const maxQuantity = plan.category === "tv" ? 4 : 99; // 1 principal + 3 adicionais = 4 total
 
-                  {plan.category === "adicionais" && (
-                    <div className="flex items-center gap-2 bg-background/50 rounded-lg px-2 py-1 ml-2">
-                      <button 
-                        onClick={() => updateQuantity(plan.id, plan.quantity - 1)}
-                        className="p-1 hover:text-white transition-colors"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="w-4 text-center font-bold">{plan.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(plan.id, plan.quantity + 1)}
-                        className="p-1 hover:text-white transition-colors"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
+                return (
+                  <div 
+                    key={plan.id}
+                    className="flex items-center gap-3 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap"
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-bold">{plan.name}</span>
+                      <span className="text-xs opacity-70">
+                        {plan.category === "tv" && plan.quantity > 1 
+                          ? `${plan.speed} (+${plan.quantity - 1} ponto)` 
+                          : plan.speed}
+                      </span>
                     </div>
-                  )}
 
-                  <button onClick={() => togglePlan(plan)} className="ml-2 p-1 hover:text-red-500 transition-colors">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+                    {(plan.category === "adicionais" || isTvWithPoints) && (
+                      <div className="flex flex-col items-center gap-1 ml-2">
+                        {plan.category === "tv" && <span className="text-[10px] uppercase font-bold opacity-50">Pontos</span>}
+                        <div className="flex items-center gap-2 bg-background/50 rounded-lg px-2 py-1">
+                          <button 
+                            onClick={() => updateQuantity(plan.id, plan.quantity - 1)}
+                            className="p-1 hover:text-white transition-colors"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-4 text-center font-bold">
+                            {plan.category === "tv" ? plan.quantity : plan.quantity}
+                          </span>
+                          <button 
+                            onClick={() => plan.quantity < maxQuantity ? updateQuantity(plan.id, plan.quantity + 1) : null}
+                            className="p-1 hover:text-white transition-colors disabled:opacity-20"
+                            disabled={plan.quantity >= maxQuantity}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <button onClick={() => togglePlan(plan)} className="ml-2 p-1 hover:text-red-500 transition-colors">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

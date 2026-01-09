@@ -79,20 +79,36 @@ export class DatabaseStorage implements IStorage {
           isHighlighted: false
         },
         {
-          name: "TV Light",
-          speed: "100 Canais",
-          price: "49,90",
+          name: "Canais Light",
+          speed: "100+ Canais",
+          price: "17,90",
           features: ["Canais Abertos", "Canais Infantis", "Qualidade HD"],
           category: "tv",
           isHighlighted: false
         },
         {
-          name: "TV Premium",
-          speed: "200 Canais",
-          price: "89,90",
-          features: ["Canais de Filmes", "Esportes ao Vivo", "Qualidade 4K", "Playback 24h"],
+          name: "Canais Plus",
+          speed: "150+ Canais",
+          price: "39,90",
+          features: ["Canais de Filmes", "Esportes", "Qualidade HD"],
+          category: "tv",
+          isHighlighted: false
+        },
+        {
+          name: "Canais Ultra",
+          speed: "200+ Canais",
+          price: "53,90",
+          features: ["Premium", "Esportes ao Vivo", "Qualidade 4K"],
           category: "tv",
           isHighlighted: true
+        },
+        {
+          name: "Canais Ultra 1P + HBO",
+          speed: "200+ Canais + HBO",
+          price: "70,90",
+          features: ["Tudo do Ultra", "HBO Max Incluso", "Qualidade 4K", "Playback 24h"],
+          category: "tv",
+          isHighlighted: false
         },
         {
           name: "Câmera de Segurança",
