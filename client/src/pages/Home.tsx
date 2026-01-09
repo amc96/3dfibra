@@ -52,14 +52,15 @@ export default function Home() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <Button 
-                    size="lg" 
-                    className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 h-14 text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:-translate-y-1"
-                    onClick={() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' })}
-                  >
-                    Ver Planos
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
+                  <Link href="/planos">
+                    <Button 
+                      size="lg" 
+                      className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 h-14 text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:-translate-y-1 w-full sm:w-auto"
+                    >
+                      Ver Planos
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
                   <a 
                     href="https://wa.me/5553999789222?text=Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20internet" 
                     target="_blank" 
