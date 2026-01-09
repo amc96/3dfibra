@@ -4,6 +4,7 @@ import { ShoppingCart, Menu, X, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { useSelection } from "@/hooks/use-selection";
+import { AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const [location] = useLocation();
@@ -76,38 +77,66 @@ export function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <button 
-          className="md:hidden text-white"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-4 md:hidden">
+          {selectedPlans.length > 0 && (
+            <Link href="/planos">
+              <Button size="icon" variant="ghost" className="relative text-white">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-background">
+                  {selectedPlans.length}
+                </span>
+              </Button>
+            </Link>
+          )}
+          <button 
+            className="text-white p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-white/10 p-4 flex flex-col gap-4 shadow-2xl"
-        >
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href}>
-              <a 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`text-lg font-bold ${
-                  location === link.href ? "text-primary" : "text-white"
-                }`}
-              >
-                {link.name}
-              </a>
-            </Link>
-          ))}
-          <Button className="w-full bg-primary text-white rounded-xl py-6 font-bold">
-            Falar com Consultor
-          </Button>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-background/95 backdrop-blur-xl border-b border-white/10 overflow-hidden shadow-2xl"
+          >
+            <div className="container mx-auto px-4 py-6 flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
+                {navLinks.map((link) => (
+                  <Link key={link.href} href={link.href}>
+                    <a 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`text-xl font-bold transition-colors ${
+                        location === link.href ? "text-primary" : "text-white hover:text-primary"
+                      }`}
+                    >
+                      {link.name}
+                    </a>
+                  </Link>
+                ))}
+              </div>
+              
+              <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
+                <Button variant="outline" className="w-full rounded-xl border-primary/20 text-white py-6 text-lg">
+                  <Phone className="w-5 h-5 mr-2" />
+                  Área do Cliente
+                </Button>
+                <Link href="/planos" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full bg-primary text-white rounded-xl py-6 text-lg font-bold">
+                    Assinar Agora
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
