@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, MapPin, Mail, Phone } from "lucide-react";
+import { Facebook, Instagram, MapPin, Mail, Phone } from "lucide-react";
 import { Link } from "wouter";
 
 export function Footer() {
@@ -20,10 +20,15 @@ export function Footer() {
               Conectando você ao mundo com ultra velocidade e estabilidade. A melhor fibra óptica da região.
             </p>
             <div className="flex gap-4">
-              {[Instagram, Facebook, Twitter].map((Icon, i) => (
+              {[
+                { Icon: Instagram, href: "https://www.instagram.com/3dnetworkrs?igsh=MWE0a3I5Zmxrb3VlaQ==" },
+                { Icon: Facebook, href: "https://www.facebook.com/3DNetworkRS?mibextid=ZbWKwL" }
+              ].map(({ Icon, href }, i) => (
                 <a 
                   key={i}
-                  href="#" 
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-200"
                 >
                   <Icon className="w-4 h-4" />
