@@ -56,7 +56,12 @@ export function Footer() {
                 </div>
               </div>
               <div className="space-y-3">
-                <a href="tel:+5553999789222" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a 
+                  href="https://wa.me/5553999789222" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   <Phone className="w-5 h-5 text-primary" />
                   (53) 99978-9222
                 </a>
