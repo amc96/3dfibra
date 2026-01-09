@@ -95,7 +95,7 @@ export default function Planos() {
         <div>
           <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
             <span className="w-2 h-8 bg-primary rounded-full"></span>
-            Adicionais (Câmeras)
+            Adicionais
           </h2>
           <Carousel className="w-full">
             <CarouselContent className="-ml-4">
