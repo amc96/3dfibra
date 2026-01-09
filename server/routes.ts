@@ -7,6 +7,10 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Ensure plans are seeded on startup if using database
+  if (storage.seedPlans) {
+    await storage.seedPlans();
+  }
   
   app.get(api.plans.list.path, async (req, res) => {
     const plans = await storage.getPlans();
