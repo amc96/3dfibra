@@ -1,0 +1,397 @@
+2026-01-09T13:07:53.000000000Z [inf]  Starting Container
+2026-01-09T13:07:53.853668888Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:53.853676997Z [err]        errno: -111,
+2026-01-09T13:07:53.853682372Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:53.853687100Z [err]        syscall: 'connect',
+2026-01-09T13:07:53.853692971Z [err]        address: '::1',
+2026-01-09T13:07:53.853697988Z [err]        port: 5432
+2026-01-09T13:07:53.853703248Z [err]      },
+2026-01-09T13:07:53.853717329Z [err]    [errors]: [
+2026-01-09T13:07:53.853721834Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:07:53.853725360Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:07:53.853728127Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:53.853734613Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:53.853734622Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:53.853744066Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:07:53.853749379Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:07:53.853752528Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:07:53.853757405Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:07:53.853760596Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:07:53.853765075Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:07:53.853768372Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:07:53.853773523Z [err]            ^
+2026-01-09T13:07:53.853774961Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:07:53.853782122Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:07:53.853782578Z [err]  
+2026-01-09T13:07:53.853789543Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:07:53.853797088Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:07:53.856000060Z [err]        errno: -111,
+2026-01-09T13:07:53.856004075Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:53.856007869Z [err]        syscall: 'connect',
+2026-01-09T13:07:53.856012002Z [err]        address: '127.0.0.1',
+2026-01-09T13:07:53.856017095Z [err]        port: 5432
+2026-01-09T13:07:53.856020994Z [err]      }
+2026-01-09T13:07:53.856025128Z [err]    ]
+2026-01-09T13:07:53.856029167Z [err]  }
+2026-01-09T13:07:53.856033712Z [err]  
+2026-01-09T13:07:53.856037810Z [err]  Node.js v20.19.6
+2026-01-09T13:07:54.941948397Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:07:54.942006213Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:07:54.942012640Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:07:54.942021199Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:07:54.942023595Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:54.942028881Z [err]            ^
+2026-01-09T13:07:54.942036004Z [err]  
+2026-01-09T13:07:54.942043859Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:07:54.942052413Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:07:54.942061324Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:54.942061789Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:07:54.942062476Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:07:54.942069715Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:07:54.942075575Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:07:54.942079597Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:07:54.942088179Z [err]    [errors]: [
+2026-01-09T13:07:54.942088689Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:07:54.942099029Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:07:54.942107376Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:54.942114735Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:54.942124892Z [err]        errno: -111,
+2026-01-09T13:07:54.942131740Z [err]  
+2026-01-09T13:07:54.942134482Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:54.942141278Z [err]  Node.js v20.19.6
+2026-01-09T13:07:54.942142512Z [err]        syscall: 'connect',
+2026-01-09T13:07:54.942150027Z [err]        address: '::1',
+2026-01-09T13:07:54.942156674Z [err]        port: 5432
+2026-01-09T13:07:54.942162400Z [err]      },
+2026-01-09T13:07:54.942199811Z [err]        errno: -111,
+2026-01-09T13:07:54.942205814Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:54.942212312Z [err]        syscall: 'connect',
+2026-01-09T13:07:54.942218112Z [err]        address: '127.0.0.1',
+2026-01-09T13:07:54.942223429Z [err]        port: 5432
+2026-01-09T13:07:54.942229260Z [err]      }
+2026-01-09T13:07:54.942236381Z [err]    ]
+2026-01-09T13:07:54.942242789Z [err]  }
+2026-01-09T13:07:56.925016767Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:07:56.925251100Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:56.925260019Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:56.925264970Z [err]        errno: -111,
+2026-01-09T13:07:56.925270049Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:56.925275207Z [err]        syscall: 'connect',
+2026-01-09T13:07:56.925279427Z [err]        address: '::1',
+2026-01-09T13:07:56.925286097Z [err]        port: 5432
+2026-01-09T13:07:56.925290892Z [err]      },
+2026-01-09T13:07:56.925308423Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:07:56.925313949Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:07:56.925319254Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:07:56.925325633Z [err]            ^
+2026-01-09T13:07:56.925331453Z [err]  
+2026-01-09T13:07:56.925337218Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:07:56.925342564Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:07:56.925348105Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:07:56.925354032Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:07:56.925358776Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:07:56.925363654Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:07:56.925369290Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:07:56.925376179Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:07:56.925381505Z [err]    [errors]: [
+2026-01-09T13:07:56.925404988Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:07:56.925409936Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:56.925414431Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:56.928927577Z [err]        errno: -111,
+2026-01-09T13:07:56.928933694Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:56.928939969Z [err]        syscall: 'connect',
+2026-01-09T13:07:56.928946291Z [err]        address: '127.0.0.1',
+2026-01-09T13:07:56.928958669Z [err]        port: 5432
+2026-01-09T13:07:56.928964313Z [err]      }
+2026-01-09T13:07:56.928970288Z [err]    ]
+2026-01-09T13:07:56.928976273Z [err]  }
+2026-01-09T13:07:56.929046556Z [err]  
+2026-01-09T13:07:56.929067953Z [err]  Node.js v20.19.6
+2026-01-09T13:07:58.229995639Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:07:58.230002542Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:07:58.230009771Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:07:58.230016239Z [err]            ^
+2026-01-09T13:07:58.230023358Z [err]  
+2026-01-09T13:07:58.230029642Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:07:58.230063641Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:07:58.230071176Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:07:58.230077357Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:07:58.230083969Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:07:58.230138428Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:07:58.230146180Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:07:58.230153228Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:07:58.230187532Z [err]    [errors]: [
+2026-01-09T13:07:58.230193919Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:07:58.230200784Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:58.230205757Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:58.230210669Z [err]        errno: -111,
+2026-01-09T13:07:58.230216970Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:58.230222535Z [err]        syscall: 'connect',
+2026-01-09T13:07:58.230227934Z [err]        address: '::1',
+2026-01-09T13:07:58.230232354Z [err]        port: 5432
+2026-01-09T13:07:58.230236642Z [err]      },
+2026-01-09T13:07:58.230241258Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:07:58.230247156Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:07:58.230251715Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:07:58.233249292Z [err]        errno: -111,
+2026-01-09T13:07:58.233255948Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:07:58.233261898Z [err]        syscall: 'connect',
+2026-01-09T13:07:58.233267685Z [err]        address: '127.0.0.1',
+2026-01-09T13:07:58.233273844Z [err]        port: 5432
+2026-01-09T13:07:58.233279817Z [err]      }
+2026-01-09T13:07:58.233285342Z [err]    ]
+2026-01-09T13:07:58.233292888Z [err]  }
+2026-01-09T13:07:58.233300504Z [err]  
+2026-01-09T13:07:58.233306867Z [err]  Node.js v20.19.6
+2026-01-09T13:08:00.158901169Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:08:00.158910012Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:08:00.158915153Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:08:00.158920055Z [err]            ^
+2026-01-09T13:08:00.158926783Z [err]  
+2026-01-09T13:08:00.158933527Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:08:00.158939907Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:08:00.158947571Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:08:00.158954588Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:08:00.158961418Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:08:00.158969502Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:08:00.158976501Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:08:00.158983062Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:08:00.158989809Z [err]    [errors]: [
+2026-01-09T13:08:00.158996381Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:08:00.159004597Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:00.159011423Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:00.159018757Z [err]        errno: -111,
+2026-01-09T13:08:00.159025998Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:00.159032995Z [err]        syscall: 'connect',
+2026-01-09T13:08:00.159039352Z [err]        address: '::1',
+2026-01-09T13:08:00.159046113Z [err]        port: 5432
+2026-01-09T13:08:00.159142499Z [err]      },
+2026-01-09T13:08:00.159150676Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:08:00.159157952Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:00.159164644Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:00.163158906Z [err]        errno: -111,
+2026-01-09T13:08:00.163165437Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:00.163171613Z [err]        syscall: 'connect',
+2026-01-09T13:08:00.163178105Z [err]        address: '127.0.0.1',
+2026-01-09T13:08:00.163183946Z [err]        port: 5432
+2026-01-09T13:08:00.163189682Z [err]      }
+2026-01-09T13:08:00.163195268Z [err]    ]
+2026-01-09T13:08:00.163201595Z [err]  }
+2026-01-09T13:08:00.163208336Z [err]  
+2026-01-09T13:08:00.163214786Z [err]  Node.js v20.19.6
+2026-01-09T13:08:02.238172647Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:08:02.238180660Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:08:02.238188104Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:08:02.238196066Z [err]            ^
+2026-01-09T13:08:02.238203928Z [err]  
+2026-01-09T13:08:02.238211725Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:08:02.238218129Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:08:02.238225418Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:08:02.238232763Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:08:02.238239598Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:08:02.238247721Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:08:02.238255161Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:08:02.238263083Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:08:02.238270315Z [err]    [errors]: [
+2026-01-09T13:08:02.238277583Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:08:02.238285308Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:02.238293114Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:02.238299961Z [err]        errno: -111,
+2026-01-09T13:08:02.238306762Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:02.238316623Z [err]        syscall: 'connect',
+2026-01-09T13:08:02.238322537Z [err]        address: '::1',
+2026-01-09T13:08:02.238329905Z [err]        port: 5432
+2026-01-09T13:08:02.238336773Z [err]      },
+2026-01-09T13:08:02.238344076Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:08:02.238351503Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:02.238358482Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:02.238690440Z [err]        errno: -111,
+2026-01-09T13:08:02.238697599Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:02.238705213Z [err]        syscall: 'connect',
+2026-01-09T13:08:02.238712724Z [err]        address: '127.0.0.1',
+2026-01-09T13:08:02.238722926Z [err]        port: 5432
+2026-01-09T13:08:02.238729545Z [err]      }
+2026-01-09T13:08:02.238736875Z [err]    ]
+2026-01-09T13:08:02.238744279Z [err]  }
+2026-01-09T13:08:02.238752513Z [err]  
+2026-01-09T13:08:02.238848450Z [err]  Node.js v20.19.6
+2026-01-09T13:08:04.193954446Z [err]        errno: -111,
+2026-01-09T13:08:04.193980891Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:04.193987487Z [err]        syscall: 'connect',
+2026-01-09T13:08:04.193993980Z [err]        address: '127.0.0.1',
+2026-01-09T13:08:04.194000140Z [err]        port: 5432
+2026-01-09T13:08:04.194006166Z [err]      }
+2026-01-09T13:08:04.194042496Z [err]    ]
+2026-01-09T13:08:04.194144370Z [err]  }
+2026-01-09T13:08:04.194151159Z [err]  
+2026-01-09T13:08:04.194157343Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:08:04.194159776Z [err]  Node.js v20.19.6
+2026-01-09T13:08:04.194164969Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:08:04.194171195Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:08:04.194179607Z [err]            ^
+2026-01-09T13:08:04.194186637Z [err]  
+2026-01-09T13:08:04.194192571Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:08:04.194198207Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:08:04.194204515Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:08:04.194213152Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:08:04.194219531Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:08:04.194226418Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:08:04.194232349Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:08:04.194238440Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:08:04.194248076Z [err]    [errors]: [
+2026-01-09T13:08:04.194255610Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:08:04.194261872Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:04.194267774Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:04.194275892Z [err]        errno: -111,
+2026-01-09T13:08:04.194283469Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:04.194292015Z [err]        syscall: 'connect',
+2026-01-09T13:08:04.194298373Z [err]        address: '::1',
+2026-01-09T13:08:04.194303853Z [err]        port: 5432
+2026-01-09T13:08:04.194311416Z [err]      },
+2026-01-09T13:08:04.194317533Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:08:04.194323889Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:04.194329678Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:06.214190174Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:06.214260179Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:08:06.214276238Z [err]            ^
+2026-01-09T13:08:06.214289511Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:08:06.214291582Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:08:06.214295086Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:08:06.214295410Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:08:06.214295612Z [err]  
+2026-01-09T13:08:06.214310266Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:06.214311881Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:08:06.214315914Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:08:06.214319647Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:08:06.214326597Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:06.214328767Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:08:06.214334325Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:08:06.214337515Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:08:06.214338838Z [err]        errno: -111,
+2026-01-09T13:08:06.214342875Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:08:06.214348944Z [err]    [errors]: [
+2026-01-09T13:08:06.217895857Z [err]        syscall: 'connect',
+2026-01-09T13:08:06.217906817Z [err]        address: '::1',
+2026-01-09T13:08:06.217912372Z [err]        port: 5432
+2026-01-09T13:08:06.217918065Z [err]      },
+2026-01-09T13:08:06.217924883Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:08:06.217930647Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:06.217936645Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:06.218306567Z [err]        errno: -111,
+2026-01-09T13:08:06.218312373Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:06.218318868Z [err]        syscall: 'connect',
+2026-01-09T13:08:06.218326387Z [err]        address: '127.0.0.1',
+2026-01-09T13:08:06.218341490Z [err]        port: 5432
+2026-01-09T13:08:06.218353257Z [err]      }
+2026-01-09T13:08:06.218360110Z [err]    ]
+2026-01-09T13:08:06.218366364Z [err]  }
+2026-01-09T13:08:06.218374189Z [err]  
+2026-01-09T13:08:06.218380914Z [err]  Node.js v20.19.6
+2026-01-09T13:08:06.962445002Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:08:06.962447474Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:08:06.962456341Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:08:06.962456636Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:08:06.962461206Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:08:06.962465583Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:08:06.962469931Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:06.962473492Z [err]        syscall: 'connect',
+2026-01-09T13:08:06.962475384Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:08:06.962476084Z [err]            ^
+2026-01-09T13:08:06.962480237Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:06.962483916Z [err]        address: '::1',
+2026-01-09T13:08:06.962485764Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:08:06.962487409Z [err]  
+2026-01-09T13:08:06.962491039Z [err]        port: 5432
+2026-01-09T13:08:06.962497903Z [err]      },
+2026-01-09T13:08:06.962498144Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:08:06.962502748Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:08:06.962511395Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:08:06.962517370Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:08:06.962520414Z [err]    [errors]: [
+2026-01-09T13:08:06.962527156Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:08:06.962533220Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:06.962540123Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:06.962545992Z [err]        errno: -111,
+2026-01-09T13:08:06.962554764Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:06.965690460Z [err]        errno: -111,
+2026-01-09T13:08:06.965696403Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:06.965702149Z [err]        syscall: 'connect',
+2026-01-09T13:08:06.965708061Z [err]        address: '127.0.0.1',
+2026-01-09T13:08:06.965714001Z [err]        port: 5432
+2026-01-09T13:08:06.965720280Z [err]      }
+2026-01-09T13:08:06.965726231Z [err]    ]
+2026-01-09T13:08:06.965731617Z [err]  }
+2026-01-09T13:08:06.965737885Z [err]  
+2026-01-09T13:08:06.965748561Z [err]  Node.js v20.19.6
+2026-01-09T13:08:09.003746196Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:08:09.003749239Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:09.003758678Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:08:09.003766712Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:08:09.003771194Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:08:09.003779336Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:08:09.003786825Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:08:09.003797440Z [err]    [errors]: [
+2026-01-09T13:08:09.003808864Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:08:09.003821949Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:09.003828726Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:09.003835415Z [err]        errno: -111,
+2026-01-09T13:08:09.003842766Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:09.003850312Z [err]      },
+2026-01-09T13:08:09.003860753Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:08:09.003867896Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:09.003887194Z [err]        syscall: 'connect',
+2026-01-09T13:08:09.003900062Z [err]        address: '::1',
+2026-01-09T13:08:09.003908312Z [err]        port: 5432
+2026-01-09T13:08:09.003916542Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:08:09.003927961Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:08:09.003936874Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:08:09.003945774Z [err]            ^
+2026-01-09T13:08:09.003955239Z [err]  
+2026-01-09T13:08:09.003961627Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:08:09.003966948Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:08:09.007293898Z [err]        errno: -111,
+2026-01-09T13:08:09.007300273Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:09.007307162Z [err]        syscall: 'connect',
+2026-01-09T13:08:09.007313336Z [err]        address: '127.0.0.1',
+2026-01-09T13:08:09.007319749Z [err]        port: 5432
+2026-01-09T13:08:09.007326156Z [err]      }
+2026-01-09T13:08:09.007333024Z [err]    ]
+2026-01-09T13:08:09.007340399Z [err]  }
+2026-01-09T13:08:09.007346754Z [err]  
+2026-01-09T13:08:09.007352898Z [err]  Node.js v20.19.6
+2026-01-09T13:08:10.089985574Z [err]  DATABASE_URL must be set. Please provision a database in your environment.
+2026-01-09T13:08:10.089990878Z [err]  /app/node_modules/pg-pool/index.js:45
+2026-01-09T13:08:10.089996130Z [err]      Error.captureStackTrace(err)
+2026-01-09T13:08:10.090001305Z [err]            ^
+2026-01-09T13:08:10.090007642Z [err]  
+2026-01-09T13:08:10.090012813Z [err]  AggregateError [ECONNREFUSED]: 
+2026-01-09T13:08:10.090018873Z [err]      at /app/node_modules/pg-pool/index.js:45:11
+2026-01-09T13:08:10.090039622Z [err]      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-01-09T13:08:10.090045523Z [err]      at async /app/node_modules/drizzle-orm/node-postgres/session.cjs:118:22
+2026-01-09T13:08:10.090051682Z [err]      at async _.seedPlans (/app/dist/index.cjs:1:6223)
+2026-01-09T13:08:10.090057985Z [err]      at async V (/app/dist/index.cjs:1:9328)
+2026-01-09T13:08:10.090064761Z [err]      at async /app/dist/index.cjs:1:10534 {
+2026-01-09T13:08:10.090070580Z [err]    code: 'ECONNREFUSED',
+2026-01-09T13:08:10.090076079Z [err]    [errors]: [
+2026-01-09T13:08:10.090088546Z [err]      Error: connect ECONNREFUSED ::1:5432
+2026-01-09T13:08:10.090095289Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:10.090101137Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:10.090111496Z [err]        errno: -111,
+2026-01-09T13:08:10.090118158Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:10.090123595Z [err]        syscall: 'connect',
+2026-01-09T13:08:10.090132516Z [err]        address: '::1',
+2026-01-09T13:08:10.090138439Z [err]        port: 5432
+2026-01-09T13:08:10.090144209Z [err]      },
+2026-01-09T13:08:10.090149803Z [err]      Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-01-09T13:08:10.090155563Z [err]          at createConnectionError (node:net:1652:14)
+2026-01-09T13:08:10.090160773Z [err]          at afterConnectMultiple (node:net:1682:16) {
+2026-01-09T13:08:10.094624187Z [err]        errno: -111,
+2026-01-09T13:08:10.094629871Z [err]        code: 'ECONNREFUSED',
+2026-01-09T13:08:10.094635633Z [err]        syscall: 'connect',
+2026-01-09T13:08:10.094641399Z [err]        address: '127.0.0.1',
+2026-01-09T13:08:10.094646902Z [err]        port: 5432
+2026-01-09T13:08:10.094652376Z [err]      }
+2026-01-09T13:08:10.094657889Z [err]    ]
+2026-01-09T13:08:10.094663512Z [err]  }
+2026-01-09T13:08:10.094670992Z [err]  
+2026-01-09T13:08:10.094678129Z [err]  Node.js v20.19.6
