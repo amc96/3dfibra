@@ -43,7 +43,7 @@ export function SelectionBar() {
             <div className="flex gap-4">
               {selectedPlans.map((plan) => {
                 const isTvWithPoints = plan.category === "tv" && !plan.name.includes("HBO");
-                const maxQuantity = plan.category === "tv" ? 4 : 99; // 1 principal + 3 adicionais = 4 total
+                const maxQuantity = plan.category === "tv" ? 3 : 99; // 1 principal + 2 adicionais = 3 total
 
                 return (
                   <div 
