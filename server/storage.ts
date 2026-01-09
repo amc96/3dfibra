@@ -130,7 +130,7 @@ export class DatabaseStorage implements IStorage {
           name: "TV Box",
           speed: "Android TV",
           price: "25,00",
-          features: ["Transforma sua TV", "Acesso a Apps", "Resolução 4K", "Controle Remoto"],
+          features: ["Transforma sua TV", "Acesso a Apps", "Resolução Full HD", "Controle Remoto"],
           category: "adicionais",
           isHighlighted: false
         }
