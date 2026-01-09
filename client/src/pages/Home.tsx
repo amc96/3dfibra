@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { Link } from "wouter";
 import { Footer } from "@/components/Footer";
 import { Features } from "@/components/Features";
 import { PlanCard } from "@/components/PlanCard";
@@ -116,28 +117,19 @@ export default function Home() {
               <h2 className="text-3xl sm:text-4xl font-black font-display mb-4">
                 Escolha o plano ideal
               </h2>
-              <p className="text-muted-foreground text-lg">
-                Soluções flexíveis desenhadas para atender todas as suas necessidades de conexão. Sem surpresas na fatura.
+              <p className="text-muted-foreground text-lg mb-8">
+                Soluções flexíveis desenhadas para atender todas as suas necessidades de conexão.
               </p>
+              <Link href="/planos">
+                <Button 
+                  size="lg" 
+                  className="bg-primary hover:bg-primary/90 text-white rounded-full px-12 h-16 text-xl font-bold shadow-2xl shadow-primary/30 hover:-translate-y-1 transition-all"
+                >
+                  Monte seu plano
+                  <ArrowRight className="w-6 h-6 ml-2" />
+                </Button>
+              </Link>
             </div>
-
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-[500px] bg-card/30 rounded-3xl animate-pulse" />
-                ))}
-              </div>
-            ) : error ? (
-              <div className="text-center text-red-400 bg-red-500/10 p-8 rounded-2xl border border-red-500/20">
-                <p>Erro ao carregar planos. Por favor, tente novamente mais tarde.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {plans?.map((plan, index) => (
-                  <PlanCard key={plan.id} plan={plan} index={index} />
-                ))}
-              </div>
-            )}
           </div>
         </section>
 
