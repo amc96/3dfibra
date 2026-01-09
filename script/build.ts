@@ -45,7 +45,21 @@ async function buildAll() {
     ...Object.keys(pkg.devDependencies || {}),
   ];
   const externals = allDeps.filter((dep) => !allowlist.includes(dep));
-  externals.push("drizzle-orm/node-postgres", "drizzle-orm", "pg", "pg-pass");
+  externals.push(
+    "drizzle-orm/node-postgres",
+    "drizzle-orm",
+    "pg",
+    "pg-pass",
+    "express",
+    "ws",
+    "framer-motion",
+    "lucide-react",
+    "express-session",
+    "connect-pg-simple",
+    "memorystore",
+    "passport",
+    "passport-local"
+  );
 
   await esbuild({
     entryPoints: ["server/index.ts"],

@@ -22,7 +22,9 @@ export async function registerRoutes(
   });
 
   // Initialize seed data
-  await storage.seedPlans();
+  if (process.env.NODE_ENV !== "production") {
+    await storage.seedPlans();
+  }
 
   return httpServer;
 }
