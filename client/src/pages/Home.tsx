@@ -61,7 +61,7 @@ export default function Home() {
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                   <a 
-                    href="https://wa.me/5553999789222" 
+                    href="https://wa.me/5553999789222?text=Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20internet" 
                     target="_blank" 
                     rel="noopener noreferrer"
                   >
@@ -153,7 +153,7 @@ export default function Home() {
               Não perca mais tempo com internet lenta. Migre agora para a 3D FIBRA e descubra o que é velocidade de verdade.
             </p>
             <a 
-              href="https://wa.me/5553999789222" 
+              href="https://wa.me/5553999789222?text=Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20internet" 
               target="_blank" 
               rel="noopener noreferrer"
             >
