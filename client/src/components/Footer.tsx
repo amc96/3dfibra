@@ -50,9 +50,9 @@ export function Footer() {
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary mt-1" />
                 <div className="text-sm text-muted-foreground">
-                  <p>Rua Exemplo, 123</p>
-                  <p>Centro, São Paulo - SP</p>
-                  <p>CEP: 00000-000</p>
+                  <p>Rua Barão do Rio Branco, 424</p>
+                  <p>Pinheiro Machado - RS</p>
+                  <p>CEP: 96470-000</p>
                 </div>
               </div>
               <div className="space-y-3">
@@ -65,9 +65,9 @@ export function Footer() {
                   <Phone className="w-5 h-5 text-primary" />
                   (53) 99978-9222
                 </a>
-                <a href="mailto:contato@3dfibra.com.br" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="mailto:contato@3dnetwork.com.br" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Mail className="w-5 h-5 text-primary" />
-                  contato@3dfibra.com.br
+                  contato@3dnetwork.com.br
                 </a>
               </div>
             </div>
