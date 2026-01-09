@@ -140,11 +140,19 @@ export function Navbar() {
                     Área do Cliente
                   </Button>
                 </a>
-                <Link href="/planos" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full bg-primary text-white rounded-xl py-6 text-lg font-bold">
-                    Assinar Agora
-                  </Button>
-                </Link>
+            <Link href="/planos">
+              <Button 
+                onClick={(e) => {
+                  // If we're already on /planos, just close the menu
+                  if (location === "/planos") {
+                    setIsMobileMenuOpen(false);
+                  }
+                }}
+                className="w-full bg-primary text-white rounded-xl py-6 text-lg font-bold"
+              >
+                Assinar Agora
+              </Button>
+            </Link>
               </div>
             </div>
           </motion.div>
