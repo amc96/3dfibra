@@ -12,8 +12,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans text-foreground overflow-x-hidden">
-      <Header />
-
       <main className="flex-grow">
         {/* HERO SECTION */}
         <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
