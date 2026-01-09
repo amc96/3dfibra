@@ -19,16 +19,17 @@ export const pool = new Pool({
 export const db = drizzle(pool, { schema });
 
 // Auto-migrate on startup
-if (process.env.NODE_ENV === "production") {
-  (async () => {
-    try {
-      console.log("Running migrations...");
-      // In bundled environments, __dirname might point to dist
-      const migrationsPath = path.resolve(process.cwd(), "migrations");
-      await migrate(db, { migrationsFolder: migrationsPath });
-      console.log("Migrations completed.");
-    } catch (err) {
-      console.error("Migration failed:", err);
+(async () => {
+  try {
+    if (!process.env.DATABASE_URL) {
+      console.warn("DATABASE_URL not set, skipping migrations");
+      return;
     }
-  })();
-}
+    console.log("Running migrations...");
+    const migrationsPath = path.resolve(process.cwd(), "migrations");
+    await migrate(db, { migrationsFolder: migrationsPath });
+    console.log("Migrations completed.");
+  } catch (err) {
+    console.error("Migration failed:", err);
+  }
+})();
