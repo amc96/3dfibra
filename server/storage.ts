@@ -95,10 +95,26 @@ export class DatabaseStorage implements IStorage {
           isHighlighted: true
         },
         {
-          name: "Câmeras de Segurança",
+          name: "Câmera de Segurança",
           speed: "Monitoramento 24h",
-          price: "49,90",
+          price: "25,00",
           features: ["Acesso via App", "Gravação em Nuvem", "Detector de Movimento", "Visão Noturna"],
+          category: "adicionais",
+          isHighlighted: false
+        },
+        {
+          name: "Roteador Extra",
+          speed: "Dual Band",
+          price: "25,00",
+          features: ["Maior Alcance", "Tecnologia Mesh", "Fácil Configuração", "Gigabit"],
+          category: "adicionais",
+          isHighlighted: false
+        },
+        {
+          name: "TV Box",
+          speed: "Android TV",
+          price: "49,90",
+          features: ["Transforma sua TV", "Acesso a Apps", "Resolução 4K", "Controle Remoto"],
           category: "adicionais",
           isHighlighted: false
         }
