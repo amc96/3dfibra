@@ -1,0 +1,90 @@
+2026-01-09T12:35:34.477283660Z [inf]  
+2026-01-09T12:35:34.890506011Z [inf]  [35m[Region: us-west1][0m
+2026-01-09T12:35:34.900606726Z [inf]  [35m=========================
+2026-01-09T12:35:34.900634527Z [inf]  Using Detected Dockerfile
+2026-01-09T12:35:34.900640501Z [inf]  =========================
+2026-01-09T12:35:34.900643647Z [inf]  [0m
+2026-01-09T12:35:34.900653671Z [inf]  context: 0k7q-Z47c
+2026-01-09T12:35:35.046538441Z [inf]  [internal] load build definition from Dockerfile
+2026-01-09T12:35:35.046587569Z [inf]  [internal] load build definition from Dockerfile
+2026-01-09T12:35:35.046609211Z [inf]  [internal] load build definition from Dockerfile
+2026-01-09T12:35:35.055911556Z [inf]  [internal] load build definition from Dockerfile
+2026-01-09T12:35:35.058267381Z [inf]  [internal] load metadata for docker.io/library/node:20-slim
+2026-01-09T12:35:35.062114812Z [inf]  [auth] library/node:pull token for registry-1.docker.io
+2026-01-09T12:35:35.062151132Z [inf]  [auth] library/node:pull token for registry-1.docker.io
+2026-01-09T12:35:35.420150997Z [inf]  [internal] load metadata for docker.io/library/node:20-slim
+2026-01-09T12:35:35.420492977Z [inf]  [internal] load .dockerignore
+2026-01-09T12:35:35.420594365Z [inf]  [internal] load .dockerignore
+2026-01-09T12:35:35.420967378Z [inf]  [internal] load .dockerignore
+2026-01-09T12:35:35.432044409Z [inf]  [internal] load .dockerignore
+2026-01-09T12:35:35.436455444Z [inf]  [stage-1 4/6] RUN npm install --omit=dev
+2026-01-09T12:35:35.436487276Z [inf]  [builder 3/7] COPY package*.json ./
+2026-01-09T12:35:35.436497602Z [inf]  [internal] load build context
+2026-01-09T12:35:35.436511031Z [inf]  [builder 2/7] WORKDIR /app
+2026-01-09T12:35:35.436526067Z [inf]  [builder 1/7] FROM docker.io/library/node:20-slim@sha256:a270640213033657548b7ed57852709a0d2ee3b277f902f912367216aa8e9520
+2026-01-09T12:35:35.436574155Z [inf]  [stage-1 6/6] COPY --from=builder /app/migrations ./migrations
+2026-01-09T12:35:35.436590006Z [inf]  [stage-1 5/6] COPY --from=builder /app/dist ./dist
+2026-01-09T12:35:35.436600034Z [inf]  [builder 7/7] RUN npx drizzle-kit generate
+2026-01-09T12:35:35.436612285Z [inf]  [builder 6/7] RUN npm run build
+2026-01-09T12:35:35.436626051Z [inf]  [builder 5/7] COPY . .
+2026-01-09T12:35:35.436638110Z [inf]  [builder 4/7] RUN npm install
+2026-01-09T12:35:35.436827505Z [inf]  [internal] load build context
+2026-01-09T12:35:35.437024479Z [inf]  [builder 1/7] FROM docker.io/library/node:20-slim@sha256:a270640213033657548b7ed57852709a0d2ee3b277f902f912367216aa8e9520
+2026-01-09T12:35:35.455859112Z [inf]  [builder 1/7] FROM docker.io/library/node:20-slim@sha256:a270640213033657548b7ed57852709a0d2ee3b277f902f912367216aa8e9520
+2026-01-09T12:35:35.457461350Z [inf]  [internal] load build context
+2026-01-09T12:35:35.524108160Z [inf]  [internal] load build context
+2026-01-09T12:35:35.527549917Z [inf]  [builder 2/7] WORKDIR /app
+2026-01-09T12:35:35.527589207Z [inf]  [builder 3/7] COPY package*.json ./
+2026-01-09T12:35:35.527605905Z [inf]  [builder 4/7] RUN npm install
+2026-01-09T12:35:35.527631317Z [inf]  [builder 5/7] COPY . .
+2026-01-09T12:35:35.586908001Z [inf]  [builder 5/7] COPY . .
+2026-01-09T12:35:35.588846286Z [inf]  [builder 6/7] RUN npm run build
+2026-01-09T12:35:35.893748187Z [inf]  
+> rest-express@1.0.0 build
+> tsx script/build.ts
+
+
+2026-01-09T12:35:36.709321735Z [inf]  building client...
+
+2026-01-09T12:35:36.784115139Z [inf]  vite v7.3.0 building client environment for production...
+
+2026-01-09T12:35:37.587089597Z [inf]  transforming...
+
+2026-01-09T12:35:40.90998848Z [inf]  ✓ 2010 modules transformed.
+
+2026-01-09T12:35:41.199881204Z [inf]  rendering chunks...
+
+2026-01-09T12:35:41.207145798Z [inf]  computing gzip size...
+
+2026-01-09T12:35:41.224828989Z [inf]  ../dist/public/index.html                   2.01 kB │ gzip:   0.77 kB
+../dist/public/assets/index-BQCCF_Dr.css   77.34 kB │ gzip:  12.55 kB
+
+2026-01-09T12:35:41.224857615Z [inf]  ../dist/public/assets/index-C4eDkVj2.js   491.80 kB │ gzip: 156.52 kB
+
+2026-01-09T12:35:41.225124466Z [inf]  ✓ built in 3.68s
+
+2026-01-09T12:35:41.225253719Z [inf]  building server...
+
+2026-01-09T12:35:41.240984449Z [inf]  
+  dist/index.cjs  10.8kb
+
+⚡ Done in 8ms
+
+2026-01-09T12:35:41.879461481Z [inf]  [builder 6/7] RUN npm run build
+2026-01-09T12:35:41.880921238Z [inf]  [builder 7/7] RUN npx drizzle-kit generate
+2026-01-09T12:35:42.625853077Z [inf]  No config path provided, using default 'drizzle.config.ts'
+
+2026-01-09T12:35:42.626523099Z [inf]  Reading config file '/app/drizzle.config.ts'
+
+2026-01-09T12:35:42.729766652Z [inf]  DATABASE_URL, ensure the database is provisioned
+
+2026-01-09T12:35:42.947120650Z [err]  [builder 7/7] RUN npx drizzle-kit generate
+2026-01-09T12:35:42.962349193Z [err]  Dockerfile:17
+2026-01-09T12:35:42.962378592Z [err]  -------------------
+2026-01-09T12:35:42.962383542Z [err]  15 |
+2026-01-09T12:35:42.962387384Z [err]  16 |     # Generate migrations
+2026-01-09T12:35:42.962392531Z [err]  17 | >>> RUN npx drizzle-kit generate
+2026-01-09T12:35:42.962399771Z [err]  18 |
+2026-01-09T12:35:42.962413583Z [err]  19 |     # Production image
+2026-01-09T12:35:42.962418664Z [err]  -------------------
+2026-01-09T12:35:42.962459802Z [err]  ERROR: failed to build: failed to solve: process "/bin/sh -c npx drizzle-kit generate" did not complete successfully: exit code: 1
