@@ -4,8 +4,9 @@ import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
 import { useToast } from "@/hooks/use-toast";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { CHANNELS } from "@/lib/channels";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
 interface PlanCardProps {
   plan: Plan;
@@ -17,6 +18,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
   const { selectedPlans, togglePlan } = useSelection();
   const { toast } = useToast();
   const isSelected = selectedPlans.some(p => p.id === plan.id);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
     const isInternetPlanSelected = selectedPlans.some(p => p.category === "internet");
@@ -98,47 +100,70 @@ export function PlanCard({ plan, index }: PlanCardProps) {
             
             if (isChannelList) {
               return (
-                <HoverCard key={i} openDelay={100} closeDelay={100}>
-                  <HoverCardTrigger asChild>
-                    <div className="flex items-center gap-3 cursor-help group/feature">
+                <Dialog key={i} open={isOpen} onOpenChange={setIsOpen}>
+                  <DialogTrigger asChild>
+                    <div className="flex items-center gap-3 cursor-pointer group/feature">
                       <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover/feature:bg-emerald-500/20 transition-colors">
                         <Check className="w-4 h-4" />
                       </div>
                       <span className="text-sm text-muted-foreground underline decoration-dotted decoration-emerald-500/50 underline-offset-4">{feature}</span>
                     </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-[500px] p-0 border-primary/20 shadow-2xl bg-card/95 backdrop-blur-md" side="right" align="start">
-                    <div className="p-4 border-b border-border/50 bg-primary/5">
-                      <div className="flex items-center gap-2 text-primary font-bold">
-                        <Tv className="w-4 h-4" />
-                        <span>Grade de Canais - {plan.name}</span>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[95vw] w-full md:max-w-[80vw] lg:max-w-[70vw] h-[85vh] p-0 border-primary/20 shadow-2xl bg-card/95 backdrop-blur-xl overflow-hidden flex flex-col rounded-3xl">
+                    <DialogHeader className="p-6 md:p-8 border-b border-border/50 bg-primary/5 flex flex-row items-center justify-between space-y-0">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                          <Tv className="w-8 h-8" />
+                        </div>
+                        <div>
+                          <DialogTitle className="text-2xl md:text-3xl font-black font-display text-foreground">
+                            Grade de Canais
+                          </DialogTitle>
+                          <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest mt-1">
+                            Plano {plan.name}
+                          </p>
+                        </div>
+                      </div>
+                    </DialogHeader>
+                    
+                    <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                        {Object.entries(
+                          CHANNELS.reduce((acc, channel) => {
+                            if (!acc[channel.category]) acc[channel.category] = [];
+                            acc[channel.category].push(channel.name);
+                            return acc;
+                          }, {} as Record<string, string[]>)
+                        ).map(([category, channels]) => (
+                          <div key={category} className="space-y-4">
+                            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-4 pb-2 border-b border-primary/10 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-primary" />
+                              {category}
+                            </h4>
+                            <div className="grid grid-cols-1 gap-2">
+                              {channels.map(name => (
+                                <motion.div 
+                                  key={name} 
+                                  whileHover={{ x: 4 }}
+                                  className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-3 p-2 rounded-lg hover:bg-primary/5 transition-all group/channel"
+                                >
+                                  <div className="w-1.5 h-1.5 rounded-full bg-primary/20 group-hover/channel:bg-primary transition-colors shrink-0" />
+                                  <span className="font-medium">{name}</span>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                    <div className="max-h-[500px] overflow-y-auto p-6 custom-scrollbar">
-                      {Object.entries(
-                        CHANNELS.reduce((acc, channel) => {
-                          if (!acc[channel.category]) acc[channel.category] = [];
-                          acc[channel.category].push(channel.name);
-                          return acc;
-                        }, {} as Record<string, string[]>)
-                      ).map(([category, channels]) => (
-                        <div key={category} className="mb-6 last:mb-0">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest text-primary/70 mb-3 border-l-2 border-primary/30 pl-2">
-                            {category}
-                          </h4>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2">
-                            {channels.map(name => (
-                              <div key={name} className="text-[11px] text-muted-foreground flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary/30 shrink-0" />
-                                <span className="truncate">{name}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
+                    
+                    <div className="p-6 border-t border-border/50 bg-primary/5 flex justify-center">
+                      <p className="text-xs text-muted-foreground text-center max-w-lg">
+                        A grade de canais pode sofrer alterações sem aviso prévio conforme disponibilidade da programadora.
+                      </p>
                     </div>
-                  </HoverCardContent>
-                </HoverCard>
+                  </DialogContent>
+                </Dialog>
               );
             }
 
