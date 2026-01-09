@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
 import { useToast } from "@/hooks/use-toast";
-import { PLUS_CHANNELS, ULTRA_CHANNELS } from "@/lib/channels";
+import { PLUS_CHANNELS, ULTRA_CHANNELS, HBO_CHANNELS } from "@/lib/channels";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
@@ -20,7 +20,11 @@ export function PlanCard({ plan, index }: PlanCardProps) {
   const isSelected = selectedPlans.some(p => p.id === plan.id);
   const [isOpen, setIsOpen] = useState(false);
 
-  const channelsToShow = plan.name === "Canais Plus" ? PLUS_CHANNELS : ULTRA_CHANNELS;
+  const channelsToShow = plan.name === "Canais Plus" 
+    ? PLUS_CHANNELS 
+    : plan.name === "Canais Ultra 1P + HBO" 
+      ? HBO_CHANNELS 
+      : ULTRA_CHANNELS;
 
   const handleToggle = () => {
     const isInternetPlanSelected = selectedPlans.some(p => p.category === "internet");
