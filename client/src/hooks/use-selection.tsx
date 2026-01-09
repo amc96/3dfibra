@@ -23,6 +23,12 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
       if (exists) {
         return prev.filter((p) => p.id !== plan.id);
       }
+      
+      // If selecting an internet plan, remove any other internet plan
+      if (plan.category === "internet") {
+        return [...prev.filter(p => p.category !== "internet"), { ...plan, quantity: 1 }];
+      }
+      
       return [...prev, { ...plan, quantity: 1 }];
     });
   };
