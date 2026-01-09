@@ -51,7 +51,10 @@ export function SelectionBar() {
                     className="flex items-center gap-3 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap"
                   >
                     <div className="flex flex-col">
-                      <span className="font-bold">{plan.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold">{plan.name}</span>
+                        <span className="text-xs font-black bg-primary/20 px-1.5 py-0.5 rounded">R$ {plan.price}</span>
+                      </div>
                       <span className="text-xs opacity-70">
                         {plan.category === "tv" && plan.quantity > 1 
                           ? `${plan.speed} (+${plan.quantity - 1} ponto)` 
