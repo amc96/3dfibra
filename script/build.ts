@@ -60,8 +60,7 @@ async function buildAll() {
     "passport",
     "passport-local",
     "zod",
-    "zod-validation-error",
-    "@shared/schema"
+    "zod-validation-error"
   );
 
   await esbuild({

@@ -1,0 +1,485 @@
+2026-01-09T12:26:11.000000000Z [inf]  Starting Container
+2026-01-09T12:26:12.183108716Z [err]  
+2026-01-09T12:26:12.183113263Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:12.183118825Z [err]  Node.js v20.19.6
+2026-01-09T12:26:12.183123289Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:12.183130221Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:12.183133884Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:12.183138746Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:12.183141882Z [err]  }
+2026-01-09T12:26:12.183152494Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:12.183164100Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:12.183180698Z [err]  
+2026-01-09T12:26:12.183184439Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:12.183185055Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:12.183191704Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:12.183193934Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:12.183195166Z [err]    throw err;
+2026-01-09T12:26:12.183200518Z [err]  Require stack:
+2026-01-09T12:26:12.183202478Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:12.183203752Z [err]    ^
+2026-01-09T12:26:12.183207282Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:12.183212726Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:12.183221036Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:13.391846059Z [err]  Require stack:
+2026-01-09T12:26:13.391846660Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:13.391859681Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:13.391861790Z [err]  }
+2026-01-09T12:26:13.391869209Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:13.391875032Z [err]  
+2026-01-09T12:26:13.391878785Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:13.391885466Z [err]  Node.js v20.19.6
+2026-01-09T12:26:13.391888068Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:13.391897722Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:13.391905891Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:13.391908876Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:13.391921112Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:13.391930144Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:13.391971390Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:13.391991177Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:13.392004094Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:13.392184663Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:13.392190832Z [err]    throw err;
+2026-01-09T12:26:13.392200392Z [err]    ^
+2026-01-09T12:26:13.392207253Z [err]  
+2026-01-09T12:26:13.392215450Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:15.375064948Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:15.375078365Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:15.375087135Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:15.375091933Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:15.375097516Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:15.375102696Z [err]  }
+2026-01-09T12:26:15.375107582Z [err]  
+2026-01-09T12:26:15.375112148Z [err]  Node.js v20.19.6
+2026-01-09T12:26:15.375126464Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:15.375133153Z [err]    throw err;
+2026-01-09T12:26:15.375139290Z [err]    ^
+2026-01-09T12:26:15.375144694Z [err]  
+2026-01-09T12:26:15.375149339Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:15.375154514Z [err]  Require stack:
+2026-01-09T12:26:15.375159612Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:15.375166363Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:15.375171813Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:15.375176497Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:15.375180581Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:15.375184586Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:15.375191906Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:15.375201477Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:16.417158671Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:16.417171307Z [err]    throw err;
+2026-01-09T12:26:16.417179855Z [err]    ^
+2026-01-09T12:26:16.417189478Z [err]  
+2026-01-09T12:26:16.418015586Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:16.418025641Z [err]  Require stack:
+2026-01-09T12:26:16.418031628Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:16.418036599Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:16.421354363Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:16.421371024Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:16.421377821Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:16.421382449Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:16.421386606Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:16.421391307Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:16.421399361Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:16.421403632Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:16.421408039Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:16.421416393Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:16.421420890Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:16.421424945Z [err]  }
+2026-01-09T12:26:16.421429563Z [err]  
+2026-01-09T12:26:16.421434429Z [err]  Node.js v20.19.6
+2026-01-09T12:26:19.373581655Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:19.373592095Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:19.373607079Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:19.373614036Z [err]  }
+2026-01-09T12:26:19.373621270Z [err]  
+2026-01-09T12:26:19.373625175Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:19.373629870Z [err]  Node.js v20.19.6
+2026-01-09T12:26:19.373639655Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:19.373651979Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:19.373660656Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:19.373668484Z [err]  Require stack:
+2026-01-09T12:26:19.373671550Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:19.373687286Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:19.373689103Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:19.373697758Z [err]    throw err;
+2026-01-09T12:26:19.373704590Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:19.373708087Z [err]    ^
+2026-01-09T12:26:19.373716619Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:19.373716844Z [err]  
+2026-01-09T12:26:19.373727240Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:19.373733235Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:19.373739665Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:20.271825849Z [err]    throw err;
+2026-01-09T12:26:20.271833333Z [err]    ^
+2026-01-09T12:26:20.271838614Z [err]  }
+2026-01-09T12:26:20.271840835Z [err]  
+2026-01-09T12:26:20.271847583Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:20.271849808Z [err]  
+2026-01-09T12:26:20.271855321Z [err]  Require stack:
+2026-01-09T12:26:20.271858607Z [err]  Node.js v20.19.6
+2026-01-09T12:26:20.271867023Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:20.271867246Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:20.271873701Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:20.271878938Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:20.271883527Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:20.271888939Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:20.271893907Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:20.271898972Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:20.271903196Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:20.271912909Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:20.271915417Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:20.271921452Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:20.271926236Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:20.272011728Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:21.285809019Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:21.285825385Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:21.285851542Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:21.285859262Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:21.285866752Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:21.285876009Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:21.285882917Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:21.285890214Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:21.285897474Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:21.285905794Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:21.285907693Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:21.285914082Z [err]    throw err;
+2026-01-09T12:26:21.285915514Z [err]  }
+2026-01-09T12:26:21.285921105Z [err]    ^
+2026-01-09T12:26:21.285924606Z [err]  
+2026-01-09T12:26:21.285929650Z [err]  
+2026-01-09T12:26:21.285933444Z [err]  Node.js v20.19.6
+2026-01-09T12:26:21.285937674Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:21.285943954Z [err]  Require stack:
+2026-01-09T12:26:21.285948958Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:21.285954577Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:21.285959720Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:22.402923787Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:22.402931410Z [err]    throw err;
+2026-01-09T12:26:22.402936530Z [err]    ^
+2026-01-09T12:26:22.402941907Z [err]  
+2026-01-09T12:26:22.402945325Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:22.402946544Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:22.402951869Z [err]  Require stack:
+2026-01-09T12:26:22.402958774Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:22.402961556Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:22.402964555Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:22.402970767Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:22.402972964Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:22.402978088Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:22.402984030Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:22.402984656Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:22.402989743Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:22.402993356Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:22.403006464Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:22.403018180Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:22.403027274Z [err]  }
+2026-01-09T12:26:22.403037691Z [err]  
+2026-01-09T12:26:22.403047128Z [err]  Node.js v20.19.6
+2026-01-09T12:26:24.356489711Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:24.356495250Z [err]    throw err;
+2026-01-09T12:26:24.356501083Z [err]    ^
+2026-01-09T12:26:24.356506933Z [err]  
+2026-01-09T12:26:24.356513003Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:24.356518482Z [err]  Require stack:
+2026-01-09T12:26:24.356524046Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:24.356529763Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:24.356534911Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:24.356541041Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:24.356546791Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:24.356552638Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:24.356558682Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:24.356564018Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:24.356570743Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:24.356576977Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:24.356587852Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:24.356594141Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:24.356599964Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:24.356615544Z [err]  }
+2026-01-09T12:26:24.356622715Z [err]  
+2026-01-09T12:26:24.356629148Z [err]  Node.js v20.19.6
+2026-01-09T12:26:25.397499078Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:25.397499372Z [err]    ^
+2026-01-09T12:26:25.397509556Z [err]  
+2026-01-09T12:26:25.397511665Z [err]  }
+2026-01-09T12:26:25.397516931Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:25.397520527Z [err]  
+2026-01-09T12:26:25.397525561Z [err]  Require stack:
+2026-01-09T12:26:25.397527942Z [err]  Node.js v20.19.6
+2026-01-09T12:26:25.397543950Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:25.397550970Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:25.397560087Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:25.397565741Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:25.397571292Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:25.397576539Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:25.397583806Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:25.397589194Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:25.397597527Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:25.397602631Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:25.397609552Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:25.397615263Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:25.397827262Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:25.397835964Z [err]    throw err;
+2026-01-09T12:26:26.644551956Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:26.644559782Z [err]    throw err;
+2026-01-09T12:26:26.644564542Z [err]    ^
+2026-01-09T12:26:26.644570658Z [err]  
+2026-01-09T12:26:26.644574967Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:26.644580100Z [err]  Require stack:
+2026-01-09T12:26:26.644585894Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:26.644590516Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:26.644595401Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:26.644599885Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:26.644608676Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:26.644613138Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:26.644618498Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:26.644623198Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:26.644626990Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:26.644631647Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:26.644636067Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:26.644642844Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:26.644647536Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:26.644651454Z [err]  }
+2026-01-09T12:26:26.644658524Z [err]  
+2026-01-09T12:26:26.644663065Z [err]  Node.js v20.19.6
+2026-01-09T12:26:46.646605835Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:46.646612190Z [err]  }
+2026-01-09T12:26:46.646617169Z [err]    throw err;
+2026-01-09T12:26:46.646625392Z [err]    ^
+2026-01-09T12:26:46.646628299Z [err]  
+2026-01-09T12:26:46.646632789Z [err]  
+2026-01-09T12:26:46.646639780Z [err]  Node.js v20.19.6
+2026-01-09T12:26:46.646643755Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:46.646651713Z [err]  Require stack:
+2026-01-09T12:26:46.646652052Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:46.646657844Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:46.646663116Z [err]    throw err;
+2026-01-09T12:26:46.646664584Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:46.646673172Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:46.646674465Z [err]    ^
+2026-01-09T12:26:46.646681562Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:46.646686042Z [err]  
+2026-01-09T12:26:46.646688944Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:46.646694938Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:46.646700521Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:46.646705267Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:46.646710348Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:46.646715292Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:46.646720684Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:46.646726291Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:46.646731042Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:46.647457169Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:46.647469682Z [err]  Require stack:
+2026-01-09T12:26:46.647476868Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:46.647483744Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:46.647490684Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:46.647497669Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:46.647505292Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:46.647512131Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:46.647519181Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:46.647526179Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:46.647532603Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:46.647539219Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:46.647545976Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:46.647552748Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:46.647561251Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:46.647567910Z [err]  }
+2026-01-09T12:26:46.647575429Z [err]  
+2026-01-09T12:26:46.647582948Z [err]  Node.js v20.19.6
+2026-01-09T12:26:46.647589578Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:46.647596395Z [err]    throw err;
+2026-01-09T12:26:46.647603488Z [err]    ^
+2026-01-09T12:26:46.647614807Z [err]  
+2026-01-09T12:26:46.647621364Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:46.647627674Z [err]  Require stack:
+2026-01-09T12:26:46.647634554Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:46.648699650Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:46.648712665Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:46.648718954Z [err]  Node.js v20.19.6
+2026-01-09T12:26:46.648722355Z [err]  Require stack:
+2026-01-09T12:26:46.648723734Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:46.648732993Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:46.648734946Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:46.648737105Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:46.648742664Z [err]    throw err;
+2026-01-09T12:26:46.648749764Z [err]    ^
+2026-01-09T12:26:46.648749954Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:46.648757343Z [err]  
+2026-01-09T12:26:46.648766739Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:46.648767009Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:46.648776800Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:46.648800273Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:46.648810457Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:46.648819098Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:46.648829533Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:46.648841697Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:46.648852031Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:46.648861172Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:46.648870223Z [err]  }
+2026-01-09T12:26:46.648884433Z [err]  
+2026-01-09T12:26:46.650286710Z [err]  
+2026-01-09T12:26:46.650299493Z [err]  Node.js v20.19.6
+2026-01-09T12:26:46.650300228Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:46.650314800Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:46.650345085Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:46.650356765Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:46.650365987Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:46.650374975Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:46.650383103Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:46.650391089Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:46.650398942Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:46.650405982Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:46.650436732Z [err]  }
+2026-01-09T12:26:47.545771498Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:47.545777234Z [err]    throw err;
+2026-01-09T12:26:47.545785994Z [err]    ^
+2026-01-09T12:26:47.545794121Z [err]  
+2026-01-09T12:26:47.545799819Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:47.545805161Z [err]  Require stack:
+2026-01-09T12:26:47.545810939Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:47.545817425Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:47.545823488Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:47.545829083Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:47.545836059Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:47.545842769Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:47.545849051Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:47.545855549Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:47.545860591Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:47.545865296Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:47.545869714Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:47.545874925Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:47.545880911Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:47.545885460Z [err]  }
+2026-01-09T12:26:47.545889939Z [err]  
+2026-01-09T12:26:47.545894332Z [err]  Node.js v20.19.6
+2026-01-09T12:26:48.537463452Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:48.537469829Z [err]    throw err;
+2026-01-09T12:26:48.537475816Z [err]    ^
+2026-01-09T12:26:48.537483395Z [err]  
+2026-01-09T12:26:48.537489307Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:48.537496110Z [err]  Require stack:
+2026-01-09T12:26:48.537502063Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:48.537508309Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:48.537514272Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:48.537520151Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:48.537526181Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:48.537532334Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:48.537539033Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:48.537545594Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:48.537551525Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:48.537557109Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:48.537563291Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:48.537569670Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:48.537575750Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:48.537581891Z [err]  }
+2026-01-09T12:26:48.537587976Z [err]  
+2026-01-09T12:26:48.537594401Z [err]  Node.js v20.19.6
+2026-01-09T12:26:49.612753147Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:49.612760373Z [err]    throw err;
+2026-01-09T12:26:49.612767327Z [err]    ^
+2026-01-09T12:26:49.612776290Z [err]  
+2026-01-09T12:26:49.612783587Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:49.612790532Z [err]  Require stack:
+2026-01-09T12:26:49.612797268Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:49.612804133Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:49.612811204Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:49.612818034Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:49.612825630Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:49.612832541Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:49.612839150Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:49.612845917Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:49.612852281Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:49.612861881Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:49.612868397Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:49.612874610Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:49.612880862Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:49.612887309Z [err]  }
+2026-01-09T12:26:49.612893831Z [err]  
+2026-01-09T12:26:49.612900429Z [err]  Node.js v20.19.6
+2026-01-09T12:26:50.892818132Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:50.892824869Z [err]    throw err;
+2026-01-09T12:26:50.892830636Z [err]    ^
+2026-01-09T12:26:50.892837643Z [err]  
+2026-01-09T12:26:50.892844333Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:50.892849662Z [err]  Require stack:
+2026-01-09T12:26:50.892855057Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:50.892860846Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:50.892866395Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:50.892871863Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:50.892877538Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:50.892883616Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:50.892889256Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:50.892894696Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:50.892900372Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:50.892906652Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:50.892912705Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:50.892919221Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:50.892924590Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:50.892929315Z [err]  }
+2026-01-09T12:26:50.892935958Z [err]  
+2026-01-09T12:26:50.892942571Z [err]  Node.js v20.19.6
+2026-01-09T12:26:52.502514941Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:52.502517931Z [err]  }
+2026-01-09T12:26:52.502523774Z [err]    throw err;
+2026-01-09T12:26:52.502527951Z [err]  
+2026-01-09T12:26:52.502535457Z [err]    ^
+2026-01-09T12:26:52.502535674Z [err]  Node.js v20.19.6
+2026-01-09T12:26:52.502541327Z [err]  
+2026-01-09T12:26:52.502546248Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:52.502551009Z [err]  Require stack:
+2026-01-09T12:26:52.502553095Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:52.502557302Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:52.502559216Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:52.502564860Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:52.502569236Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:52.502570360Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:52.502576485Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:52.502579863Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:52.502582729Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:52.502586622Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:52.502591754Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:52.502597048Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:52.502604196Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:53.582434719Z [err]  
+2026-01-09T12:26:53.582436577Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:53.582447455Z [err]  Node.js v20.19.6
+2026-01-09T12:26:53.582448384Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:53.582466480Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:53.582473183Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:53.582473412Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:53.582475783Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:53.582478647Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:53.582480541Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:53.582483061Z [err]    throw err;
+2026-01-09T12:26:53.582485713Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:53.582492212Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:53.582493978Z [err]    ^
+2026-01-09T12:26:53.582501671Z [err]  
+2026-01-09T12:26:53.582502028Z [err]  }
+2026-01-09T12:26:53.582508521Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:53.582514628Z [err]  Require stack:
+2026-01-09T12:26:53.582521259Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:53.582526812Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:53.582532793Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:53.582538795Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:54.588246612Z [err]  node:internal/modules/cjs/loader:1210
+2026-01-09T12:26:54.588253809Z [err]    throw err;
+2026-01-09T12:26:54.588261057Z [err]    ^
+2026-01-09T12:26:54.588268783Z [err]  
+2026-01-09T12:26:54.588276956Z [err]  Error: Cannot find module '@shared/schema'
+2026-01-09T12:26:54.588283736Z [err]  Require stack:
+2026-01-09T12:26:54.588291584Z [err]  - /app/dist/index.cjs
+2026-01-09T12:26:54.588307068Z [err]      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+2026-01-09T12:26:54.588321829Z [err]      at Module._load (node:internal/modules/cjs/loader:1038:27)
+2026-01-09T12:26:54.588329977Z [err]      at Module.require (node:internal/modules/cjs/loader:1289:19)
+2026-01-09T12:26:54.588337264Z [err]      at require (node:internal/modules/helpers:182:18)
+2026-01-09T12:26:54.588347141Z [err]      at Object.<anonymous> (/app/dist/index.cjs:1:715)
+2026-01-09T12:26:54.588354348Z [err]      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+2026-01-09T12:26:54.588361309Z [err]      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+2026-01-09T12:26:54.588368033Z [err]      at Module.load (node:internal/modules/cjs/loader:1266:32)
+2026-01-09T12:26:54.588375428Z [err]      at Module._load (node:internal/modules/cjs/loader:1091:12)
+2026-01-09T12:26:54.588382915Z [err]      at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2026-01-09T12:26:54.588390017Z [err]    code: 'MODULE_NOT_FOUND',
+2026-01-09T12:26:54.588396670Z [err]    requireStack: [ '/app/dist/index.cjs' ]
+2026-01-09T12:26:54.588403870Z [err]  }
+2026-01-09T12:26:54.588410437Z [err]  
+2026-01-09T12:26:54.588416957Z [err]  Node.js v20.19.6
