@@ -1,0 +1,118 @@
+Categoria,Canal
+Cultura e Variedades,Brozo
+Cultura e Variedades,TV Pampa
+Cultura e Variedades,SBT
+Cultura e Variedades,RECORD
+Cultura e Variedades,BAND
+Cultura e Variedades,TRAVEL
+Cultura e Variedades,TV BLITS
+Cultura e Variedades,Planalto Norte
+Cultura e Variedades,GAZETA
+Cultura e Variedades,VRT
+Cultura e Variedades,DOCS
+Cultura e Variedades,Unique
+Cultura e Variedades,Artel
+Cultura e Variedades,Trace Brazuca
+Cultura e Variedades,Trace Latina
+Cultura e Variedades,Trace Urban
+Cultura e Variedades,TV História
+Cultura e Variedades,Music Box Brazil
+Cultura e Variedades,Home & Health
+Cultura e Variedades,TLC
+Cultura e Variedades,Food Network
+Cultura e Variedades,Int Novelas
+Cultura e Variedades,Rai Italia
+Cultura e Variedades,Adult Swim
+Cultura e Variedades,Sabor & Arte
+Públicos,TV Justiça
+Públicos,TV Brasil
+Públicos,RESERVADO COMUNITÁRIO
+Públicos,TV Senado
+Públicos,TV Câmara
+Notícias,RedeTV
+Notícias,New
+Notícias,TVD News
+Notícias,Euro News
+Notícias,Band News
+Notícias,RN
+Notícias,CNN Brasil
+Notícias,Telesur
+Notícias,Exitosa
+Notícias,JP News
+Notícias,Fox News
+Notícias,Bloomberg
+Notícias,CNBC
+Notícias,Times Now
+Filmes e Séries,Mider
+Filmes e Séries,LMC
+Filmes e Séries,Retro
+Filmes e Séries,Ultra
+Filmes e Séries,Family Series
+Filmes e Séries,Movies
+Filmes e Séries,Prime Box Brazil
+Filmes e Séries,Film & Arts
+Filmes e Séries,AMC
+Filmes e Séries,ISTV
+Filmes e Séries,Canal Sony
+Filmes e Séries,TNT Series
+Filmes e Séries,Space
+Filmes e Séries,TCM HD
+Filmes e Séries,Cinemax
+Filmes e Séries,Lifetime HD
+Filmes e Séries,Top Action
+Filmes e Séries (HBO),HBO
+Filmes e Séries (HBO),HBO 2 (HBO Hits)
+Filmes e Séries (HBO),HBO Family
+Filmes e Séries (HBO),HBO Signature (HBO Drama)
+Filmes e Séries (HBO),HBO Mundi (HBO Movies)
+Filmes e Séries (HBO),HBO Pop
+Filmes e Séries (HBO),HBO Xtreme
+Filmes e Séries (HBO),HBO Plus
+Infantil,Kios
+Infantil,ID
+Infantil,Otaku
+Infantil,Leo & Lully
+Infantil,Yupi
+Infantil,Hallo!
+Infantil,Discovery Kids
+Infantil,Cartoon Network
+Infantil,Tooncast
+Infantil,Cartoonito
+Esportes,Fish TV
+Esportes,Unique Sports
+Esportes,Cazé TV
+Esportes,Band Sports HD
+Esportes,Fuel TV
+Esportes,ESPN
+Esportes,ESPN 2
+Esportes,ESPN 3
+Esportes,ESPN 4
+Esportes,ESPN 5
+Esportes,TNT Sports
+Esportes,Trace Sport Stars
+Agronegócio,Canal Rural
+Agronegócio,AgroBrasil
+Agronegócio,Terra Viva
+Agronegócio,AgroCanal
+Agronegócio,Canal do Boi
+Documentários,Discovery
+Documentários,Animal Planet
+Documentários,Discovery Turbo
+Documentários,Discovery Science
+Documentários,Discovery Theater
+Documentários,Discovery World
+Documentários,HGTV
+Documentários,History
+Educativos,TV Cultura
+Educativos,Tvescala
+Educativos,RESERVADO UNIVERSITÁRIO
+Educativos,SescTV
+Religiosos / Outros,TV Mundo Maior
+Religiosos / Outros,Canção Nova
+Religiosos / Outros,Rede Vida
+Religiosos / Outros,RS21
+Religiosos / Outros,TV Evangelizar
+Religiosos / Outros,Novo Tempo
+Religiosos / Outros,EWTN
+Religiosos / Outros,Rede Gênesis
+Étnicos,NHK
