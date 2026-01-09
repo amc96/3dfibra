@@ -60,7 +60,7 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             <Button variant="outline" className="rounded-full border-primary/20 hover:border-primary/50 text-white gap-2">
               <Phone className="w-4 h-4" />
-              (53) 99978-9222
+              Área do Cliente
             </Button>
             <Link href="/planos">
               <Button className="rounded-full bg-primary hover:bg-primary/90 text-white relative">
