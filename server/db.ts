@@ -25,10 +25,20 @@ export const db = drizzle(pool, { schema });
       console.warn("DATABASE_URL not set, skipping migrations");
       return;
     }
-    console.log("Running migrations...");
+    
+    // In production/Railway, migrations should already be pushed
+    // We only try to migrate if the folder exists and has content
     const migrationsPath = path.resolve(process.cwd(), "migrations");
-    await migrate(db, { migrationsFolder: migrationsPath });
-    console.log("Migrations completed.");
+    
+    // Check if the directory exists first to avoid crashes in environments without it
+    const fs = await import("fs");
+    if (fs.existsSync(migrationsPath) && fs.existsSync(path.join(migrationsPath, "meta", "_journal.json"))) {
+      console.log("Running migrations...");
+      await migrate(db, { migrationsFolder: migrationsPath });
+      console.log("Migrations completed.");
+    } else {
+      console.log("No migration files found or journal missing, skipping auto-migration.");
+    }
   } catch (err) {
     console.error("Migration failed:", err);
   }
