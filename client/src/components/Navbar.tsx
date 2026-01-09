@@ -37,11 +37,11 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/">
-          <a className="flex items-center gap-2">
+          <div className="flex items-center gap-2 cursor-pointer">
             <span className="text-2xl font-black text-white tracking-tighter">
               3D <span className="text-primary">FIBRA</span>
             </span>
-          </a>
+          </div>
         </Link>
 
         {/* Desktop Menu */}
@@ -49,11 +49,11 @@ export function Navbar() {
           <div className="flex items-center gap-6">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
-                <a className={`text-sm font-medium transition-colors hover:text-primary ${
+                <span className={`text-sm font-medium transition-colors hover:text-primary cursor-pointer ${
                   location === link.href ? "text-primary" : "text-gray-400"
                 }`}>
                   {link.name}
-                </a>
+                </span>
               </Link>
             ))}
           </div>
@@ -116,14 +116,14 @@ export function Navbar() {
               <div className="flex flex-col gap-4">
                 {navLinks.map((link) => (
                   <Link key={link.href} href={link.href}>
-                    <a 
+                    <span 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`text-xl font-bold transition-colors ${
+                      className={`text-xl font-bold transition-colors cursor-pointer ${
                         location === link.href ? "text-primary" : "text-white hover:text-primary"
                       }`}
                     >
                       {link.name}
-                    </a>
+                    </span>
                   </Link>
                 ))}
               </div>
