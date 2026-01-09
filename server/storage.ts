@@ -19,9 +19,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async seedPlans(): Promise<void> {
-    const existing = await db.select().from(plans);
-    if (existing.length === 0) {
-      await db.insert(plans).values([
+    try {
+      if (!process.env.DATABASE_URL) {
+        console.warn("DATABASE_URL not set, skipping seedPlans");
+        return;
+      }
+      const existing = await db.select().from(plans);
+      if (existing.length === 0) {
+        await db.insert(plans).values([
         {
           name: "Básico",
           speed: "300 MEGA",
@@ -136,7 +141,10 @@ export class DatabaseStorage implements IStorage {
         }
       ]);
     }
+  } catch (err) {
+    console.error("Error in seedPlans:", err);
   }
+}
 }
 
 export const storage = new DatabaseStorage();
