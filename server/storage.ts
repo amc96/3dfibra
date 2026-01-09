@@ -95,14 +95,6 @@ export class DatabaseStorage implements IStorage {
           isHighlighted: true
         },
         {
-          name: "Câmera de Segurança",
-          speed: "Câmera",
-          price: "25,00",
-          features: ["Acesso via App", "Gravação em Nuvem", "Detector de Movimento", "Visão Noturna"],
-          category: "adicionais",
-          isHighlighted: false
-        },
-        {
           name: "Roteador Extra",
           speed: "WIFI 6",
           price: "25,00",
