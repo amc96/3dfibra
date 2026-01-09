@@ -17,6 +17,17 @@ export function PlanCard({ plan, index }: PlanCardProps) {
   const isSelected = selectedPlans.some(p => p.id === plan.id);
 
   const handleToggle = () => {
+    const isInternetPlanSelected = selectedPlans.some(p => p.category === "internet");
+    
+    if (plan.category !== "internet" && !isInternetPlanSelected) {
+      toast({
+        title: "Plano Requerido",
+        description: "Selecione um plano de internet antes de adicionar TV ou outros serviços.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (plan.name === "TV Box" && plan.category === "adicionais") {
       toast({
         title: "Produto Indisponível",
