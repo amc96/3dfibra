@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Channel } from "@shared/channels";
 
 interface ChannelsData {
+  light: Channel[];
   plus: Channel[];
   ultra: Channel[];
   hbo: Channel[];

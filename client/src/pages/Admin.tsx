@@ -800,6 +800,7 @@ function SettingsTab({ password }: { password: string }) {
     }
   }
 
+  const lightInitial = channelsData ? serializeChannels(channelsData.light) : "";
   const plusInitial = channelsData ? serializeChannels(channelsData.plus) : "";
   const ultraInitial = channelsData ? serializeChannels(channelsData.ultra) : "";
   const hboInitial = channelsData ? serializeChannels(channelsData.hbo) : "";
@@ -925,8 +926,14 @@ function SettingsTab({ password }: { password: string }) {
           {!channelsData ? (
             <p className="text-gray-500 text-sm">Carregando listas de canais...</p>
           ) : (
-            <Tabs defaultValue="plus">
-              <TabsList className="bg-gray-800 border border-gray-700 mb-6">
+            <Tabs defaultValue="light">
+              <TabsList className="bg-gray-800 border border-gray-700 mb-6 flex-wrap h-auto gap-1">
+                <TabsTrigger
+                  value="light"
+                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
+                >
+                  Canais Light
+                </TabsTrigger>
                 <TabsTrigger
                   value="plus"
                   className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
@@ -947,6 +954,16 @@ function SettingsTab({ password }: { password: string }) {
                 </TabsTrigger>
               </TabsList>
 
+              <TabsContent value="light">
+                <ChannelEditor
+                  label="Canais Light"
+                  settingKey="channels_light"
+                  description="Canais do plano 'Canais Light' (100+ canais)"
+                  password={password}
+                  initialValue={lightInitial}
+                />
+              </TabsContent>
+
               <TabsContent value="plus">
                 <ChannelEditor
                   label="Canais Plus"
@@ -961,7 +978,7 @@ function SettingsTab({ password }: { password: string }) {
                 <ChannelEditor
                   label="Canais Ultra"
                   settingKey="channels_ultra"
-                  description="Canais dos planos 'Canais Light' e 'Canais Ultra' (200+ canais)"
+                  description="Canais do plano 'Canais Ultra' (200+ canais)"
                   password={password}
                   initialValue={ultraInitial}
                 />

@@ -112,12 +112,14 @@ export async function registerRoutes(
 
   // Public: get all TV channel lists
   app.get("/api/channels", async (_req, res) => {
-    const [plus, ultra, hbo] = await Promise.all([
+    const [light, plus, ultra, hbo] = await Promise.all([
+      storage.getSetting("channels_light"),
       storage.getSetting("channels_plus"),
       storage.getSetting("channels_ultra"),
       storage.getSetting("channels_hbo"),
     ]);
     res.json({
+      light: light ? JSON.parse(light) : [],
       plus: plus ? JSON.parse(plus) : [],
       ultra: ultra ? JSON.parse(ultra) : [],
       hbo: hbo ? JSON.parse(hbo) : [],

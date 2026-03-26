@@ -16,6 +16,7 @@ interface PlanCardProps {
 }
 
 function getChannelsFallback(planName: string): Channel[] {
+  if (planName === "Canais Light") return PLUS_CHANNELS;
   if (planName === "Canais Plus") return PLUS_CHANNELS;
   if (planName === "Canais Ultra 1P + HBO") return HBO_CHANNELS;
   return ULTRA_CHANNELS;
@@ -31,6 +32,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
 
   function getChannels(): Channel[] {
     if (channelsData) {
+      if (plan.name === "Canais Light") return channelsData.light;
       if (plan.name === "Canais Plus") return channelsData.plus;
       if (plan.name === "Canais Ultra 1P + HBO") return channelsData.hbo;
       return channelsData.ultra;
