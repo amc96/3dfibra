@@ -651,10 +651,114 @@ function PlansTab({ password }: { password: string }) {
 
 // ─── Settings Tab ─────────────────────────────────────────────────────────────
 
+interface ChannelItem {
+  name: string;
+  category: string;
+}
+
+function serializeChannels(channels: ChannelItem[]): string {
+  return channels.map((c) => `${c.category}: ${c.name}`).join("\n");
+}
+
+function parseChannels(text: string): ChannelItem[] {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => {
+      const colonIdx = line.indexOf(": ");
+      if (colonIdx === -1) return null;
+      return {
+        category: line.slice(0, colonIdx).trim(),
+        name: line.slice(colonIdx + 2).trim(),
+      };
+    })
+    .filter((c): c is ChannelItem => c !== null && c.name.length > 0);
+}
+
+function ChannelEditor({
+  label,
+  settingKey,
+  description,
+  password,
+  initialValue,
+}: {
+  label: string;
+  settingKey: string;
+  description: string;
+  password: string;
+  initialValue: string;
+}) {
+  const { toast } = useToast();
+  const [text, setText] = useState(initialValue);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setText(initialValue);
+  }, [initialValue]);
+
+  const channelCount = parseChannels(text).length;
+
+  async function save() {
+    setSaving(true);
+    try {
+      const channels = parseChannels(text);
+      const res = await fetch(`/api/admin/settings/${settingKey}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-password": password,
+        },
+        body: JSON.stringify({ value: JSON.stringify(channels) }),
+      });
+      if (!res.ok) throw new Error();
+      queryClient.invalidateQueries({ queryKey: ["/api/channels"] });
+      toast({ title: `Lista "${label}" atualizada! (${channels.length} canais)` });
+    } catch {
+      toast({ title: "Erro ao salvar lista de canais", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-gray-300 text-sm font-medium">{label}</p>
+          <p className="text-gray-500 text-xs">{description}</p>
+        </div>
+        <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">
+          {channelCount} canais
+        </span>
+      </div>
+      <textarea
+        data-testid={`textarea-channels-${settingKey}`}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        rows={10}
+        placeholder={"Categoria: Nome do Canal\nCategoria: Outro Canal"}
+        className="w-full rounded-md bg-gray-800 border border-gray-700 text-white text-xs placeholder:text-gray-600 px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+      />
+      <Button
+        data-testid={`button-save-channels-${settingKey}`}
+        onClick={save}
+        disabled={saving}
+        size="sm"
+        className="bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        {saving ? "Salvando..." : `Salvar lista`}
+      </Button>
+    </div>
+  );
+}
+
 function SettingsTab({ password }: { password: string }) {
   const { toast } = useToast();
   const [whatsapp, setWhatsapp] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [savingWa, setSavingWa] = useState(false);
+  const [savingLogo, setSavingLogo] = useState(false);
 
   const { data: settings = [], isLoading } = useQuery<{ id: number; key: string; value: string }[]>({
     queryKey: ["/api/admin/settings"],
@@ -667,24 +771,28 @@ function SettingsTab({ password }: { password: string }) {
     },
   });
 
+  const { data: channelsData } = useQuery<{ plus: ChannelItem[]; ultra: ChannelItem[]; hbo: ChannelItem[] }>({
+    queryKey: ["/api/channels"],
+  });
+
   useEffect(() => {
     const waSetting = settings.find((s) => s.key === "whatsapp_number");
     if (waSetting) setWhatsapp(waSetting.value);
+    const logoSetting = settings.find((s) => s.key === "logo_url");
+    if (logoSetting !== undefined) setLogoUrl(logoSetting.value);
   }, [settings]);
 
-  async function saveWhatsapp() {
+  async function saveSetting(key: string, value: string, label: string, setSaving: (v: boolean) => void) {
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/settings/whatsapp_number", {
+      const res = await fetch(`/api/admin/settings/${key}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-password": password,
-        },
-        body: JSON.stringify({ value: whatsapp }),
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
+        body: JSON.stringify({ value }),
       });
       if (!res.ok) throw new Error();
-      toast({ title: "Número do WhatsApp atualizado!" });
+      queryClient.invalidateQueries({ queryKey: ["/api/settings", key] });
+      toast({ title: `${label} atualizado!` });
     } catch {
       toast({ title: "Erro ao salvar configuração", variant: "destructive" });
     } finally {
@@ -692,8 +800,13 @@ function SettingsTab({ password }: { password: string }) {
     }
   }
 
+  const plusInitial = channelsData ? serializeChannels(channelsData.plus) : "";
+  const ultraInitial = channelsData ? serializeChannels(channelsData.ultra) : "";
+  const hboInitial = channelsData ? serializeChannels(channelsData.hbo) : "";
+
   return (
-    <div className="space-y-6 max-w-xl">
+    <div className="space-y-6 max-w-2xl">
+      {/* WhatsApp */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader>
           <CardTitle className="text-white text-base flex items-center gap-2">
@@ -712,9 +825,7 @@ function SettingsTab({ password }: { password: string }) {
           ) : (
             <>
               <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="text-gray-300">
-                  Número (com código do país)
-                </Label>
+                <Label htmlFor="whatsapp" className="text-gray-300">Número (com código do país)</Label>
                 <Input
                   id="whatsapp"
                   data-testid="input-whatsapp-number"
@@ -729,13 +840,143 @@ function SettingsTab({ password }: { password: string }) {
               </div>
               <Button
                 data-testid="button-save-whatsapp"
-                onClick={saveWhatsapp}
-                disabled={saving}
+                onClick={() => saveSetting("whatsapp_number", whatsapp, "WhatsApp", setSavingWa)}
+                disabled={savingWa}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                {saving ? "Salvando..." : "Salvar número"}
+                {savingWa ? "Salvando..." : "Salvar número"}
               </Button>
             </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Logo */}
+      <Card className="bg-gray-900 border-gray-800">
+        <CardHeader>
+          <CardTitle className="text-white text-base flex items-center gap-2">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-blue-400" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zm2 2v10h12V7H6zm2 6.5 2.5-3 2 2.5 2.5-3.5 3 4H8z" />
+            </svg>
+            Logo do Site
+          </CardTitle>
+          <p className="text-gray-400 text-sm">
+            URL de uma imagem para substituir o logo de texto "3D FIBRA"
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {isLoading ? (
+            <p className="text-gray-500 text-sm">Carregando...</p>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="logo-url" className="text-gray-300">URL da imagem</Label>
+                <Input
+                  id="logo-url"
+                  data-testid="input-logo-url"
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  placeholder="https://exemplo.com/logo.png"
+                  className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                />
+                <p className="text-xs text-gray-500">
+                  Deixe em branco para usar o logo de texto padrão. Recomendado: PNG ou SVG com fundo transparente.
+                </p>
+              </div>
+              {logoUrl && (
+                <div className="p-4 rounded-lg bg-gray-800 border border-gray-700">
+                  <p className="text-xs text-gray-500 mb-2">Pré-visualização:</p>
+                  <img
+                    src={logoUrl}
+                    alt="Preview do logo"
+                    className="h-10 w-auto object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                </div>
+              )}
+              <Button
+                data-testid="button-save-logo"
+                onClick={() => saveSetting("logo_url", logoUrl, "Logo", setSavingLogo)}
+                disabled={savingLogo}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {savingLogo ? "Salvando..." : "Salvar logo"}
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Channel Lists */}
+      <Card className="bg-gray-900 border-gray-800">
+        <CardHeader>
+          <CardTitle className="text-white text-base flex items-center gap-2">
+            <Tv className="w-5 h-5 text-purple-400" />
+            Lista de Canais por Plano de TV
+          </CardTitle>
+          <p className="text-gray-400 text-sm">
+            Edite os canais exibidos em cada plano. Formato por linha:{" "}
+            <code className="text-gray-300 bg-gray-800 px-1 rounded">Categoria: Nome do Canal</code>
+          </p>
+        </CardHeader>
+        <CardContent>
+          {!channelsData ? (
+            <p className="text-gray-500 text-sm">Carregando listas de canais...</p>
+          ) : (
+            <Tabs defaultValue="plus">
+              <TabsList className="bg-gray-800 border border-gray-700 mb-6">
+                <TabsTrigger
+                  value="plus"
+                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
+                >
+                  Canais Plus
+                </TabsTrigger>
+                <TabsTrigger
+                  value="ultra"
+                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
+                >
+                  Canais Ultra
+                </TabsTrigger>
+                <TabsTrigger
+                  value="hbo"
+                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
+                >
+                  Ultra + HBO
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="plus">
+                <ChannelEditor
+                  label="Canais Plus"
+                  settingKey="channels_plus"
+                  description="Canais do plano 'Canais Plus' (150+ canais)"
+                  password={password}
+                  initialValue={plusInitial}
+                />
+              </TabsContent>
+
+              <TabsContent value="ultra">
+                <ChannelEditor
+                  label="Canais Ultra"
+                  settingKey="channels_ultra"
+                  description="Canais dos planos 'Canais Light' e 'Canais Ultra' (200+ canais)"
+                  password={password}
+                  initialValue={ultraInitial}
+                />
+              </TabsContent>
+
+              <TabsContent value="hbo">
+                <ChannelEditor
+                  label="Canais Ultra + HBO"
+                  settingKey="channels_hbo"
+                  description="Canais do plano 'Canais Ultra 1P + HBO' (200+ canais + HBO)"
+                  password={password}
+                  initialValue={hboInitial}
+                />
+              </TabsContent>
+            </Tabs>
           )}
         </CardContent>
       </Card>

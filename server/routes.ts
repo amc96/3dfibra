@@ -21,6 +21,9 @@ export async function registerRoutes(
   if (storage.seedPlans) {
     await storage.seedPlans();
   }
+  if (storage.seedSettings) {
+    await storage.seedSettings();
+  }
 
   // Public: list plans
   app.get(api.plans.list.path, async (_req, res) => {
@@ -105,6 +108,20 @@ export async function registerRoutes(
       return res.status(404).json({ message: "Configuração não encontrada" });
     }
     res.json({ key: req.params.key, value });
+  });
+
+  // Public: get all TV channel lists
+  app.get("/api/channels", async (_req, res) => {
+    const [plus, ultra, hbo] = await Promise.all([
+      storage.getSetting("channels_plus"),
+      storage.getSetting("channels_ultra"),
+      storage.getSetting("channels_hbo"),
+    ]);
+    res.json({
+      plus: plus ? JSON.parse(plus) : [],
+      ultra: ultra ? JSON.parse(ultra) : [],
+      hbo: hbo ? JSON.parse(hbo) : [],
+    });
   });
 
   return httpServer;

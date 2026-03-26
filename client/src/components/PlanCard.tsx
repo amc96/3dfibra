@@ -4,6 +4,8 @@ import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
 import { useToast } from "@/hooks/use-toast";
+import { useChannels } from "@/hooks/use-channels";
+import type { Channel } from "@shared/channels";
 import { PLUS_CHANNELS, ULTRA_CHANNELS, HBO_CHANNELS } from "@/lib/channels";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
@@ -13,18 +15,30 @@ interface PlanCardProps {
   index: number;
 }
 
+function getChannelsFallback(planName: string): Channel[] {
+  if (planName === "Canais Plus") return PLUS_CHANNELS;
+  if (planName === "Canais Ultra 1P + HBO") return HBO_CHANNELS;
+  return ULTRA_CHANNELS;
+}
+
 export function PlanCard({ plan, index }: PlanCardProps) {
   const isHighlighted = plan.isHighlighted;
   const { selectedPlans, togglePlan } = useSelection();
   const { toast } = useToast();
   const isSelected = selectedPlans.some(p => p.id === plan.id);
   const [isOpen, setIsOpen] = useState(false);
+  const { data: channelsData } = useChannels();
 
-  const channelsToShow = plan.name === "Canais Plus" 
-    ? PLUS_CHANNELS 
-    : plan.name === "Canais Ultra 1P + HBO" 
-      ? HBO_CHANNELS 
-      : ULTRA_CHANNELS;
+  function getChannels(): Channel[] {
+    if (channelsData) {
+      if (plan.name === "Canais Plus") return channelsData.plus;
+      if (plan.name === "Canais Ultra 1P + HBO") return channelsData.hbo;
+      return channelsData.ultra;
+    }
+    return getChannelsFallback(plan.name);
+  }
+
+  const channelsToShow = getChannels();
 
   const handleToggle = () => {
     const isInternetPlanSelected = selectedPlans.some(p => p.category === "internet");
@@ -66,7 +80,6 @@ export function PlanCard({ plan, index }: PlanCardProps) {
       }`}
     >
       <div className="h-full bg-card rounded-[1.4rem] p-6 sm:p-8 flex flex-col relative overflow-hidden">
-        {/* Background Pattern */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10" />
 
         {(isHighlighted || isSelected) && (

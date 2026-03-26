@@ -1,7 +1,11 @@
 import { Facebook, Instagram, MapPin, Mail, Phone } from "lucide-react";
 import { Link } from "wouter";
+import { useLogoUrl } from "@/hooks/use-logo";
 
 export function Footer() {
+  const { data: logoSetting } = useLogoUrl();
+  const logoUrl = logoSetting?.value || "";
+
   return (
     <footer className="bg-card border-t border-border pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -9,12 +13,18 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-black text-sm font-display">3D</span>
-              </div>
-              <span className="text-xl font-black tracking-tighter text-white">
-                FIBRA<span className="text-primary">.</span>
-              </span>
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
+              ) : (
+                <>
+                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                    <span className="text-white font-black text-sm font-display">3D</span>
+                  </div>
+                  <span className="text-xl font-black tracking-tighter text-white">
+                    FIBRA<span className="text-primary">.</span>
+                  </span>
+                </>
+              )}
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               Conectando você ao mundo com ultra velocidade e estabilidade. A melhor fibra óptica da região.

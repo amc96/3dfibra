@@ -4,6 +4,7 @@ import { ShoppingCart, Menu, X, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { useSelection } from "@/hooks/use-selection";
+import { useLogoUrl } from "@/hooks/use-logo";
 import { AnimatePresence } from "framer-motion";
 
 export function Navbar() {
@@ -11,6 +12,8 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { selectedPlans } = useSelection();
+  const { data: logoSetting } = useLogoUrl();
+  const logoUrl = logoSetting?.value || "";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +28,15 @@ export function Navbar() {
     { name: "Planos", href: "/planos" },
   ];
 
+  const LogoContent = () =>
+    logoUrl ? (
+      <img src={logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
+    ) : (
+      <span className="text-2xl font-black text-white tracking-tighter">
+        3D <span className="text-primary">FIBRA</span>
+      </span>
+    );
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -38,9 +50,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer">
-            <span className="text-2xl font-black text-white tracking-tighter">
-              3D <span className="text-primary">FIBRA</span>
-            </span>
+            <LogoContent />
           </div>
         </Link>
 
@@ -140,19 +150,18 @@ export function Navbar() {
                     Área do Cliente
                   </Button>
                 </a>
-            <Link href="/planos">
-              <Button 
-                onClick={(e) => {
-                  // If we're already on /planos, just close the menu
-                  if (location === "/planos") {
-                    setIsMobileMenuOpen(false);
-                  }
-                }}
-                className="w-full bg-primary text-white rounded-xl py-6 text-lg font-bold"
-              >
-                Assinar Agora
-              </Button>
-            </Link>
+                <Link href="/planos">
+                  <Button 
+                    onClick={() => {
+                      if (location === "/planos") {
+                        setIsMobileMenuOpen(false);
+                      }
+                    }}
+                    className="w-full bg-primary text-white rounded-xl py-6 text-lg font-bold"
+                  >
+                    Assinar Agora
+                  </Button>
+                </Link>
               </div>
             </div>
           </motion.div>

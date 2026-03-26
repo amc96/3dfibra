@@ -1,6 +1,7 @@
 import { plans, settings, type Plan, type InsertPlan, type UpdatePlan, type Setting } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
+import { PLUS_CHANNELS, ULTRA_CHANNELS, HBO_CHANNELS } from "@shared/channels";
 
 export interface IStorage {
   getPlans(): Promise<Plan[]>;
@@ -9,6 +10,7 @@ export interface IStorage {
   updatePlan(id: number, plan: UpdatePlan): Promise<Plan | undefined>;
   deletePlan(id: number): Promise<boolean>;
   seedPlans(): Promise<void>;
+  seedSettings(): Promise<void>;
   getSetting(key: string): Promise<string | undefined>;
   setSetting(key: string, value: string): Promise<void>;
   getAllSettings(): Promise<Setting[]>;
@@ -131,6 +133,10 @@ const INITIAL_PLANS: InsertPlan[] = [
 
 const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "whatsapp_number", value: "5553999789222" },
+  { key: "logo_url", value: "" },
+  { key: "channels_plus", value: JSON.stringify(PLUS_CHANNELS) },
+  { key: "channels_ultra", value: JSON.stringify(ULTRA_CHANNELS) },
+  { key: "channels_hbo", value: JSON.stringify(HBO_CHANNELS) },
 ];
 
 export class HybridStorage implements IStorage {
@@ -303,6 +309,22 @@ export class HybridStorage implements IStorage {
       }
     } catch (err) {
       console.error("Seed failed, switching to memory fallback:", err);
+      this.useMemoryFallback = true;
+    }
+  }
+
+  async seedSettings(): Promise<void> {
+    if (this.useMemoryFallback) return;
+    try {
+      const existingSettings = await db.select().from(settings);
+      const existingKeys = new Set(existingSettings.map((s) => s.key));
+      for (const def of DEFAULT_SETTINGS) {
+        if (!existingKeys.has(def.key)) {
+          await db.insert(settings).values(def);
+        }
+      }
+    } catch (err) {
+      console.error("Settings seed failed, switching to memory fallback:", err);
       this.useMemoryFallback = true;
     }
   }
