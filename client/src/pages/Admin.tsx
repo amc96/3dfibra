@@ -753,12 +753,15 @@ function ChannelEditor({
   );
 }
 
-function SettingsTab({ password }: { password: string }) {
+function SettingsTab({ password, onPasswordChange }: { password: string; onPasswordChange: (p: string) => void }) {
   const { toast } = useToast();
   const [whatsapp, setWhatsapp] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [savingWa, setSavingWa] = useState(false);
   const [savingLogo, setSavingLogo] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [savingPw, setSavingPw] = useState(false);
 
   const { data: settings = [], isLoading } = useQuery<{ id: number; key: string; value: string }[]>({
     queryKey: ["/api/admin/settings"],
@@ -800,6 +803,38 @@ function SettingsTab({ password }: { password: string }) {
     }
   }
 
+  async function changePassword() {
+    if (newPassword.length < 6) {
+      toast({ title: "A senha deve ter pelo menos 6 caracteres", variant: "destructive" });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: "As senhas não coincidem", variant: "destructive" });
+      return;
+    }
+    setSavingPw(true);
+    try {
+      const res = await fetch("/api/admin/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
+        body: JSON.stringify({ newPassword }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Erro");
+      }
+      sessionStorage.setItem(SESSION_KEY, newPassword);
+      onPasswordChange(newPassword);
+      setNewPassword("");
+      setConfirmPassword("");
+      toast({ title: "Senha alterada com sucesso!" });
+    } catch (err: any) {
+      toast({ title: err.message || "Erro ao alterar senha", variant: "destructive" });
+    } finally {
+      setSavingPw(false);
+    }
+  }
+
   const lightInitial = channelsData ? serializeChannels(channelsData.light) : "";
   const plusInitial = channelsData ? serializeChannels(channelsData.plus) : "";
   const ultraInitial = channelsData ? serializeChannels(channelsData.ultra) : "";
@@ -807,6 +842,52 @@ function SettingsTab({ password }: { password: string }) {
 
   return (
     <div className="space-y-6 max-w-2xl">
+      {/* Change Password */}
+      <Card className="bg-gray-900 border-gray-800">
+        <CardHeader>
+          <CardTitle className="text-white text-base flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            Trocar Senha do Painel
+          </CardTitle>
+          <p className="text-gray-400 text-sm">Altere a senha de acesso ao painel administrativo.</p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Nova Senha</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Mínimo 6 caracteres"
+              data-testid="input-new-password"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Confirmar Nova Senha</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Repita a nova senha"
+              data-testid="input-confirm-password"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          <button
+            onClick={changePassword}
+            disabled={savingPw || !newPassword || !confirmPassword}
+            data-testid="button-change-password"
+            className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-gray-900 font-semibold rounded-lg text-sm transition-colors"
+          >
+            {savingPw ? "Salvando..." : "Alterar Senha"}
+          </button>
+        </CardContent>
+      </Card>
+
       {/* WhatsApp */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader>
@@ -1069,7 +1150,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="settings">
-            <SettingsTab password={password} />
+            <SettingsTab password={password} onPasswordChange={setPassword} />
           </TabsContent>
         </Tabs>
       </main>

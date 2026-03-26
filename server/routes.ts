@@ -4,11 +4,17 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { insertPlanSchema, updatePlanSchema } from "@shared/schema";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
-function requireAdmin(req: any, res: any, next: any) {
+async function getActivePassword(): Promise<string> {
+  const stored = await storage.getSetting("admin_password");
+  return stored && stored.trim() !== "" ? stored : ENV_PASSWORD;
+}
+
+async function requireAdmin(req: any, res: any, next: any) {
   const password = req.headers["x-admin-password"];
-  if (password !== ADMIN_PASSWORD) {
+  const active = await getActivePassword();
+  if (password !== active) {
     return res.status(401).json({ message: "Não autorizado" });
   }
   next();
@@ -41,13 +47,24 @@ export async function registerRoutes(
   });
 
   // Admin: verify password
-  app.post("/api/admin/login", (req, res) => {
+  app.post("/api/admin/login", async (req, res) => {
     const { password } = req.body;
-    if (password === ADMIN_PASSWORD) {
+    const active = await getActivePassword();
+    if (password === active) {
       res.json({ ok: true });
     } else {
       res.status(401).json({ message: "Senha incorreta" });
     }
+  });
+
+  // Admin: change password
+  app.post("/api/admin/change-password", requireAdmin, async (req, res) => {
+    const { newPassword } = req.body;
+    if (!newPassword || typeof newPassword !== "string" || newPassword.trim().length < 6) {
+      return res.status(400).json({ message: "A nova senha deve ter pelo menos 6 caracteres" });
+    }
+    await storage.setSetting("admin_password", newPassword.trim());
+    res.json({ ok: true });
   });
 
   // Admin: create plan

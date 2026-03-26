@@ -134,6 +134,7 @@ const INITIAL_PLANS: InsertPlan[] = [
 const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "whatsapp_number", value: "5553999789222" },
   { key: "logo_url", value: "" },
+  { key: "admin_password", value: "" },
   { key: "channels_light", value: JSON.stringify(PLUS_CHANNELS) },
   { key: "channels_plus", value: JSON.stringify(PLUS_CHANNELS) },
   { key: "channels_ultra", value: JSON.stringify(ULTRA_CHANNELS) },
