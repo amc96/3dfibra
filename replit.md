@@ -57,6 +57,27 @@ shared/           # Shared types and schemas
 3. **Dark Theme First**: CSS variables in index.css define a dark color scheme optimized for the ISP branding
 4. **Seed Data**: Plans are seeded on server startup if the database is empty
 
+## Admin Panel
+
+Accessible at `/admin`. Protected by a password (default: `admin123`, overridable via the `ADMIN_PASSWORD` environment variable).
+
+### Features
+- **Plans Management**: Create, edit, and delete plans for Internet, TV, and Adicionais categories
+- **Settings Management**: Update the WhatsApp contact number used throughout the site
+- **Session persistence**: Password is stored in sessionStorage during the browser session
+
+### Admin API Routes (require `x-admin-password` header)
+- `POST /api/admin/login` — Verify password
+- `POST /api/admin/plans` — Create a plan
+- `PATCH /api/admin/plans/:id` — Update a plan
+- `DELETE /api/admin/plans/:id` — Delete a plan
+- `GET /api/admin/settings` — List all settings
+- `PATCH /api/admin/settings/:key` — Update a setting
+
+### Database Tables
+- `plans` — Internet/TV/Adicionais plans
+- `settings` — Key-value site configuration (e.g. `whatsapp_number`)
+
 ## External Dependencies
 
 ### Database
