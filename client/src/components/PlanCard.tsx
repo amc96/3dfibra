@@ -1,13 +1,11 @@
-import { Plan } from "@shared/schema";
+import { Plan, TvChannel } from "@shared/schema";
 import { Check, Wifi, ArrowRight, Tv } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
 import { useToast } from "@/hooks/use-toast";
-import { useChannels } from "@/hooks/use-channels";
-import type { Channel } from "@shared/channels";
-import { PLUS_CHANNELS, ULTRA_CHANNELS, HBO_CHANNELS } from "@/lib/channels";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
 interface PlanCardProps {
@@ -15,11 +13,40 @@ interface PlanCardProps {
   index: number;
 }
 
-function getChannelsFallback(planName: string): Channel[] {
-  if (planName === "Canais Light") return PLUS_CHANNELS;
-  if (planName === "Canais Plus") return PLUS_CHANNELS;
-  if (planName === "Canais Ultra 1P + HBO") return HBO_CHANNELS;
-  return ULTRA_CHANNELS;
+function usePlanChannels(planId: number, enabled: boolean) {
+  const { data: allChannels = [] } = useQuery<TvChannel[]>({
+    queryKey: ["/api/tv-channels"],
+    staleTime: 5 * 60 * 1000,
+    enabled,
+  });
+  const { data: enabledIds = [] } = useQuery<number[]>({
+    queryKey: ["/api/plans", planId, "channels"],
+    queryFn: async () => {
+      const res = await fetch(`/api/plans/${planId}/channels`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+    enabled,
+  });
+
+  const channels = useMemo(() => {
+    const idSet = new Set(enabledIds);
+    return allChannels.filter((c) => idSet.has(c.id));
+  }, [allChannels, enabledIds]);
+
+  // Group by category
+  const groups = useMemo(() => {
+    const map = new Map<string, TvChannel[]>();
+    for (const ch of channels) {
+      const g = ch.group || "Geral";
+      if (!map.has(g)) map.set(g, []);
+      map.get(g)!.push(ch);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [channels]);
+
+  return { groups, total: channels.length };
 }
 
 export function PlanCard({ plan, index }: PlanCardProps) {
@@ -28,23 +55,13 @@ export function PlanCard({ plan, index }: PlanCardProps) {
   const { toast } = useToast();
   const isSelected = selectedPlans.some(p => p.id === plan.id);
   const [isOpen, setIsOpen] = useState(false);
-  const { data: channelsData } = useChannels();
 
-  function getChannels(): Channel[] {
-    if (channelsData) {
-      if (plan.name === "Canais Light") return channelsData.light;
-      if (plan.name === "Canais Plus") return channelsData.plus;
-      if (plan.name === "Canais Ultra 1P + HBO") return channelsData.hbo;
-      return channelsData.ultra;
-    }
-    return getChannelsFallback(plan.name);
-  }
-
-  const channelsToShow = getChannels();
+  const isTv = plan.category === "tv";
+  const { groups, total } = usePlanChannels(plan.id, isTv && isOpen);
 
   const handleToggle = () => {
     const isInternetPlanSelected = selectedPlans.some(p => p.category === "internet");
-    
+
     if (plan.category !== "internet" && !isInternetPlanSelected) {
       toast({
         title: "Plano Requerido",
@@ -76,8 +93,8 @@ export function PlanCard({ plan, index }: PlanCardProps) {
       className={`relative rounded-3xl p-1 ${
         isSelected
           ? "bg-primary shadow-2xl shadow-primary/40 scale-[1.02]"
-          : isHighlighted 
-            ? "bg-gradient-to-b from-primary via-blue-500 to-purple-600 shadow-2xl shadow-primary/20" 
+          : isHighlighted
+            ? "bg-gradient-to-b from-primary via-blue-500 to-purple-600 shadow-2xl shadow-primary/20"
             : "bg-border/50 border border-border/50 hover:border-primary/50 transition-all"
       }`}
     >
@@ -108,7 +125,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
 
         <div className="space-y-4 mb-8 flex-grow">
           <div className="w-full h-px bg-border/50 mb-6" />
-          
+
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <Wifi className="w-4 h-4" />
@@ -117,8 +134,8 @@ export function PlanCard({ plan, index }: PlanCardProps) {
           </div>
 
           {plan.features.map((feature, i) => {
-            const isChannelList = feature.toLowerCase().includes("lista de canais") && plan.category === "tv";
-            
+            const isChannelList = feature.toLowerCase().includes("lista de canais") && isTv;
+
             if (isChannelList) {
               return (
                 <Dialog key={i} open={isOpen} onOpenChange={setIsOpen}>
@@ -141,43 +158,70 @@ export function PlanCard({ plan, index }: PlanCardProps) {
                             Grade de Canais
                           </DialogTitle>
                           <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest mt-1">
-                            Plano {plan.name}
+                            Plano {plan.name} · {total} canais
                           </p>
                         </div>
                       </div>
                     </DialogHeader>
-                    
-                    <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-                        {Object.entries(
-                          channelsToShow.reduce((acc, channel) => {
-                            if (!acc[channel.category]) acc[channel.category] = [];
-                            acc[channel.category].push(channel.name);
-                            return acc;
-                          }, {} as Record<string, string[]>)
-                        ).map(([category, channels]) => (
-                          <div key={category} className="space-y-4">
-                            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-4 pb-2 border-b border-primary/10 flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-primary" />
-                              {category}
-                            </h4>
-                            <div className="grid grid-cols-1 gap-2">
-                              {channels.map(name => (
-                                <motion.div 
-                                  key={name} 
-                                  whileHover={{ x: 4 }}
-                                  className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-3 p-2 rounded-lg hover:bg-primary/5 transition-all group/channel"
-                                >
-                                  <div className="w-1.5 h-1.5 rounded-full bg-primary/20 group-hover/channel:bg-primary transition-colors shrink-0" />
-                                  <span className="font-medium">{name}</span>
-                                </motion.div>
-                              ))}
+
+                    <div className="flex-1 overflow-y-auto p-6 md:p-8">
+                      {groups.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full gap-3 text-muted-foreground">
+                          <Tv className="w-10 h-10 opacity-30" />
+                          <p className="text-sm">Nenhum canal configurado para este plano.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-8">
+                          {groups.map(([groupName, channels]) => (
+                            <div key={groupName}>
+                              {/* Category header */}
+                              <div className="flex items-center gap-2 mb-4">
+                                <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">
+                                  {groupName}
+                                </h4>
+                                <span className="text-xs text-muted-foreground/50 font-normal normal-case tracking-normal">
+                                  ({channels.length})
+                                </span>
+                                <div className="flex-1 h-px bg-primary/10 ml-1" />
+                              </div>
+
+                              {/* Logos grid */}
+                              <div className="flex flex-wrap gap-3">
+                                {channels.map((ch) => (
+                                  <motion.div
+                                    key={ch.id}
+                                    whileHover={{ scale: 1.08 }}
+                                    title={ch.name}
+                                    className="w-14 h-14 rounded-xl bg-background border border-border/60 flex items-center justify-center overflow-hidden hover:border-primary/40 transition-colors"
+                                  >
+                                    {ch.logoUrl ? (
+                                      <img
+                                        src={ch.logoUrl}
+                                        alt={ch.name}
+                                        className="w-11 h-11 object-contain"
+                                        onError={(e) => {
+                                          const parent = (e.target as HTMLImageElement).parentElement;
+                                          if (parent) {
+                                            (e.target as HTMLImageElement).style.display = "none";
+                                            parent.innerHTML = `<span class="text-[10px] text-muted-foreground text-center leading-tight px-1 font-medium">${ch.name}</span>`;
+                                          }
+                                        }}
+                                      />
+                                    ) : (
+                                      <span className="text-[10px] text-muted-foreground text-center leading-tight px-1 font-medium">
+                                        {ch.name}
+                                      </span>
+                                    )}
+                                  </motion.div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    
+
                     <div className="p-6 border-t border-border/50 bg-primary/5 flex justify-center">
                       <p className="text-xs text-muted-foreground text-center max-w-lg">
                         A grade de canais pode sofrer alterações sem aviso prévio conforme disponibilidade da programadora.
@@ -200,12 +244,12 @@ export function PlanCard({ plan, index }: PlanCardProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button 
+          <Button
             className={`w-full py-6 text-base font-semibold rounded-xl group transition-all duration-300 ${
               isSelected
                 ? "bg-white text-primary hover:bg-white/90"
-                : isHighlighted 
-                  ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1" 
+                : isHighlighted
+                  ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1"
                   : "bg-secondary hover:bg-secondary/80 text-foreground hover:-translate-y-1"
             }`}
             onClick={handleToggle}
