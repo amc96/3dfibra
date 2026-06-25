@@ -3,6 +3,30 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { insertPlanSchema, updatePlanSchema, insertTvChannelSchema, updateTvChannelSchema } from "@shared/schema";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+const uploadsChannelsDir = path.resolve(process.cwd(), "uploads/channels");
+if (!fs.existsSync(uploadsChannelsDir)) fs.mkdirSync(uploadsChannelsDir, { recursive: true });
+
+const channelLogoStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsChannelsDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname) || ".png";
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
+    cb(null, unique);
+  },
+});
+
+const uploadChannelLogo = multer({
+  storage: channelLogoStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Apenas imagens são permitidas"));
+  },
+}).single("logo");
 
 const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
@@ -132,6 +156,17 @@ export async function registerRoutes(
     if (!Array.isArray(channelIds)) return res.status(400).json({ message: "channelIds deve ser um array" });
     await storage.setPlanChannelIds(planId, channelIds.map(Number));
     res.json({ ok: true, planId, channelIds });
+  });
+
+  // ── Admin: logo upload ────────────────────────────────────────────────────
+
+  app.post("/api/admin/upload-logo", requireAdmin, (req, res) => {
+    uploadChannelLogo(req, res, (err) => {
+      if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
+      if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
+      const url = `/uploads/channels/${req.file.filename}`;
+      res.json({ url });
+    });
   });
 
   // ── Admin: TV channels ─────────────────────────────────────────────────────

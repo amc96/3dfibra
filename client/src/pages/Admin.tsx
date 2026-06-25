@@ -301,6 +301,9 @@ function ChannelCatalogDialog({ open, onClose, channel, password, existingGroups
   const isEditing = !!channel;
   const [customGroup, setCustomGroup] = useState("");
   const [selectValue, setSelectValue] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const fileInputRef = useState<HTMLInputElement | null>(null);
 
   const form = useForm<ChannelFormValues>({
     resolver: zodResolver(channelFormSchema),
@@ -314,6 +317,7 @@ function ChannelCatalogDialog({ open, onClose, channel, password, existingGroups
         ? { name: channel.name, logoUrl: channel.logoUrl, group: channel.group, sortOrder: channel.sortOrder }
         : { name: "", logoUrl: "", group: initialGroup, sortOrder: 0 }
       );
+      setPreviewUrl(channel?.logoUrl ?? "");
       if (existingGroups.includes(initialGroup)) {
         setSelectValue(initialGroup);
         setCustomGroup("");
@@ -339,7 +343,41 @@ function ChannelCatalogDialog({ open, onClose, channel, password, existingGroups
     form.setValue("group", e.target.value, { shouldValidate: true });
   }
 
-  const logoUrl = form.watch("logoUrl");
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Local preview immediately
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+    // Upload to server
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("logo", file);
+      const res = await fetch("/api/admin/upload-logo", {
+        method: "POST",
+        headers: { "x-admin-password": password },
+        body: formData,
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      form.setValue("logoUrl", data.url, { shouldValidate: true });
+      setPreviewUrl(data.url);
+      toast({ title: "Logo enviado com sucesso!" });
+    } catch {
+      toast({ title: "Erro ao enviar logo", variant: "destructive" });
+      setPreviewUrl("");
+      form.setValue("logoUrl", "");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function removeLogo() {
+    setPreviewUrl("");
+    form.setValue("logoUrl", "", { shouldValidate: true });
+    if (fileInputRef[0]) fileInputRef[0].value = "";
+  }
 
   async function submit(values: ChannelFormValues) {
     try {
@@ -397,29 +435,71 @@ function ChannelCatalogDialog({ open, onClose, channel, password, existingGroups
                 <FormMessage />
               </FormItem>
             )} />
-            <FormField control={form.control} name="logoUrl" render={({ field }) => (
+
+            {/* Logo upload */}
+            <FormField control={form.control} name="logoUrl" render={() => (
               <FormItem>
-                <FormLabel className="text-gray-300">URL do Logo</FormLabel>
-                <FormControl>
-                  <Input data-testid="input-channel-logo" placeholder="https://exemplo.com/logo.png" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
-                </FormControl>
-                {logoUrl && (
-                  <div className="mt-2 p-3 bg-gray-800 rounded-lg border border-gray-700 flex items-center gap-3">
-                    <img
-                      src={logoUrl}
-                      alt="preview"
-                      className="w-10 h-10 object-contain rounded bg-white/5"
-                      onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0.2"; }}
-                    />
-                    <span className="text-xs text-gray-400">Pré-visualização</span>
-                  </div>
-                )}
+                <FormLabel className="text-gray-300">Logo do Canal</FormLabel>
+                <div className="space-y-3">
+                  {previewUrl ? (
+                    <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg border border-gray-700">
+                      <img
+                        src={previewUrl}
+                        alt="logo preview"
+                        className="w-14 h-14 object-contain rounded bg-white/5 shrink-0"
+                        onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0.2"; }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-300 truncate">Logo carregado</p>
+                        {uploading && <p className="text-xs text-purple-400 mt-0.5">Enviando...</p>}
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={removeLogo}
+                        disabled={uploading}
+                        className="text-gray-400 hover:text-red-400 hover:bg-red-900/20 h-8 w-8 p-0 shrink-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <label
+                      data-testid="label-channel-logo-upload"
+                      className={`flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${uploading ? "border-purple-500 bg-purple-500/5" : "border-gray-700 bg-gray-800/50 hover:border-purple-600 hover:bg-gray-800"}`}
+                    >
+                      {uploading ? (
+                        <>
+                          <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mb-2" />
+                          <span className="text-sm text-purple-400">Enviando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Image className="w-8 h-8 text-gray-600 mb-2" />
+                          <span className="text-sm text-gray-400">Clique para selecionar a logo</span>
+                          <span className="text-xs text-gray-600 mt-0.5">PNG, JPG, SVG, WebP — máx. 5MB</span>
+                        </>
+                      )}
+                      <input
+                        data-testid="input-channel-logo-file"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploading}
+                        ref={(el) => { fileInputRef[0] = el; }}
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  )}
+                </div>
                 <FormMessage />
               </FormItem>
             )} />
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose} className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancelar</Button>
-              <Button data-testid="button-save-channel" type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">{isEditing ? "Salvar" : "Cadastrar canal"}</Button>
+              <Button data-testid="button-save-channel" type="submit" disabled={uploading} className="bg-purple-600 hover:bg-purple-700 text-white">{isEditing ? "Salvar" : "Cadastrar canal"}</Button>
             </DialogFooter>
           </form>
         </Form>
