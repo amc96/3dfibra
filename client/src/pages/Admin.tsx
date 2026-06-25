@@ -233,13 +233,13 @@ function PlanDialog({ open, onClose, plan, password, defaultCategory }: { open: 
               )} />
               <FormField control={form.control} name="category" render={({ field }) => (
                 <FormItem><FormLabel className="text-gray-300">Categoria</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? "internet"}>
+                  <Select modal={false} onValueChange={field.onChange} value={field.value ?? "internet"}>
                     <FormControl>
                       <SelectTrigger data-testid="select-plan-category" className="bg-gray-800 border-gray-700 text-white">
                         <SelectValue placeholder="Categoria" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white z-[9999]">
                       <SelectItem value="internet">Internet</SelectItem>
                       <SelectItem value="tv">TV / Canais</SelectItem>
                       <SelectItem value="adicionais">Adicionais</SelectItem>
@@ -371,11 +371,11 @@ function ChannelCatalogDialog({ open, onClose, channel, password, existingGroups
             <FormField control={form.control} name="group" render={() => (
               <FormItem>
                 <FormLabel className="text-gray-300">Categoria / Grupo</FormLabel>
-                <Select value={selectValue} onValueChange={handleSelectChange}>
+                <Select modal={false} value={selectValue} onValueChange={handleSelectChange}>
                   <SelectTrigger data-testid="select-channel-group" className="bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Selecione um grupo" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                  <SelectContent className="bg-gray-800 border-gray-700 text-white z-[9999]">
                     {existingGroups.map((g) => (
                       <SelectItem key={g} value={g}>{g}</SelectItem>
                     ))}
