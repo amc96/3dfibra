@@ -1,0 +1,1 @@
+- [Deployment lock file fix](deployment-lock-fix.md) — package-lock.json gerado no Replit usa URLs internas que quebram o deploy; corrigir com sed antes de publicar.
