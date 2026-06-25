@@ -294,9 +294,14 @@ function PlanDialog({ open, onClose, plan, password, defaultCategory }: { open: 
 
 // ─── Channel Catalog Dialog (add/edit a TV channel) ───────────────────────────
 
-function ChannelCatalogDialog({ open, onClose, channel, password }: { open: boolean; onClose: () => void; channel: TvChannel | null; password: string }) {
+const NEW_GROUP_SENTINEL = "__novo_grupo__";
+
+function ChannelCatalogDialog({ open, onClose, channel, password, existingGroups }: { open: boolean; onClose: () => void; channel: TvChannel | null; password: string; existingGroups: string[] }) {
   const { toast } = useToast();
   const isEditing = !!channel;
+  const [customGroup, setCustomGroup] = useState("");
+  const [selectValue, setSelectValue] = useState("");
+
   const form = useForm<ChannelFormValues>({
     resolver: zodResolver(channelFormSchema),
     defaultValues: { name: "", logoUrl: "", group: "Geral", sortOrder: 0 },
@@ -304,12 +309,35 @@ function ChannelCatalogDialog({ open, onClose, channel, password }: { open: bool
 
   useEffect(() => {
     if (open) {
+      const initialGroup = channel ? channel.group : (existingGroups[0] ?? "Geral");
       form.reset(channel
         ? { name: channel.name, logoUrl: channel.logoUrl, group: channel.group, sortOrder: channel.sortOrder }
-        : { name: "", logoUrl: "", group: "Geral", sortOrder: 0 }
+        : { name: "", logoUrl: "", group: initialGroup, sortOrder: 0 }
       );
+      if (existingGroups.includes(initialGroup)) {
+        setSelectValue(initialGroup);
+        setCustomGroup("");
+      } else {
+        setSelectValue(NEW_GROUP_SENTINEL);
+        setCustomGroup(initialGroup);
+      }
     }
-  }, [open, channel]);
+  }, [open, channel, existingGroups.join(",")]);
+
+  function handleSelectChange(val: string) {
+    setSelectValue(val);
+    if (val !== NEW_GROUP_SENTINEL) {
+      form.setValue("group", val, { shouldValidate: true });
+      setCustomGroup("");
+    } else {
+      form.setValue("group", customGroup, { shouldValidate: true });
+    }
+  }
+
+  function handleCustomGroupChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setCustomGroup(e.target.value);
+    form.setValue("group", e.target.value, { shouldValidate: true });
+  }
 
   const logoUrl = form.watch("logoUrl");
 
@@ -340,10 +368,34 @@ function ChannelCatalogDialog({ open, onClose, channel, password }: { open: bool
                 <FormControl><Input data-testid="input-channel-name" placeholder="Ex: ESPN" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
                 <FormMessage /></FormItem>
             )} />
-            <FormField control={form.control} name="group" render={({ field }) => (
-              <FormItem><FormLabel className="text-gray-300">Categoria / Grupo</FormLabel>
-                <FormControl><Input data-testid="input-channel-group" placeholder="Ex: Esportes" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
-                <FormMessage /></FormItem>
+            <FormField control={form.control} name="group" render={() => (
+              <FormItem>
+                <FormLabel className="text-gray-300">Categoria / Grupo</FormLabel>
+                <Select value={selectValue} onValueChange={handleSelectChange}>
+                  <SelectTrigger data-testid="select-channel-group" className="bg-gray-800 border-gray-700 text-white">
+                    <SelectValue placeholder="Selecione um grupo" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                    {existingGroups.map((g) => (
+                      <SelectItem key={g} value={g}>{g}</SelectItem>
+                    ))}
+                    <SelectItem value={NEW_GROUP_SENTINEL} className="text-purple-400 border-t border-gray-700 mt-1">
+                      + Novo grupo...
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {selectValue === NEW_GROUP_SENTINEL && (
+                  <Input
+                    data-testid="input-channel-group-custom"
+                    placeholder="Digite o nome do novo grupo"
+                    value={customGroup}
+                    onChange={handleCustomGroupChange}
+                    className="mt-2 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                    autoFocus
+                  />
+                )}
+                <FormMessage />
+              </FormItem>
             )} />
             <FormField control={form.control} name="logoUrl" render={({ field }) => (
               <FormItem>
@@ -695,6 +747,12 @@ function ChannelCatalog({ password }: { password: string }) {
 
   const filtered = channels.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.group.toLowerCase().includes(search.toLowerCase()));
 
+  // All unique groups (sorted) for the dialog dropdown
+  const existingGroups = useMemo(() => {
+    const set = new Set(channels.map((c) => c.group || "Geral"));
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [channels]);
+
   // Group for display
   const groups = useMemo(() => {
     const map = new Map<string, TvChannel[]>();
@@ -809,7 +867,7 @@ function ChannelCatalog({ password }: { password: string }) {
         </div>
       )}
 
-      <ChannelCatalogDialog open={dialogOpen} onClose={() => setDialogOpen(false)} channel={editingChannel} password={password} />
+      <ChannelCatalogDialog open={dialogOpen} onClose={() => setDialogOpen(false)} channel={editingChannel} password={password} existingGroups={existingGroups} />
       <DeleteDialog id={deletingId} label="canal" onCancel={() => setDeletingId(null)} onConfirm={() => deletingId !== null && deleteMutation.mutate(deletingId)} loading={deleteMutation.isPending} />
     </div>
   );
