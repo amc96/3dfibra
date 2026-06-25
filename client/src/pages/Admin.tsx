@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { insertPlanSchema, type Plan } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -43,20 +43,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Pencil,
@@ -69,21 +56,45 @@ import {
   Settings,
   Star,
   ShieldCheck,
+  List,
+  DollarSign,
+  Zap,
+  ChevronDown,
+  ChevronUp,
+  Save,
 } from "lucide-react";
 
 const SESSION_KEY = "admin_password";
 
-const planFormSchema = insertPlanSchema.extend({
-  featuresText: z.string().min(1, "Insira ao menos um benefício"),
-}).omit({ features: true });
+const planFormSchema = insertPlanSchema
+  .extend({ featuresText: z.string().min(1, "Insira ao menos um benefício") })
+  .omit({ features: true });
 
 type PlanFormValues = z.infer<typeof planFormSchema>;
 
-function adminHeaders(password: string) {
-  return { "x-admin-password": password };
+interface ChannelItem {
+  name: string;
+  category: string;
 }
 
-// ─── Login Screen ───────────────────────────────────────────────────────────
+function serializeChannels(channels: ChannelItem[]): string {
+  return channels.map((c) => `${c.category}: ${c.name}`).join("\n");
+}
+
+function parseChannels(text: string): ChannelItem[] {
+  return text
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0)
+    .map((l) => {
+      const idx = l.indexOf(": ");
+      if (idx === -1) return null;
+      return { category: l.slice(0, idx).trim(), name: l.slice(idx + 2).trim() };
+    })
+    .filter((c): c is ChannelItem => c !== null && c.name.length > 0);
+}
+
+// ─── Login ───────────────────────────────────────────────────────────────────
 
 function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
   const [password, setPassword] = useState("");
@@ -95,7 +106,12 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
     setLoading(true);
     setError("");
     try {
-      await apiRequest("POST", "/api/admin/login", { password });
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (!res.ok) throw new Error();
       sessionStorage.setItem(SESSION_KEY, password);
       onLogin(password);
     } catch {
@@ -152,11 +168,13 @@ function PlanDialog({
   onClose,
   plan,
   password,
+  defaultCategory,
 }: {
   open: boolean;
   onClose: () => void;
   plan: Plan | null;
   password: string;
+  defaultCategory?: string;
 }) {
   const { toast } = useToast();
   const isEditing = !!plan;
@@ -168,7 +186,7 @@ function PlanDialog({
       speed: "",
       price: "",
       description: "",
-      category: "internet",
+      category: defaultCategory ?? "internet",
       isHighlighted: false,
       featuresText: "",
     },
@@ -192,68 +210,27 @@ function PlanDialog({
           speed: "",
           price: "",
           description: "",
-          category: "internet",
+          category: defaultCategory ?? "internet",
           isHighlighted: false,
           featuresText: "",
         });
       }
     }
-  }, [open, plan]);
+  }, [open, plan, defaultCategory]);
 
-  const mutation = useMutation({
-    mutationFn: async (values: PlanFormValues) => {
-      const { featuresText, ...rest } = values;
-      const features = featuresText
-        .split("\n")
-        .map((f) => f.trim())
-        .filter(Boolean);
-      const body = { ...rest, features };
-      if (isEditing) {
-        const res = await apiRequest("PATCH", `/api/admin/plans/${plan!.id}`, body);
-        return res.json();
-      } else {
-        const res = await apiRequest("POST", "/api/admin/plans", body);
-        return res.json();
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/plans"] });
-      toast({ title: isEditing ? "Plano atualizado!" : "Plano criado!" });
-      onClose();
-    },
-    onError: () => {
-      toast({ title: "Erro ao salvar plano", variant: "destructive" });
-    },
-  });
-
-  const originalFetch = window.fetch;
   async function submit(values: PlanFormValues) {
     const { featuresText, ...rest } = values;
-    const features = featuresText
-      .split("\n")
-      .map((f) => f.trim())
-      .filter(Boolean);
+    const features = featuresText.split("\n").map((f) => f.trim()).filter(Boolean);
     const body = { ...rest, features };
     try {
-      if (isEditing) {
-        await fetch(`/api/admin/plans/${plan!.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "x-admin-password": password,
-          },
-          body: JSON.stringify(body),
-        }).then((r) => { if (!r.ok) throw new Error(); return r.json(); });
-      } else {
-        await fetch("/api/admin/plans", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-admin-password": password,
-          },
-          body: JSON.stringify(body),
-        }).then((r) => { if (!r.ok) throw new Error(); return r.json(); });
-      }
+      const url = isEditing ? `/api/admin/plans/${plan!.id}` : "/api/admin/plans";
+      const method = isEditing ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error();
       queryClient.invalidateQueries({ queryKey: ["/api/plans"] });
       toast({ title: isEditing ? "Plano atualizado!" : "Plano criado!" });
       onClose();
@@ -261,6 +238,12 @@ function PlanDialog({
       toast({ title: "Erro ao salvar plano", variant: "destructive" });
     }
   }
+
+  const categoryLabel: Record<string, string> = {
+    internet: "Internet",
+    tv: "TV / Canais",
+    adicionais: "Adicionais",
+  };
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -306,7 +289,7 @@ function PlanDialog({
                       </FormControl>
                       <SelectContent className="bg-gray-800 border-gray-700 text-white">
                         <SelectItem value="internet">Internet</SelectItem>
-                        <SelectItem value="tv">TV</SelectItem>
+                        <SelectItem value="tv">TV / Canais</SelectItem>
                         <SelectItem value="adicionais">Adicionais</SelectItem>
                       </SelectContent>
                     </Select>
@@ -321,11 +304,23 @@ function PlanDialog({
                 name="speed"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-300">Velocidade / Info</FormLabel>
+                    <FormLabel className="text-gray-300">
+                      {form.watch("category") === "internet"
+                        ? "Velocidade"
+                        : form.watch("category") === "tv"
+                        ? "Qtd. de Canais"
+                        : "Tipo / Info"}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         data-testid="input-plan-speed"
-                        placeholder="Ex: 500 MEGA"
+                        placeholder={
+                          form.watch("category") === "internet"
+                            ? "Ex: 500 MEGA"
+                            : form.watch("category") === "tv"
+                            ? "Ex: 150+ Canais"
+                            : "Ex: Câmera"
+                        }
                         {...field}
                         className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
                       />
@@ -437,40 +432,147 @@ function PlanDialog({
   );
 }
 
-// ─── Category Badge ───────────────────────────────────────────────────────────
+// ─── Delete Confirm ───────────────────────────────────────────────────────────
 
-function CategoryBadge({ category }: { category: string | null }) {
-  if (category === "internet")
-    return (
-      <Badge className="bg-blue-600/20 text-blue-400 border-blue-600/30 gap-1">
-        <Wifi className="w-3 h-3" /> Internet
-      </Badge>
-    );
-  if (category === "tv")
-    return (
-      <Badge className="bg-purple-600/20 text-purple-400 border-purple-600/30 gap-1">
-        <Tv className="w-3 h-3" /> TV
-      </Badge>
-    );
+function DeleteDialog({
+  id,
+  onCancel,
+  onConfirm,
+  loading,
+}: {
+  id: number | null;
+  onCancel: () => void;
+  onConfirm: () => void;
+  loading: boolean;
+}) {
   return (
-    <Badge className="bg-orange-600/20 text-orange-400 border-orange-600/30 gap-1">
-      <Package className="w-3 h-3" /> Adicional
-    </Badge>
+    <AlertDialog open={id !== null} onOpenChange={(v) => !v && onCancel()}>
+      <AlertDialogContent className="bg-gray-900 border-gray-800 text-white">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
+          <AlertDialogDescription className="text-gray-400">
+            Esta ação não pode ser desfeita. O plano será removido permanentemente.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel
+            data-testid="button-cancel-delete"
+            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+          >
+            Cancelar
+          </AlertDialogCancel>
+          <AlertDialogAction
+            data-testid="button-confirm-delete"
+            onClick={onConfirm}
+            disabled={loading}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            {loading ? "Excluindo..." : "Excluir"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
-// ─── Plans Tab ───────────────────────────────────────────────────────────────
+// ─── Plan Card ────────────────────────────────────────────────────────────────
 
-function PlansTab({ password }: { password: string }) {
+function PlanCard({
+  plan,
+  accentColor,
+  onEdit,
+  onDelete,
+}: {
+  plan: Plan;
+  accentColor: string;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div
+      data-testid={`card-plan-${plan.id}`}
+      className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col gap-3 hover:border-gray-700 transition-colors"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-white text-sm">{plan.name}</span>
+            {plan.isHighlighted && (
+              <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 gap-1 text-xs">
+                <Star className="w-2.5 h-2.5 fill-yellow-400" /> Popular
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-3 mt-1 flex-wrap">
+            <span className={`text-xs font-medium ${accentColor}`}>{plan.speed}</span>
+            <span className="text-gray-300 text-sm font-bold">R$ {plan.price}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <Button
+            data-testid={`button-edit-plan-${plan.id}`}
+            size="sm"
+            variant="ghost"
+            onClick={onEdit}
+            className="text-gray-400 hover:text-white hover:bg-gray-700 h-8 w-8 p-0"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </Button>
+          <Button
+            data-testid={`button-delete-plan-${plan.id}`}
+            size="sm"
+            variant="ghost"
+            onClick={onDelete}
+            className="text-gray-400 hover:text-red-400 hover:bg-red-900/20 h-8 w-8 p-0"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      </div>
+      {plan.features.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {plan.features.slice(0, 3).map((f, i) => (
+            <span
+              key={i}
+              className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full"
+            >
+              {f}
+            </span>
+          ))}
+          {plan.features.length > 3 && (
+            <span className="text-xs bg-gray-800 text-gray-500 px-2 py-0.5 rounded-full">
+              +{plan.features.length - 3}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Category Section ─────────────────────────────────────────────────────────
+
+function CategorySection({
+  plans,
+  category,
+  label,
+  icon,
+  accentColor,
+  password,
+  isLoading,
+}: {
+  plans: Plan[];
+  category: string;
+  label: string;
+  icon: React.ReactNode;
+  accentColor: string;
+  password: string;
+  isLoading: boolean;
+}) {
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [filterCategory, setFilterCategory] = useState<string>("all");
-
-  const { data: plans = [], isLoading } = useQuery<Plan[]>({
-    queryKey: ["/api/plans"],
-  });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -490,191 +592,80 @@ function PlansTab({ password }: { password: string }) {
     },
   });
 
-  const filtered =
-    filterCategory === "all"
-      ? plans
-      : plans.filter((p) => p.category === filterCategory);
-
-  const counts = {
-    all: plans.length,
-    internet: plans.filter((p) => p.category === "internet").length,
-    tv: plans.filter((p) => p.category === "tv").length,
-    adicionais: plans.filter((p) => p.category === "adicionais").length,
-  };
+  const categoryPlans = plans.filter((p) => p.category === category);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3 justify-between">
-        <div className="flex gap-2 flex-wrap">
-          {(["all", "internet", "tv", "adicionais"] as const).map((cat) => (
-            <Button
-              key={cat}
-              data-testid={`filter-${cat}`}
-              variant={filterCategory === cat ? "default" : "outline"}
-              size="sm"
-              onClick={() => setFilterCategory(cat)}
-              className={
-                filterCategory === cat
-                  ? "bg-blue-600 text-white"
-                  : "border-gray-700 text-gray-400 hover:bg-gray-800"
-              }
-            >
-              {cat === "all" ? "Todos" : cat === "internet" ? "Internet" : cat === "tv" ? "TV" : "Adicionais"}
-              <span className="ml-1.5 text-xs opacity-70">
-                ({counts[cat]})
-              </span>
-            </Button>
-          ))}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-white font-semibold">
+            {icon}
+            {label}
+          </div>
+          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">
+            {categoryPlans.length} planos
+          </span>
         </div>
         <Button
-          data-testid="button-new-plan"
+          data-testid={`button-new-${category}`}
+          size="sm"
           onClick={() => { setEditingPlan(null); setDialogOpen(true); }}
-          className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5 h-8"
         >
-          <Plus className="w-4 h-4" /> Novo Plano
+          <Plus className="w-3.5 h-3.5" /> Novo Plano
         </Button>
       </div>
 
-      <div className="rounded-xl border border-gray-800 overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-gray-800 hover:bg-transparent">
-              <TableHead className="text-gray-400">Nome</TableHead>
-              <TableHead className="text-gray-400">Categoria</TableHead>
-              <TableHead className="text-gray-400">Velocidade</TableHead>
-              <TableHead className="text-gray-400">Preço</TableHead>
-              <TableHead className="text-gray-400">Destaque</TableHead>
-              <TableHead className="text-gray-400 text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center text-gray-500 py-10">
-                  Carregando...
-                </TableCell>
-              </TableRow>
-            ) : filtered.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center text-gray-500 py-10">
-                  Nenhum plano encontrado
-                </TableCell>
-              </TableRow>
-            ) : (
-              filtered.map((plan) => (
-                <TableRow
-                  key={plan.id}
-                  data-testid={`row-plan-${plan.id}`}
-                  className="border-gray-800 hover:bg-gray-800/50"
-                >
-                  <TableCell className="font-medium text-white">
-                    {plan.name}
-                  </TableCell>
-                  <TableCell>
-                    <CategoryBadge category={plan.category} />
-                  </TableCell>
-                  <TableCell className="text-gray-300">{plan.speed}</TableCell>
-                  <TableCell className="text-gray-300">R$ {plan.price}</TableCell>
-                  <TableCell>
-                    {plan.isHighlighted ? (
-                      <span className="flex items-center gap-1 text-yellow-400 text-sm">
-                        <Star className="w-3.5 h-3.5 fill-yellow-400" /> Sim
-                      </span>
-                    ) : (
-                      <span className="text-gray-500 text-sm">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        data-testid={`button-edit-plan-${plan.id}`}
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => { setEditingPlan(plan); setDialogOpen(true); }}
-                        className="text-gray-400 hover:text-white hover:bg-gray-700"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        data-testid={`button-delete-plan-${plan.id}`}
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setDeletingId(plan.id)}
-                        className="text-gray-400 hover:text-red-400 hover:bg-red-900/20"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4 animate-pulse h-28" />
+          ))}
+        </div>
+      ) : categoryPlans.length === 0 ? (
+        <div className="border-2 border-dashed border-gray-800 rounded-xl p-8 text-center">
+          <p className="text-gray-500 text-sm mb-3">Nenhum plano cadastrado ainda</p>
+          <Button
+            size="sm"
+            onClick={() => { setEditingPlan(null); setDialogOpen(true); }}
+            className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5"
+          >
+            <Plus className="w-3.5 h-3.5" /> Adicionar primeiro plano
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {categoryPlans.map((plan) => (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              accentColor={accentColor}
+              onEdit={() => { setEditingPlan(plan); setDialogOpen(true); }}
+              onDelete={() => setDeletingId(plan.id)}
+            />
+          ))}
+        </div>
+      )}
 
       <PlanDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         plan={editingPlan}
         password={password}
+        defaultCategory={category}
       />
 
-      <AlertDialog open={deletingId !== null} onOpenChange={(v) => !v && setDeletingId(null)}>
-        <AlertDialogContent className="bg-gray-900 border-gray-800 text-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
-              Esta ação não pode ser desfeita. O plano será removido permanentemente.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              data-testid="button-cancel-delete"
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
-            >
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              data-testid="button-confirm-delete"
-              onClick={() => deletingId !== null && deleteMutation.mutate(deletingId)}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteDialog
+        id={deletingId}
+        onCancel={() => setDeletingId(null)}
+        onConfirm={() => deletingId !== null && deleteMutation.mutate(deletingId)}
+        loading={deleteMutation.isPending}
+      />
     </div>
   );
 }
 
-// ─── Settings Tab ─────────────────────────────────────────────────────────────
-
-interface ChannelItem {
-  name: string;
-  category: string;
-}
-
-function serializeChannels(channels: ChannelItem[]): string {
-  return channels.map((c) => `${c.category}: ${c.name}`).join("\n");
-}
-
-function parseChannels(text: string): ChannelItem[] {
-  return text
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-    .map((line) => {
-      const colonIdx = line.indexOf(": ");
-      if (colonIdx === -1) return null;
-      return {
-        category: line.slice(0, colonIdx).trim(),
-        name: line.slice(colonIdx + 2).trim(),
-      };
-    })
-    .filter((c): c is ChannelItem => c !== null && c.name.length > 0);
-}
+// ─── Channel Editor ───────────────────────────────────────────────────────────
 
 function ChannelEditor({
   label,
@@ -692,12 +683,14 @@ function ChannelEditor({
   const { toast } = useToast();
   const [text, setText] = useState(initialValue);
   const [saving, setSaving] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     setText(initialValue);
   }, [initialValue]);
 
   const channelCount = parseChannels(text).length;
+  const isDirty = text !== initialValue;
 
   async function save() {
     setSaving(true);
@@ -705,10 +698,7 @@ function ChannelEditor({
       const channels = parseChannels(text);
       const res = await fetch(`/api/admin/settings/${settingKey}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-password": password,
-        },
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
         body: JSON.stringify({ value: JSON.stringify(channels) }),
       });
       if (!res.ok) throw new Error();
@@ -722,38 +712,271 @@ function ChannelEditor({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-gray-300 text-sm font-medium">{label}</p>
-          <p className="text-gray-500 text-xs">{description}</p>
-        </div>
-        <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">
-          {channelCount} canais
-        </span>
-      </div>
-      <textarea
-        data-testid={`textarea-channels-${settingKey}`}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        rows={10}
-        placeholder={"Categoria: Nome do Canal\nCategoria: Outro Canal"}
-        className="w-full rounded-md bg-gray-800 border border-gray-700 text-white text-xs placeholder:text-gray-600 px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
-      />
-      <Button
-        data-testid={`button-save-channels-${settingKey}`}
-        onClick={save}
-        disabled={saving}
-        size="sm"
-        className="bg-blue-600 hover:bg-blue-700 text-white"
+    <div className="border border-gray-800 rounded-xl overflow-hidden">
+      <button
+        data-testid={`toggle-channels-${settingKey}`}
+        onClick={() => setExpanded((v) => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-gray-900 hover:bg-gray-800/60 transition-colors text-left"
       >
-        {saving ? "Salvando..." : `Salvar lista`}
-      </Button>
+        <div className="flex items-center gap-3">
+          <List className="w-4 h-4 text-purple-400" />
+          <div>
+            <p className="text-white text-sm font-medium">{label}</p>
+            <p className="text-gray-500 text-xs">{description}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {isDirty && (
+            <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">
+              não salvo
+            </span>
+          )}
+          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">
+            {channelCount} canais
+          </span>
+          {expanded ? (
+            <ChevronUp className="w-4 h-4 text-gray-500" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-gray-500" />
+          )}
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="px-4 py-4 bg-gray-950 border-t border-gray-800 space-y-3">
+          <p className="text-xs text-gray-500">
+            Formato por linha:{" "}
+            <code className="bg-gray-800 text-gray-300 px-1 py-0.5 rounded">
+              Categoria: Nome do Canal
+            </code>
+          </p>
+          <textarea
+            data-testid={`textarea-channels-${settingKey}`}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={12}
+            placeholder={"Abertos: Band\nAbertos: SBT\nEsportes: ESPN"}
+            className="w-full rounded-md bg-gray-900 border border-gray-700 text-white text-xs placeholder:text-gray-600 px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
+          />
+          <Button
+            data-testid={`button-save-channels-${settingKey}`}
+            onClick={save}
+            disabled={saving}
+            size="sm"
+            className="bg-purple-600 hover:bg-purple-700 text-white gap-2"
+          >
+            <Save className="w-3.5 h-3.5" />
+            {saving ? "Salvando..." : "Salvar lista de canais"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
 
-function SettingsTab({ password, onPasswordChange }: { password: string; onPasswordChange: (p: string) => void }) {
+// ─── Internet Tab ─────────────────────────────────────────────────────────────
+
+function InternetTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boolean; password: string }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-3 gap-3">
+        <StatCard
+          label="Total de Planos"
+          value={plans.filter((p) => p.category === "internet").length}
+          icon={<Wifi className="w-4 h-4 text-blue-400" />}
+          color="text-blue-400"
+        />
+        <StatCard
+          label="Menor Preço"
+          value={
+            plans
+              .filter((p) => p.category === "internet")
+              .sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0]
+              ?.price
+              ? `R$ ${plans.filter((p) => p.category === "internet").sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0].price}`
+              : "—"
+          }
+          icon={<DollarSign className="w-4 h-4 text-green-400" />}
+          color="text-green-400"
+        />
+        <StatCard
+          label="Maior Velocidade"
+          value={
+            plans
+              .filter((p) => p.category === "internet")
+              .sort((a, b) => parseInt(b.speed) - parseInt(a.speed))[0]?.speed ?? "—"
+          }
+          icon={<Zap className="w-4 h-4 text-yellow-400" />}
+          color="text-yellow-400"
+        />
+      </div>
+      <CategorySection
+        plans={plans}
+        category="internet"
+        label="Planos de Internet"
+        icon={<Wifi className="w-4 h-4 text-blue-400" />}
+        accentColor="text-blue-400"
+        password={password}
+        isLoading={isLoading}
+      />
+    </div>
+  );
+}
+
+// ─── TV Tab ───────────────────────────────────────────────────────────────────
+
+function TVTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boolean; password: string }) {
+  const { data: channelsData } = useQuery<{
+    light: ChannelItem[];
+    plus: ChannelItem[];
+    ultra: ChannelItem[];
+    hbo: ChannelItem[];
+  }>({ queryKey: ["/api/channels"] });
+
+  const lightInitial = channelsData ? serializeChannels(channelsData.light) : "";
+  const plusInitial = channelsData ? serializeChannels(channelsData.plus) : "";
+  const ultraInitial = channelsData ? serializeChannels(channelsData.ultra) : "";
+  const hboInitial = channelsData ? serializeChannels(channelsData.hbo) : "";
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard
+          label="Planos de TV"
+          value={plans.filter((p) => p.category === "tv").length}
+          icon={<Tv className="w-4 h-4 text-purple-400" />}
+          color="text-purple-400"
+        />
+        <StatCard
+          label="Total de Canais (Ultra)"
+          value={channelsData ? channelsData.ultra.length : "—"}
+          icon={<List className="w-4 h-4 text-purple-400" />}
+          color="text-purple-400"
+        />
+      </div>
+
+      <CategorySection
+        plans={plans}
+        category="tv"
+        label="Planos de TV / Canais"
+        icon={<Tv className="w-4 h-4 text-purple-400" />}
+        accentColor="text-purple-400"
+        password={password}
+        isLoading={isLoading}
+      />
+
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <List className="w-4 h-4 text-purple-400" />
+          <h3 className="text-white font-semibold">Canais por Plano</h3>
+          <span className="text-xs text-gray-500">— clique para expandir e editar</span>
+        </div>
+
+        <ChannelEditor
+          label="Canais Light"
+          settingKey="channels_light"
+          description="Plano 'Canais Light' — 100+ canais"
+          password={password}
+          initialValue={lightInitial}
+        />
+        <ChannelEditor
+          label="Canais Plus"
+          settingKey="channels_plus"
+          description="Plano 'Canais Plus' — 150+ canais"
+          password={password}
+          initialValue={plusInitial}
+        />
+        <ChannelEditor
+          label="Canais Ultra"
+          settingKey="channels_ultra"
+          description="Plano 'Canais Ultra' — 200+ canais"
+          password={password}
+          initialValue={ultraInitial}
+        />
+        <ChannelEditor
+          label="Canais Ultra + HBO"
+          settingKey="channels_hbo"
+          description="Plano 'Canais Ultra 1P + HBO' — 200+ canais + HBO"
+          password={password}
+          initialValue={hboInitial}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Adicionais Tab ───────────────────────────────────────────────────────────
+
+function AdicionaisTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boolean; password: string }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard
+          label="Serviços Adicionais"
+          value={plans.filter((p) => p.category === "adicionais").length}
+          icon={<Package className="w-4 h-4 text-orange-400" />}
+          color="text-orange-400"
+        />
+        <StatCard
+          label="Menor Preço"
+          value={
+            plans
+              .filter((p) => p.category === "adicionais")
+              .sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0]
+              ?.price
+              ? `R$ ${plans.filter((p) => p.category === "adicionais").sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0].price}`
+              : "—"
+          }
+          icon={<DollarSign className="w-4 h-4 text-green-400" />}
+          color="text-green-400"
+        />
+      </div>
+      <CategorySection
+        plans={plans}
+        category="adicionais"
+        label="Serviços Adicionais"
+        icon={<Package className="w-4 h-4 text-orange-400" />}
+        accentColor="text-orange-400"
+        password={password}
+        isLoading={isLoading}
+      />
+    </div>
+  );
+}
+
+// ─── Stat Card ────────────────────────────────────────────────────────────────
+
+function StatCard({
+  label,
+  value,
+  icon,
+  color,
+}: {
+  label: string;
+  value: string | number;
+  icon: React.ReactNode;
+  color: string;
+}) {
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+      <div className="flex items-center gap-2 mb-1">
+        {icon}
+        <span className="text-xs text-gray-500">{label}</span>
+      </div>
+      <p className={`text-xl font-bold ${color}`}>{value}</p>
+    </div>
+  );
+}
+
+// ─── Settings Tab ─────────────────────────────────────────────────────────────
+
+function SettingsTab({
+  password,
+  onPasswordChange,
+}: {
+  password: string;
+  onPasswordChange: (p: string) => void;
+}) {
   const { toast } = useToast();
   const [whatsapp, setWhatsapp] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
@@ -763,7 +986,7 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingPw, setSavingPw] = useState(false);
 
-  const { data: settings = [], isLoading } = useQuery<{ id: number; key: string; value: string }[]>({
+  const { data: settingsList = [], isLoading } = useQuery<{ id: number; key: string; value: string }[]>({
     queryKey: ["/api/admin/settings"],
     queryFn: async () => {
       const res = await fetch("/api/admin/settings", {
@@ -774,18 +997,19 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
     },
   });
 
-  const { data: channelsData } = useQuery<{ plus: ChannelItem[]; ultra: ChannelItem[]; hbo: ChannelItem[] }>({
-    queryKey: ["/api/channels"],
-  });
-
   useEffect(() => {
-    const waSetting = settings.find((s) => s.key === "whatsapp_number");
-    if (waSetting) setWhatsapp(waSetting.value);
-    const logoSetting = settings.find((s) => s.key === "logo_url");
-    if (logoSetting !== undefined) setLogoUrl(logoSetting.value);
-  }, [settings]);
+    const wa = settingsList.find((s) => s.key === "whatsapp_number");
+    if (wa) setWhatsapp(wa.value);
+    const logo = settingsList.find((s) => s.key === "logo_url");
+    if (logo !== undefined) setLogoUrl(logo.value);
+  }, [settingsList]);
 
-  async function saveSetting(key: string, value: string, label: string, setSaving: (v: boolean) => void) {
+  async function saveSetting(
+    key: string,
+    value: string,
+    label: string,
+    setSaving: (v: boolean) => void
+  ) {
     setSaving(true);
     try {
       const res = await fetch(`/api/admin/settings/${key}`, {
@@ -835,62 +1059,11 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
     }
   }
 
-  const lightInitial = channelsData ? serializeChannels(channelsData.light) : "";
-  const plusInitial = channelsData ? serializeChannels(channelsData.plus) : "";
-  const ultraInitial = channelsData ? serializeChannels(channelsData.ultra) : "";
-  const hboInitial = channelsData ? serializeChannels(channelsData.hbo) : "";
-
   return (
-    <div className="space-y-6 max-w-2xl">
-      {/* Change Password */}
-      <Card className="bg-gray-900 border-gray-800">
-        <CardHeader>
-          <CardTitle className="text-white text-base flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-            Trocar Senha do Painel
-          </CardTitle>
-          <p className="text-gray-400 text-sm">Altere a senha de acesso ao painel administrativo.</p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Nova Senha</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Mínimo 6 caracteres"
-              data-testid="input-new-password"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Confirmar Nova Senha</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Repita a nova senha"
-              data-testid="input-confirm-password"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
-          <button
-            onClick={changePassword}
-            disabled={savingPw || !newPassword || !confirmPassword}
-            data-testid="button-change-password"
-            className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-gray-900 font-semibold rounded-lg text-sm transition-colors"
-          >
-            {savingPw ? "Salvando..." : "Alterar Senha"}
-          </button>
-        </CardContent>
-      </Card>
-
+    <div className="space-y-5 max-w-xl">
       {/* WhatsApp */}
       <Card className="bg-gray-900 border-gray-800">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="text-white text-base flex items-center gap-2">
             <svg viewBox="0 0 24 24" className="w-5 h-5 fill-green-400" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -901,29 +1074,27 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
             Número usado nos botões "Contratar" e "Fale com Consultor"
           </p>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {isLoading ? (
-            <p className="text-gray-500 text-sm">Carregando...</p>
+            <div className="h-10 bg-gray-800 rounded-md animate-pulse" />
           ) : (
             <>
-              <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="text-gray-300">Número (com código do país)</Label>
-                <Input
-                  id="whatsapp"
-                  data-testid="input-whatsapp-number"
-                  value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
-                  placeholder="Ex: 5553999789222"
-                  className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                />
-                <p className="text-xs text-gray-500">
-                  Formato: código do país + DDD + número. Ex: <code className="text-gray-400">5553999789222</code>
-                </p>
-              </div>
+              <Input
+                data-testid="input-whatsapp-number"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                placeholder="Ex: 5553999789222"
+                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+              />
+              <p className="text-xs text-gray-500">
+                Formato: código do país + DDD + número.{" "}
+                <code className="text-gray-400">5553999789222</code>
+              </p>
               <Button
                 data-testid="button-save-whatsapp"
                 onClick={() => saveSetting("whatsapp_number", whatsapp, "WhatsApp", setSavingWa)}
                 disabled={savingWa}
+                size="sm"
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 {savingWa ? "Salvando..." : "Salvar número"}
@@ -935,9 +1106,9 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
 
       {/* Logo */}
       <Card className="bg-gray-900 border-gray-800">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="text-white text-base flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-blue-400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-blue-400" xmlns="http://www.w3.org/2000/svg">
               <path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zm2 2v10h12V7H6zm2 6.5 2.5-3 2 2.5 2.5-3.5 3 4H8z" />
             </svg>
             Logo do Site
@@ -946,35 +1117,29 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
             URL de uma imagem para substituir o logo de texto "3D FIBRA"
           </p>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {isLoading ? (
-            <p className="text-gray-500 text-sm">Carregando...</p>
+            <div className="h-10 bg-gray-800 rounded-md animate-pulse" />
           ) : (
             <>
-              <div className="space-y-2">
-                <Label htmlFor="logo-url" className="text-gray-300">URL da imagem</Label>
-                <Input
-                  id="logo-url"
-                  data-testid="input-logo-url"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                  placeholder="https://exemplo.com/logo.png"
-                  className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                />
-                <p className="text-xs text-gray-500">
-                  Deixe em branco para usar o logo de texto padrão. Recomendado: PNG ou SVG com fundo transparente.
-                </p>
-              </div>
+              <Input
+                data-testid="input-logo-url"
+                value={logoUrl}
+                onChange={(e) => setLogoUrl(e.target.value)}
+                placeholder="https://exemplo.com/logo.png"
+                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+              />
+              <p className="text-xs text-gray-500">
+                Deixe em branco para usar o logo de texto padrão.
+              </p>
               {logoUrl && (
-                <div className="p-4 rounded-lg bg-gray-800 border border-gray-700">
+                <div className="p-3 rounded-lg bg-gray-800 border border-gray-700">
                   <p className="text-xs text-gray-500 mb-2">Pré-visualização:</p>
                   <img
                     src={logoUrl}
                     alt="Preview do logo"
                     className="h-10 w-auto object-contain"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
                 </div>
               )}
@@ -982,6 +1147,7 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
                 data-testid="button-save-logo"
                 onClick={() => saveSetting("logo_url", logoUrl, "Logo", setSavingLogo)}
                 disabled={savingLogo}
+                size="sm"
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {savingLogo ? "Salvando..." : "Salvar logo"}
@@ -991,91 +1157,50 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
         </CardContent>
       </Card>
 
-      {/* Channel Lists */}
+      {/* Change Password */}
       <Card className="bg-gray-900 border-gray-800">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="text-white text-base flex items-center gap-2">
-            <Tv className="w-5 h-5 text-purple-400" />
-            Lista de Canais por Plano de TV
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            Trocar Senha do Painel
           </CardTitle>
-          <p className="text-gray-400 text-sm">
-            Edite os canais exibidos em cada plano. Formato por linha:{" "}
-            <code className="text-gray-300 bg-gray-800 px-1 rounded">Categoria: Nome do Canal</code>
-          </p>
+          <p className="text-gray-400 text-sm">Altere a senha de acesso ao painel administrativo.</p>
         </CardHeader>
-        <CardContent>
-          {!channelsData ? (
-            <p className="text-gray-500 text-sm">Carregando listas de canais...</p>
-          ) : (
-            <Tabs defaultValue="light">
-              <TabsList className="bg-gray-800 border border-gray-700 mb-6 flex-wrap h-auto gap-1">
-                <TabsTrigger
-                  value="light"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
-                >
-                  Canais Light
-                </TabsTrigger>
-                <TabsTrigger
-                  value="plus"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
-                >
-                  Canais Plus
-                </TabsTrigger>
-                <TabsTrigger
-                  value="ultra"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
-                >
-                  Canais Ultra
-                </TabsTrigger>
-                <TabsTrigger
-                  value="hbo"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 text-xs"
-                >
-                  Ultra + HBO
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="light">
-                <ChannelEditor
-                  label="Canais Light"
-                  settingKey="channels_light"
-                  description="Canais do plano 'Canais Light' (100+ canais)"
-                  password={password}
-                  initialValue={lightInitial}
-                />
-              </TabsContent>
-
-              <TabsContent value="plus">
-                <ChannelEditor
-                  label="Canais Plus"
-                  settingKey="channels_plus"
-                  description="Canais do plano 'Canais Plus' (150+ canais)"
-                  password={password}
-                  initialValue={plusInitial}
-                />
-              </TabsContent>
-
-              <TabsContent value="ultra">
-                <ChannelEditor
-                  label="Canais Ultra"
-                  settingKey="channels_ultra"
-                  description="Canais do plano 'Canais Ultra' (200+ canais)"
-                  password={password}
-                  initialValue={ultraInitial}
-                />
-              </TabsContent>
-
-              <TabsContent value="hbo">
-                <ChannelEditor
-                  label="Canais Ultra + HBO"
-                  settingKey="channels_hbo"
-                  description="Canais do plano 'Canais Ultra 1P + HBO' (200+ canais + HBO)"
-                  password={password}
-                  initialValue={hboInitial}
-                />
-              </TabsContent>
-            </Tabs>
-          )}
+        <CardContent className="space-y-3">
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">Nova Senha</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Mínimo 6 caracteres"
+              data-testid="input-new-password"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">Confirmar Nova Senha</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Repita a nova senha"
+              data-testid="input-confirm-password"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            />
+          </div>
+          <Button
+            onClick={changePassword}
+            disabled={savingPw || !newPassword || !confirmPassword}
+            data-testid="button-change-password"
+            size="sm"
+            className="bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold"
+          >
+            {savingPw ? "Salvando..." : "Alterar Senha"}
+          </Button>
         </CardContent>
       </Card>
     </div>
@@ -1089,64 +1214,108 @@ export default function Admin() {
     sessionStorage.getItem(SESSION_KEY)
   );
 
+  const { data: plans = [], isLoading } = useQuery<Plan[]>({
+    queryKey: ["/api/plans"],
+    enabled: !!password,
+  });
+
   function handleLogout() {
     sessionStorage.removeItem(SESSION_KEY);
     setPassword(null);
   }
 
-  if (!password) {
-    return <LoginScreen onLogin={setPassword} />;
-  }
+  if (!password) return <LoginScreen onLogin={setPassword} />;
+
+  const totalPlans = plans.length;
+  const internetCount = plans.filter((p) => p.category === "internet").length;
+  const tvCount = plans.filter((p) => p.category === "tv").length;
+  const adicionaisCount = plans.filter((p) => p.category === "adicionais").length;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Top bar */}
-      <header className="border-b border-gray-800 bg-gray-900">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="border-b border-gray-800 bg-gray-900 sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-blue-500 font-bold text-xl tracking-tight">3D</span>
+            <span className="text-blue-500 font-bold text-lg tracking-tight">3D</span>
             <span className="text-white font-semibold">FIBRA</span>
-            <span className="text-gray-600 mx-1">|</span>
+            <span className="text-gray-700 mx-1">|</span>
             <span className="text-gray-400 text-sm">Painel Administrativo</span>
           </div>
-          <Button
-            data-testid="button-logout"
-            variant="ghost"
-            size="sm"
-            onClick={handleLogout}
-            className="text-gray-400 hover:text-white hover:bg-gray-800 gap-2"
-          >
-            <LogOut className="w-4 h-4" /> Sair
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-4 text-xs text-gray-500">
+              <span>{totalPlans} planos cadastrados</span>
+            </div>
+            <Button
+              data-testid="button-logout"
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-gray-400 hover:text-white hover:bg-gray-800 gap-2"
+            >
+              <LogOut className="w-4 h-4" /> Sair
+            </Button>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">Gerenciamento do Site</h1>
-          <p className="text-gray-400 mt-1">Edite planos e configurações do site 3D FIBRA</p>
+          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <p className="text-gray-400 text-sm mt-0.5">
+            Gerencie os planos e configurações do site 3D FIBRA
+          </p>
         </div>
 
-        <Tabs defaultValue="plans">
-          <TabsList className="bg-gray-900 border border-gray-800 mb-6">
+        <Tabs defaultValue="internet">
+          <TabsList className="bg-gray-900 border border-gray-800 mb-6 h-auto p-1 flex-wrap gap-1">
             <TabsTrigger
-              value="plans"
-              data-testid="tab-plans"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-400"
+              value="internet"
+              data-testid="tab-internet"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-400 gap-2"
             >
-              <Wifi className="w-4 h-4 mr-2" /> Planos
+              <Wifi className="w-4 h-4" />
+              Internet
+              <span className="text-xs opacity-70">({internetCount})</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="tv"
+              data-testid="tab-tv"
+              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 gap-2"
+            >
+              <Tv className="w-4 h-4" />
+              TV / Canais
+              <span className="text-xs opacity-70">({tvCount})</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="adicionais"
+              data-testid="tab-adicionais"
+              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white text-gray-400 gap-2"
+            >
+              <Package className="w-4 h-4" />
+              Adicionais
+              <span className="text-xs opacity-70">({adicionaisCount})</span>
             </TabsTrigger>
             <TabsTrigger
               value="settings"
               data-testid="tab-settings"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-400"
+              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400 gap-2"
             >
-              <Settings className="w-4 h-4 mr-2" /> Configurações
+              <Settings className="w-4 h-4" />
+              Configurações
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="plans">
-            <PlansTab password={password} />
+          <TabsContent value="internet">
+            <InternetTab plans={plans} isLoading={isLoading} password={password} />
+          </TabsContent>
+
+          <TabsContent value="tv">
+            <TVTab plans={plans} isLoading={isLoading} password={password} />
+          </TabsContent>
+
+          <TabsContent value="adicionais">
+            <AdicionaisTab plans={plans} isLoading={isLoading} password={password} />
           </TabsContent>
 
           <TabsContent value="settings">
