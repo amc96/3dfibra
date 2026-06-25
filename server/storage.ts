@@ -1,6 +1,17 @@
-import { plans, settings, type Plan, type InsertPlan, type UpdatePlan, type Setting } from "@shared/schema";
+import {
+  plans,
+  settings,
+  tvChannels,
+  type Plan,
+  type InsertPlan,
+  type UpdatePlan,
+  type Setting,
+  type TvChannel,
+  type InsertTvChannel,
+  type UpdateTvChannel,
+} from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { PLUS_CHANNELS, ULTRA_CHANNELS, HBO_CHANNELS } from "@shared/channels";
 
 export interface IStorage {
@@ -14,6 +25,16 @@ export interface IStorage {
   getSetting(key: string): Promise<string | undefined>;
   setSetting(key: string, value: string): Promise<void>;
   getAllSettings(): Promise<Setting[]>;
+  // TV Channels
+  getTvChannels(): Promise<TvChannel[]>;
+  getTvChannel(id: number): Promise<TvChannel | undefined>;
+  createTvChannel(channel: InsertTvChannel): Promise<TvChannel>;
+  updateTvChannel(id: number, channel: UpdateTvChannel): Promise<TvChannel | undefined>;
+  deleteTvChannel(id: number): Promise<boolean>;
+  seedTvChannels(): Promise<void>;
+  // Plan-channel assignments (stored as setting plan_channels_{planId})
+  getPlanChannelIds(planId: number): Promise<number[]>;
+  setPlanChannelIds(planId: number, channelIds: number[]): Promise<void>;
 }
 
 const INITIAL_PLANS: InsertPlan[] = [
@@ -141,9 +162,41 @@ const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "channels_hbo", value: JSON.stringify(HBO_CHANNELS) },
 ];
 
+// Seed TV channels from the existing ULTRA_CHANNELS list (deduplicated by name)
+function buildInitialTvChannels(): InsertTvChannel[] {
+  const seen = new Set<string>();
+  const result: InsertTvChannel[] = [];
+  let order = 0;
+  for (const ch of ULTRA_CHANNELS) {
+    if (!seen.has(ch.name)) {
+      seen.add(ch.name);
+      result.push({
+        name: ch.name,
+        logoUrl: "",
+        group: ch.category,
+        sortOrder: order++,
+      });
+    }
+  }
+  // Add HBO-only channels
+  for (const ch of HBO_CHANNELS) {
+    if (!seen.has(ch.name)) {
+      seen.add(ch.name);
+      result.push({
+        name: ch.name,
+        logoUrl: "",
+        group: ch.category,
+        sortOrder: order++,
+      });
+    }
+  }
+  return result;
+}
+
 export class HybridStorage implements IStorage {
   private memPlans: Plan[] = [];
   private memSettings: Map<string, string> = new Map();
+  private memTvChannels: TvChannel[] = [];
   private useMemoryFallback: boolean = false;
 
   constructor() {
@@ -158,11 +211,15 @@ export class HybridStorage implements IStorage {
     for (const s of DEFAULT_SETTINGS) {
       this.memSettings.set(s.key, s.value);
     }
+    const initialChannels = buildInitialTvChannels();
+    this.memTvChannels = initialChannels.map((c, i) => ({ ...c, id: i + 1 }));
     if (!process.env.DATABASE_URL) {
       console.warn("DATABASE_URL not set, using memory storage fallback");
       this.useMemoryFallback = true;
     }
   }
+
+  // ─── Plans ─────────────────────────────────────────────────────────────────
 
   async getPlans(): Promise<Plan[]> {
     if (this.useMemoryFallback) return this.memPlans;
@@ -244,6 +301,8 @@ export class HybridStorage implements IStorage {
     }
   }
 
+  // ─── Settings ──────────────────────────────────────────────────────────────
+
   async getSetting(key: string): Promise<string | undefined> {
     if (this.useMemoryFallback) return this.memSettings.get(key);
     try {
@@ -301,6 +360,100 @@ export class HybridStorage implements IStorage {
     }
   }
 
+  // ─── TV Channels ───────────────────────────────────────────────────────────
+
+  async getTvChannels(): Promise<TvChannel[]> {
+    if (this.useMemoryFallback) return this.memTvChannels;
+    try {
+      return await db.select().from(tvChannels).orderBy(asc(tvChannels.sortOrder), asc(tvChannels.name));
+    } catch (err) {
+      console.error("Database error in getTvChannels, falling back to memory:", err);
+      this.useMemoryFallback = true;
+      return this.memTvChannels;
+    }
+  }
+
+  async getTvChannel(id: number): Promise<TvChannel | undefined> {
+    if (this.useMemoryFallback) return this.memTvChannels.find((c) => c.id === id);
+    try {
+      const results = await db.select().from(tvChannels).where(eq(tvChannels.id, id));
+      return results[0];
+    } catch (err) {
+      this.useMemoryFallback = true;
+      return this.memTvChannels.find((c) => c.id === id);
+    }
+  }
+
+  async createTvChannel(channel: InsertTvChannel): Promise<TvChannel> {
+    if (this.useMemoryFallback) {
+      const newId = Math.max(0, ...this.memTvChannels.map((c) => c.id)) + 1;
+      const newChannel: TvChannel = { ...channel, id: newId };
+      this.memTvChannels.push(newChannel);
+      return newChannel;
+    }
+    try {
+      const results = await db.insert(tvChannels).values(channel as any).returning();
+      return results[0];
+    } catch (err) {
+      console.error("Database error in createTvChannel, falling back to memory:", err);
+      this.useMemoryFallback = true;
+      return this.createTvChannel(channel);
+    }
+  }
+
+  async updateTvChannel(id: number, channel: UpdateTvChannel): Promise<TvChannel | undefined> {
+    if (this.useMemoryFallback) {
+      const idx = this.memTvChannels.findIndex((c) => c.id === id);
+      if (idx === -1) return undefined;
+      this.memTvChannels[idx] = { ...this.memTvChannels[idx], ...channel };
+      return this.memTvChannels[idx];
+    }
+    try {
+      const results = await db
+        .update(tvChannels)
+        .set(channel as any)
+        .where(eq(tvChannels.id, id))
+        .returning();
+      return results[0];
+    } catch (err) {
+      this.useMemoryFallback = true;
+      return this.updateTvChannel(id, channel);
+    }
+  }
+
+  async deleteTvChannel(id: number): Promise<boolean> {
+    if (this.useMemoryFallback) {
+      const idx = this.memTvChannels.findIndex((c) => c.id === id);
+      if (idx === -1) return false;
+      this.memTvChannels.splice(idx, 1);
+      return true;
+    }
+    try {
+      const results = await db.delete(tvChannels).where(eq(tvChannels.id, id)).returning();
+      return results.length > 0;
+    } catch (err) {
+      this.useMemoryFallback = true;
+      return this.deleteTvChannel(id);
+    }
+  }
+
+  // Plan-channel assignments via settings key "plan_channels_{planId}"
+  async getPlanChannelIds(planId: number): Promise<number[]> {
+    const raw = await this.getSetting(`plan_channels_${planId}`);
+    if (!raw) return [];
+    try {
+      return JSON.parse(raw) as number[];
+    } catch {
+      return [];
+    }
+  }
+
+  async setPlanChannelIds(planId: number, channelIds: number[]): Promise<void> {
+    await this.setSetting(`plan_channels_${planId}`, JSON.stringify(channelIds));
+  }
+
+  // ─── Seeds ─────────────────────────────────────────────────────────────────
+
   async seedPlans(): Promise<void> {
     if (this.useMemoryFallback) return;
     try {
@@ -327,6 +480,21 @@ export class HybridStorage implements IStorage {
       }
     } catch (err) {
       console.error("Settings seed failed, switching to memory fallback:", err);
+      this.useMemoryFallback = true;
+    }
+  }
+
+  async seedTvChannels(): Promise<void> {
+    if (this.useMemoryFallback) return;
+    try {
+      const existing = await db.select().from(tvChannels);
+      if (existing.length === 0) {
+        const initial = buildInitialTvChannels();
+        await db.insert(tvChannels).values(initial as any);
+        console.log("TV channels seeded successfully");
+      }
+    } catch (err) {
+      console.error("TV channels seed failed, switching to memory fallback:", err);
       this.useMemoryFallback = true;
     }
   }

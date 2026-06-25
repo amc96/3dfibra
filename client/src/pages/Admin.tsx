@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { queryClient } from "@/lib/queryClient";
-import { insertPlanSchema, type Plan } from "@shared/schema";
+import { insertPlanSchema, insertTvChannelSchema, type Plan, type TvChannel } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,40 +59,26 @@ import {
   List,
   DollarSign,
   Zap,
-  ChevronDown,
-  ChevronUp,
   Save,
+  Image,
+  Search,
+  X,
+  CheckCheck,
 } from "lucide-react";
 
 const SESSION_KEY = "admin_password";
 
+// ─── Schemas ──────────────────────────────────────────────────────────────────
+
 const planFormSchema = insertPlanSchema
   .extend({ featuresText: z.string().min(1, "Insira ao menos um benefício") })
   .omit({ features: true });
-
 type PlanFormValues = z.infer<typeof planFormSchema>;
 
-interface ChannelItem {
-  name: string;
-  category: string;
-}
-
-function serializeChannels(channels: ChannelItem[]): string {
-  return channels.map((c) => `${c.category}: ${c.name}`).join("\n");
-}
-
-function parseChannels(text: string): ChannelItem[] {
-  return text
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0)
-    .map((l) => {
-      const idx = l.indexOf(": ");
-      if (idx === -1) return null;
-      return { category: l.slice(0, idx).trim(), name: l.slice(idx + 2).trim() };
-    })
-    .filter((c): c is ChannelItem => c !== null && c.name.length > 0);
-}
+const channelFormSchema = insertTvChannelSchema.extend({
+  name: z.string().min(1, "Nome obrigatório"),
+});
+type ChannelFormValues = z.infer<typeof channelFormSchema>;
 
 // ─── Login ───────────────────────────────────────────────────────────────────
 
@@ -134,9 +120,8 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-300">Senha</Label>
+              <Label className="text-gray-300">Senha</Label>
               <Input
-                id="password"
                 data-testid="input-admin-password"
                 type="password"
                 placeholder="Digite a senha de acesso"
@@ -161,72 +146,65 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
   );
 }
 
-// ─── Plan Dialog (Create / Edit) ─────────────────────────────────────────────
+// ─── Stat Card ────────────────────────────────────────────────────────────────
 
-function PlanDialog({
-  open,
-  onClose,
-  plan,
-  password,
-  defaultCategory,
-}: {
-  open: boolean;
-  onClose: () => void;
-  plan: Plan | null;
-  password: string;
-  defaultCategory?: string;
-}) {
+function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+      <div className="flex items-center gap-2 mb-1">{icon}<span className="text-xs text-gray-500">{label}</span></div>
+      <p className={`text-xl font-bold ${color}`}>{value}</p>
+    </div>
+  );
+}
+
+// ─── Delete Confirm ───────────────────────────────────────────────────────────
+
+function DeleteDialog({ id, label, onCancel, onConfirm, loading }: { id: number | null; label?: string; onCancel: () => void; onConfirm: () => void; loading: boolean }) {
+  return (
+    <AlertDialog open={id !== null} onOpenChange={(v) => !v && onCancel()}>
+      <AlertDialogContent className="bg-gray-900 border-gray-800 text-white">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Excluir {label ?? "item"}?</AlertDialogTitle>
+          <AlertDialogDescription className="text-gray-400">
+            Esta ação não pode ser desfeita.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel data-testid="button-cancel-delete" className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancelar</AlertDialogCancel>
+          <AlertDialogAction data-testid="button-confirm-delete" onClick={onConfirm} disabled={loading} className="bg-red-600 hover:bg-red-700 text-white">
+            {loading ? "Excluindo..." : "Excluir"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+// ─── Plan Dialog ──────────────────────────────────────────────────────────────
+
+function PlanDialog({ open, onClose, plan, password, defaultCategory }: { open: boolean; onClose: () => void; plan: Plan | null; password: string; defaultCategory?: string }) {
   const { toast } = useToast();
   const isEditing = !!plan;
-
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(planFormSchema),
-    defaultValues: {
-      name: "",
-      speed: "",
-      price: "",
-      description: "",
-      category: defaultCategory ?? "internet",
-      isHighlighted: false,
-      featuresText: "",
-    },
+    defaultValues: { name: "", speed: "", price: "", description: "", category: defaultCategory ?? "internet", isHighlighted: false, featuresText: "" },
   });
 
   useEffect(() => {
     if (open) {
-      if (plan) {
-        form.reset({
-          name: plan.name,
-          speed: plan.speed,
-          price: plan.price,
-          description: plan.description ?? "",
-          category: plan.category ?? "internet",
-          isHighlighted: plan.isHighlighted ?? false,
-          featuresText: plan.features.join("\n"),
-        });
-      } else {
-        form.reset({
-          name: "",
-          speed: "",
-          price: "",
-          description: "",
-          category: defaultCategory ?? "internet",
-          isHighlighted: false,
-          featuresText: "",
-        });
-      }
+      form.reset(plan
+        ? { name: plan.name, speed: plan.speed, price: plan.price, description: plan.description ?? "", category: plan.category ?? "internet", isHighlighted: plan.isHighlighted ?? false, featuresText: plan.features.join("\n") }
+        : { name: "", speed: "", price: "", description: "", category: defaultCategory ?? "internet", isHighlighted: false, featuresText: "" }
+      );
     }
   }, [open, plan, defaultCategory]);
 
   async function submit(values: PlanFormValues) {
     const { featuresText, ...rest } = values;
-    const features = featuresText.split("\n").map((f) => f.trim()).filter(Boolean);
-    const body = { ...rest, features };
+    const body = { ...rest, features: featuresText.split("\n").map((f) => f.trim()).filter(Boolean) };
     try {
-      const url = isEditing ? `/api/admin/plans/${plan!.id}` : "/api/admin/plans";
-      const method = isEditing ? "PATCH" : "POST";
-      const res = await fetch(url, {
-        method,
+      const res = await fetch(isEditing ? `/api/admin/plans/${plan!.id}` : "/api/admin/plans", {
+        method: isEditing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json", "x-admin-password": password },
         body: JSON.stringify(body),
       });
@@ -239,191 +217,73 @@ function PlanDialog({
     }
   }
 
-  const categoryLabel: Record<string, string> = {
-    internet: "Internet",
-    tv: "TV / Canais",
-    adicionais: "Adicionais",
-  };
+  const cat = form.watch("category");
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{isEditing ? "Editar Plano" : "Novo Plano"}</DialogTitle>
-        </DialogHeader>
+        <DialogHeader><DialogTitle>{isEditing ? "Editar Plano" : "Novo Plano"}</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-300">Nome</FormLabel>
+              <FormField control={form.control} name="name" render={({ field }) => (
+                <FormItem><FormLabel className="text-gray-300">Nome</FormLabel>
+                  <FormControl><Input data-testid="input-plan-name" placeholder="Ex: Premium" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                  <FormMessage /></FormItem>
+              )} />
+              <FormField control={form.control} name="category" render={({ field }) => (
+                <FormItem><FormLabel className="text-gray-300">Categoria</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value ?? "internet"}>
                     <FormControl>
-                      <Input
-                        data-testid="input-plan-name"
-                        placeholder="Ex: Premium"
-                        {...field}
-                        className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                      />
+                      <SelectTrigger data-testid="select-plan-category" className="bg-gray-800 border-gray-700 text-white">
+                        <SelectValue placeholder="Categoria" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-300">Categoria</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value ?? "internet"}>
-                      <FormControl>
-                        <SelectTrigger
-                          data-testid="select-plan-category"
-                          className="bg-gray-800 border-gray-700 text-white"
-                        >
-                          <SelectValue placeholder="Categoria" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                        <SelectItem value="internet">Internet</SelectItem>
-                        <SelectItem value="tv">TV / Canais</SelectItem>
-                        <SelectItem value="adicionais">Adicionais</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                      <SelectItem value="internet">Internet</SelectItem>
+                      <SelectItem value="tv">TV / Canais</SelectItem>
+                      <SelectItem value="adicionais">Adicionais</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage /></FormItem>
+              )} />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="speed"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-300">
-                      {form.watch("category") === "internet"
-                        ? "Velocidade"
-                        : form.watch("category") === "tv"
-                        ? "Qtd. de Canais"
-                        : "Tipo / Info"}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        data-testid="input-plan-speed"
-                        placeholder={
-                          form.watch("category") === "internet"
-                            ? "Ex: 500 MEGA"
-                            : form.watch("category") === "tv"
-                            ? "Ex: 150+ Canais"
-                            : "Ex: Câmera"
-                        }
-                        {...field}
-                        className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-300">Preço (R$)</FormLabel>
-                    <FormControl>
-                      <Input
-                        data-testid="input-plan-price"
-                        placeholder="Ex: 97,90"
-                        {...field}
-                        className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FormField control={form.control} name="speed" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">{cat === "internet" ? "Velocidade" : cat === "tv" ? "Qtd. de Canais" : "Tipo / Info"}</FormLabel>
+                  <FormControl><Input data-testid="input-plan-speed" placeholder={cat === "internet" ? "500 MEGA" : cat === "tv" ? "150+ Canais" : "Câmera"} {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                  <FormMessage /></FormItem>
+              )} />
+              <FormField control={form.control} name="price" render={({ field }) => (
+                <FormItem><FormLabel className="text-gray-300">Preço (R$)</FormLabel>
+                  <FormControl><Input data-testid="input-plan-price" placeholder="97,90" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                  <FormMessage /></FormItem>
+              )} />
             </div>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-300">Descrição (opcional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      data-testid="input-plan-description"
-                      placeholder="Descrição breve do plano"
-                      {...field}
-                      value={field.value ?? ""}
-                      className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="featuresText"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-300">
-                    Benefícios{" "}
-                    <span className="text-gray-500 font-normal">(um por linha)</span>
-                  </FormLabel>
-                  <FormControl>
-                    <textarea
-                      data-testid="textarea-plan-features"
-                      {...field}
-                      rows={4}
-                      placeholder={"Wi-Fi Grátis\nInstalação Grátis\nSuporte 24h"}
-                      className="w-full rounded-md bg-gray-800 border border-gray-700 text-white placeholder:text-gray-500 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="isHighlighted"
-              render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-lg border border-gray-700 p-3">
-                  <div>
-                    <FormLabel className="text-gray-300">Mais Popular</FormLabel>
-                    <p className="text-xs text-gray-500">Destaca o plano com badge especial</p>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      data-testid="switch-plan-highlighted"
-                      checked={field.value ?? false}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <FormField control={form.control} name="description" render={({ field }) => (
+              <FormItem><FormLabel className="text-gray-300">Descrição (opcional)</FormLabel>
+                <FormControl><Input data-testid="input-plan-description" placeholder="Descrição breve" {...field} value={field.value ?? ""} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                <FormMessage /></FormItem>
+            )} />
+            <FormField control={form.control} name="featuresText" render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-300">Benefícios <span className="text-gray-500 font-normal">(um por linha)</span></FormLabel>
+                <FormControl>
+                  <textarea data-testid="textarea-plan-features" {...field} rows={4} placeholder={"Wi-Fi Grátis\nInstalação Grátis\nSuporte 24h"}
+                    className="w-full rounded-md bg-gray-800 border border-gray-700 text-white placeholder:text-gray-500 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </FormControl>
+                <FormMessage /></FormItem>
+            )} />
+            <FormField control={form.control} name="isHighlighted" render={({ field }) => (
+              <FormItem className="flex items-center justify-between rounded-lg border border-gray-700 p-3">
+                <div><FormLabel className="text-gray-300">Mais Popular</FormLabel><p className="text-xs text-gray-500">Destaca o plano com badge especial</p></div>
+                <FormControl><Switch data-testid="switch-plan-highlighted" checked={field.value ?? false} onCheckedChange={field.onChange} /></FormControl>
+              </FormItem>
+            )} />
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="border-gray-700 text-gray-300 hover:bg-gray-800"
-              >
-                Cancelar
-              </Button>
-              <Button
-                data-testid="button-save-plan"
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {isEditing ? "Salvar alterações" : "Criar plano"}
-              </Button>
+              <Button type="button" variant="outline" onClick={onClose} className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancelar</Button>
+              <Button data-testid="button-save-plan" type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">{isEditing ? "Salvar" : "Criar plano"}</Button>
             </DialogFooter>
           </form>
         </Form>
@@ -432,67 +292,279 @@ function PlanDialog({
   );
 }
 
-// ─── Delete Confirm ───────────────────────────────────────────────────────────
+// ─── Channel Catalog Dialog (add/edit a TV channel) ───────────────────────────
 
-function DeleteDialog({
-  id,
-  onCancel,
-  onConfirm,
-  loading,
-}: {
-  id: number | null;
-  onCancel: () => void;
-  onConfirm: () => void;
-  loading: boolean;
-}) {
+function ChannelCatalogDialog({ open, onClose, channel, password }: { open: boolean; onClose: () => void; channel: TvChannel | null; password: string }) {
+  const { toast } = useToast();
+  const isEditing = !!channel;
+  const form = useForm<ChannelFormValues>({
+    resolver: zodResolver(channelFormSchema),
+    defaultValues: { name: "", logoUrl: "", group: "Geral", sortOrder: 0 },
+  });
+
+  useEffect(() => {
+    if (open) {
+      form.reset(channel
+        ? { name: channel.name, logoUrl: channel.logoUrl, group: channel.group, sortOrder: channel.sortOrder }
+        : { name: "", logoUrl: "", group: "Geral", sortOrder: 0 }
+      );
+    }
+  }, [open, channel]);
+
+  const logoUrl = form.watch("logoUrl");
+
+  async function submit(values: ChannelFormValues) {
+    try {
+      const res = await fetch(isEditing ? `/api/admin/tv-channels/${channel!.id}` : "/api/admin/tv-channels", {
+        method: isEditing ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
+        body: JSON.stringify(values),
+      });
+      if (!res.ok) throw new Error();
+      queryClient.invalidateQueries({ queryKey: ["/api/tv-channels"] });
+      toast({ title: isEditing ? "Canal atualizado!" : "Canal cadastrado!" });
+      onClose();
+    } catch {
+      toast({ title: "Erro ao salvar canal", variant: "destructive" });
+    }
+  }
+
   return (
-    <AlertDialog open={id !== null} onOpenChange={(v) => !v && onCancel()}>
-      <AlertDialogContent className="bg-gray-900 border-gray-800 text-white">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
-          <AlertDialogDescription className="text-gray-400">
-            Esta ação não pode ser desfeita. O plano será removido permanentemente.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            data-testid="button-cancel-delete"
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-md">
+        <DialogHeader><DialogTitle>{isEditing ? "Editar Canal" : "Novo Canal"}</DialogTitle></DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(submit)} className="space-y-4">
+            <FormField control={form.control} name="name" render={({ field }) => (
+              <FormItem><FormLabel className="text-gray-300">Nome do Canal</FormLabel>
+                <FormControl><Input data-testid="input-channel-name" placeholder="Ex: ESPN" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                <FormMessage /></FormItem>
+            )} />
+            <FormField control={form.control} name="group" render={({ field }) => (
+              <FormItem><FormLabel className="text-gray-300">Categoria / Grupo</FormLabel>
+                <FormControl><Input data-testid="input-channel-group" placeholder="Ex: Esportes" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                <FormMessage /></FormItem>
+            )} />
+            <FormField control={form.control} name="logoUrl" render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-300">URL do Logo</FormLabel>
+                <FormControl>
+                  <Input data-testid="input-channel-logo" placeholder="https://exemplo.com/logo.png" {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                </FormControl>
+                {logoUrl && (
+                  <div className="mt-2 p-3 bg-gray-800 rounded-lg border border-gray-700 flex items-center gap-3">
+                    <img
+                      src={logoUrl}
+                      alt="preview"
+                      className="w-10 h-10 object-contain rounded bg-white/5"
+                      onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0.2"; }}
+                    />
+                    <span className="text-xs text-gray-400">Pré-visualização</span>
+                  </div>
+                )}
+                <FormMessage />
+              </FormItem>
+            )} />
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={onClose} className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancelar</Button>
+              <Button data-testid="button-save-channel" type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">{isEditing ? "Salvar" : "Cadastrar canal"}</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ─── Plan Channels Dialog (toggle channels per plan) ──────────────────────────
+
+function PlanChannelsDialog({ plan, allChannels, password, onClose }: { plan: Plan; allChannels: TvChannel[]; password: string; onClose: () => void }) {
+  const { toast } = useToast();
+  const [search, setSearch] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [enabledIds, setEnabledIds] = useState<Set<number>>(new Set());
+  const [loaded, setLoaded] = useState(false);
+
+  // Load existing assignment on mount
+  useEffect(() => {
+    fetch(`/api/plans/${plan.id}/channels`)
+      .then((r) => r.json())
+      .then((ids: number[]) => {
+        setEnabledIds(new Set(ids));
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
+  }, [plan.id]);
+
+  function toggle(id: number) {
+    setEnabledIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  async function save() {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/plans/${plan.id}/channels`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
+        body: JSON.stringify({ channelIds: Array.from(enabledIds) }),
+      });
+      if (!res.ok) throw new Error();
+      toast({ title: `Canais do plano "${plan.name}" salvos!` });
+      onClose();
+    } catch {
+      toast({ title: "Erro ao salvar canais", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // Group channels by category
+  const groups = useMemo(() => {
+    const filtered = allChannels.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.group.toLowerCase().includes(search.toLowerCase()));
+    const map = new Map<string, TvChannel[]>();
+    for (const ch of filtered) {
+      const g = ch.group || "Geral";
+      if (!map.has(g)) map.set(g, []);
+      map.get(g)!.push(ch);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [allChannels, search]);
+
+  const enabledCount = enabledIds.size;
+  const totalVisible = allChannels.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.group.toLowerCase().includes(search.toLowerCase())).length;
+
+  function selectAll() {
+    const filtered = allChannels.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.group.toLowerCase().includes(search.toLowerCase()));
+    setEnabledIds((prev) => {
+      const next = new Set(prev);
+      filtered.forEach((c) => next.add(c.id));
+      return next;
+    });
+  }
+
+  function deselectAll() {
+    const filtered = allChannels.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.group.toLowerCase().includes(search.toLowerCase()));
+    setEnabledIds((prev) => {
+      const next = new Set(prev);
+      filtered.forEach((c) => next.delete(c.id));
+      return next;
+    });
+  }
+
+  return (
+    <Dialog open onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[90vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Tv className="w-5 h-5 text-purple-400" />
+            Canais do plano "{plan.name}"
+          </DialogTitle>
+          <p className="text-sm text-gray-400 mt-1">
+            {enabledCount} de {allChannels.length} canais ativos
+          </p>
+        </DialogHeader>
+
+        {/* Search + bulk actions */}
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Input
+              data-testid="input-channel-search"
+              placeholder="Buscar canal ou categoria..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="bg-gray-800 border-gray-700 text-white pl-9 placeholder:text-gray-500"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <Button size="sm" variant="outline" onClick={selectAll} className="border-gray-700 text-gray-300 hover:bg-gray-800 gap-1.5 shrink-0">
+            <CheckCheck className="w-3.5 h-3.5" /> Selecionar todos
+          </Button>
+          <Button size="sm" variant="outline" onClick={deselectAll} className="border-gray-700 text-gray-300 hover:bg-gray-800 shrink-0">
+            Limpar
+          </Button>
+        </div>
+
+        {/* Channel list */}
+        <div className="flex-1 overflow-y-auto space-y-4 pr-1 min-h-0">
+          {!loaded ? (
+            <p className="text-gray-500 text-sm text-center py-8">Carregando...</p>
+          ) : groups.length === 0 ? (
+            <p className="text-gray-500 text-sm text-center py-8">Nenhum canal encontrado</p>
+          ) : (
+            groups.map(([groupName, channels]) => (
+              <div key={groupName}>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 sticky top-0 bg-gray-900 py-1">{groupName}</p>
+                <div className="space-y-1">
+                  {channels.map((ch) => (
+                    <div
+                      key={ch.id}
+                      data-testid={`channel-toggle-${ch.id}`}
+                      className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors cursor-pointer ${enabledIds.has(ch.id) ? "bg-purple-600/10 border border-purple-600/30" : "bg-gray-800/50 border border-transparent hover:bg-gray-800"}`}
+                      onClick={() => toggle(ch.id)}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        {ch.logoUrl ? (
+                          <img
+                            src={ch.logoUrl}
+                            alt={ch.name}
+                            className="w-7 h-7 object-contain rounded bg-white/5 shrink-0"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = "none";
+                            }}
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded bg-gray-700 flex items-center justify-center shrink-0">
+                            <Tv className="w-3.5 h-3.5 text-gray-500" />
+                          </div>
+                        )}
+                        <span className={`text-sm truncate ${enabledIds.has(ch.id) ? "text-white font-medium" : "text-gray-300"}`}>{ch.name}</span>
+                      </div>
+                      <Switch
+                        checked={enabledIds.has(ch.id)}
+                        onCheckedChange={() => toggle(ch.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="shrink-0"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <DialogFooter className="pt-2 border-t border-gray-800">
+          <Button type="button" variant="outline" onClick={onClose} className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancelar</Button>
+          <Button
+            data-testid="button-save-plan-channels"
+            onClick={save}
+            disabled={saving}
+            className="bg-purple-600 hover:bg-purple-700 text-white gap-2"
           >
-            Cancelar
-          </AlertDialogCancel>
-          <AlertDialogAction
-            data-testid="button-confirm-delete"
-            onClick={onConfirm}
-            disabled={loading}
-            className="bg-red-600 hover:bg-red-700 text-white"
-          >
-            {loading ? "Excluindo..." : "Excluir"}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+            <Save className="w-4 h-4" />
+            {saving ? "Salvando..." : `Salvar ${enabledCount} canais`}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 // ─── Plan Card ────────────────────────────────────────────────────────────────
 
-function PlanCard({
-  plan,
-  accentColor,
-  onEdit,
-  onDelete,
-}: {
-  plan: Plan;
-  accentColor: string;
-  onEdit: () => void;
-  onDelete: () => void;
-}) {
+function PlanCard({ plan, accentColor, onEdit, onDelete, extraAction }: { plan: Plan; accentColor: string; onEdit: () => void; onDelete: () => void; extraAction?: React.ReactNode }) {
   return (
-    <div
-      data-testid={`card-plan-${plan.id}`}
-      className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col gap-3 hover:border-gray-700 transition-colors"
-    >
+    <div data-testid={`card-plan-${plan.id}`} className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col gap-3 hover:border-gray-700 transition-colors">
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -509,87 +581,37 @@ function PlanCard({
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <Button
-            data-testid={`button-edit-plan-${plan.id}`}
-            size="sm"
-            variant="ghost"
-            onClick={onEdit}
-            className="text-gray-400 hover:text-white hover:bg-gray-700 h-8 w-8 p-0"
-          >
-            <Pencil className="w-3.5 h-3.5" />
-          </Button>
-          <Button
-            data-testid={`button-delete-plan-${plan.id}`}
-            size="sm"
-            variant="ghost"
-            onClick={onDelete}
-            className="text-gray-400 hover:text-red-400 hover:bg-red-900/20 h-8 w-8 p-0"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </Button>
+          <Button data-testid={`button-edit-plan-${plan.id}`} size="sm" variant="ghost" onClick={onEdit} className="text-gray-400 hover:text-white hover:bg-gray-700 h-8 w-8 p-0"><Pencil className="w-3.5 h-3.5" /></Button>
+          <Button data-testid={`button-delete-plan-${plan.id}`} size="sm" variant="ghost" onClick={onDelete} className="text-gray-400 hover:text-red-400 hover:bg-red-900/20 h-8 w-8 p-0"><Trash2 className="w-3.5 h-3.5" /></Button>
         </div>
       </div>
       {plan.features.length > 0 && (
         <div className="flex flex-wrap gap-1">
-          {plan.features.slice(0, 3).map((f, i) => (
-            <span
-              key={i}
-              className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full"
-            >
-              {f}
-            </span>
-          ))}
-          {plan.features.length > 3 && (
-            <span className="text-xs bg-gray-800 text-gray-500 px-2 py-0.5 rounded-full">
-              +{plan.features.length - 3}
-            </span>
-          )}
+          {plan.features.slice(0, 3).map((f, i) => <span key={i} className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">{f}</span>)}
+          {plan.features.length > 3 && <span className="text-xs bg-gray-800 text-gray-500 px-2 py-0.5 rounded-full">+{plan.features.length - 3}</span>}
         </div>
       )}
+      {extraAction}
     </div>
   );
 }
 
-// ─── Category Section ─────────────────────────────────────────────────────────
+// ─── Category Plans Section ───────────────────────────────────────────────────
 
-function CategorySection({
-  plans,
-  category,
-  label,
-  icon,
-  accentColor,
-  password,
-  isLoading,
-}: {
-  plans: Plan[];
-  category: string;
-  label: string;
-  icon: React.ReactNode;
-  accentColor: string;
-  password: string;
-  isLoading: boolean;
-}) {
+function CategorySection({ plans, category, label, icon, accentColor, password, isLoading, allChannels }: { plans: Plan[]; category: string; label: string; icon: React.ReactNode; accentColor: string; password: string; isLoading: boolean; allChannels?: TvChannel[] }) {
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [channelsPlan, setChannelsPlan] = useState<Plan | null>(null);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await fetch(`/api/admin/plans/${id}`, {
-        method: "DELETE",
-        headers: { "x-admin-password": password },
-      });
+      const res = await fetch(`/api/admin/plans/${id}`, { method: "DELETE", headers: { "x-admin-password": password } });
       if (!res.ok) throw new Error();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/plans"] });
-      toast({ title: "Plano excluído com sucesso" });
-      setDeletingId(null);
-    },
-    onError: () => {
-      toast({ title: "Erro ao excluir plano", variant: "destructive" });
-    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/plans"] }); toast({ title: "Plano excluído" }); setDeletingId(null); },
+    onError: () => toast({ title: "Erro ao excluir plano", variant: "destructive" }),
   });
 
   const categoryPlans = plans.filter((p) => p.category === category);
@@ -598,38 +620,22 @@ function CategorySection({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-white font-semibold">
-            {icon}
-            {label}
-          </div>
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">
-            {categoryPlans.length} planos
-          </span>
+          <div className="flex items-center gap-2 text-white font-semibold">{icon}{label}</div>
+          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">{categoryPlans.length} planos</span>
         </div>
-        <Button
-          data-testid={`button-new-${category}`}
-          size="sm"
-          onClick={() => { setEditingPlan(null); setDialogOpen(true); }}
-          className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5 h-8"
-        >
+        <Button data-testid={`button-new-${category}`} size="sm" onClick={() => { setEditingPlan(null); setDialogOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5 h-8">
           <Plus className="w-3.5 h-3.5" /> Novo Plano
         </Button>
       </div>
 
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4 animate-pulse h-28" />
-          ))}
+          {[1, 2, 3].map((i) => <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4 animate-pulse h-28" />)}
         </div>
       ) : categoryPlans.length === 0 ? (
         <div className="border-2 border-dashed border-gray-800 rounded-xl p-8 text-center">
           <p className="text-gray-500 text-sm mb-3">Nenhum plano cadastrado ainda</p>
-          <Button
-            size="sm"
-            onClick={() => { setEditingPlan(null); setDialogOpen(true); }}
-            className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5"
-          >
+          <Button size="sm" onClick={() => { setEditingPlan(null); setDialogOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white gap-1.5">
             <Plus className="w-3.5 h-3.5" /> Adicionar primeiro plano
           </Button>
         </div>
@@ -642,134 +648,169 @@ function CategorySection({
               accentColor={accentColor}
               onEdit={() => { setEditingPlan(plan); setDialogOpen(true); }}
               onDelete={() => setDeletingId(plan.id)}
+              extraAction={category === "tv" && allChannels ? (
+                <Button
+                  data-testid={`button-plan-channels-${plan.id}`}
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setChannelsPlan(plan)}
+                  className="w-full border-purple-700/50 text-purple-400 hover:bg-purple-600/10 hover:text-purple-300 gap-2 h-8 text-xs"
+                >
+                  <List className="w-3.5 h-3.5" /> Configurar canais
+                </Button>
+              ) : undefined}
             />
           ))}
         </div>
       )}
 
-      <PlanDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        plan={editingPlan}
-        password={password}
-        defaultCategory={category}
-      />
-
-      <DeleteDialog
-        id={deletingId}
-        onCancel={() => setDeletingId(null)}
-        onConfirm={() => deletingId !== null && deleteMutation.mutate(deletingId)}
-        loading={deleteMutation.isPending}
-      />
+      <PlanDialog open={dialogOpen} onClose={() => setDialogOpen(false)} plan={editingPlan} password={password} defaultCategory={category} />
+      <DeleteDialog id={deletingId} label="plano" onCancel={() => setDeletingId(null)} onConfirm={() => deletingId !== null && deleteMutation.mutate(deletingId)} loading={deleteMutation.isPending} />
+      {channelsPlan && allChannels && (
+        <PlanChannelsDialog plan={channelsPlan} allChannels={allChannels} password={password} onClose={() => setChannelsPlan(null)} />
+      )}
     </div>
   );
 }
 
-// ─── Channel Editor ───────────────────────────────────────────────────────────
+// ─── Channel Catalog Section ──────────────────────────────────────────────────
 
-function ChannelEditor({
-  label,
-  settingKey,
-  description,
-  password,
-  initialValue,
-}: {
-  label: string;
-  settingKey: string;
-  description: string;
-  password: string;
-  initialValue: string;
-}) {
+function ChannelCatalog({ password }: { password: string }) {
   const { toast } = useToast();
-  const [text, setText] = useState(initialValue);
-  const [saving, setSaving] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingChannel, setEditingChannel] = useState<TvChannel | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    setText(initialValue);
-  }, [initialValue]);
+  const { data: channels = [], isLoading } = useQuery<TvChannel[]>({ queryKey: ["/api/tv-channels"] });
 
-  const channelCount = parseChannels(text).length;
-  const isDirty = text !== initialValue;
-
-  async function save() {
-    setSaving(true);
-    try {
-      const channels = parseChannels(text);
-      const res = await fetch(`/api/admin/settings/${settingKey}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-admin-password": password },
-        body: JSON.stringify({ value: JSON.stringify(channels) }),
-      });
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/admin/tv-channels/${id}`, { method: "DELETE", headers: { "x-admin-password": password } });
       if (!res.ok) throw new Error();
-      queryClient.invalidateQueries({ queryKey: ["/api/channels"] });
-      toast({ title: `Lista "${label}" atualizada! (${channels.length} canais)` });
-    } catch {
-      toast({ title: "Erro ao salvar lista de canais", variant: "destructive" });
-    } finally {
-      setSaving(false);
+    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/tv-channels"] }); toast({ title: "Canal excluído" }); setDeletingId(null); },
+    onError: () => toast({ title: "Erro ao excluir canal", variant: "destructive" }),
+  });
+
+  const filtered = channels.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.group.toLowerCase().includes(search.toLowerCase()));
+
+  // Group for display
+  const groups = useMemo(() => {
+    const map = new Map<string, TvChannel[]>();
+    for (const ch of filtered) {
+      const g = ch.group || "Geral";
+      if (!map.has(g)) map.set(g, []);
+      map.get(g)!.push(ch);
     }
-  }
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [filtered]);
 
   return (
-    <div className="border border-gray-800 rounded-xl overflow-hidden">
-      <button
-        data-testid={`toggle-channels-${settingKey}`}
-        onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-900 hover:bg-gray-800/60 transition-colors text-left"
-      >
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <List className="w-4 h-4 text-purple-400" />
-          <div>
-            <p className="text-white text-sm font-medium">{label}</p>
-            <p className="text-gray-500 text-xs">{description}</p>
+          <div className="flex items-center gap-2 text-white font-semibold">
+            <Image className="w-4 h-4 text-purple-400" />
+            Catálogo de Canais
           </div>
+          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">{channels.length} canais</span>
         </div>
-        <div className="flex items-center gap-2">
-          {isDirty && (
-            <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">
-              não salvo
-            </span>
-          )}
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">
-            {channelCount} canais
-          </span>
-          {expanded ? (
-            <ChevronUp className="w-4 h-4 text-gray-500" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-gray-500" />
-          )}
-        </div>
-      </button>
+        <Button
+          data-testid="button-new-tv-channel"
+          size="sm"
+          onClick={() => { setEditingChannel(null); setDialogOpen(true); }}
+          className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5 h-8"
+        >
+          <Plus className="w-3.5 h-3.5" /> Novo Canal
+        </Button>
+      </div>
 
-      {expanded && (
-        <div className="px-4 py-4 bg-gray-950 border-t border-gray-800 space-y-3">
-          <p className="text-xs text-gray-500">
-            Formato por linha:{" "}
-            <code className="bg-gray-800 text-gray-300 px-1 py-0.5 rounded">
-              Categoria: Nome do Canal
-            </code>
-          </p>
-          <textarea
-            data-testid={`textarea-channels-${settingKey}`}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={12}
-            placeholder={"Abertos: Band\nAbertos: SBT\nEsportes: ESPN"}
-            className="w-full rounded-md bg-gray-900 border border-gray-700 text-white text-xs placeholder:text-gray-600 px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
-          />
-          <Button
-            data-testid={`button-save-channels-${settingKey}`}
-            onClick={save}
-            disabled={saving}
-            size="sm"
-            className="bg-purple-600 hover:bg-purple-700 text-white gap-2"
-          >
-            <Save className="w-3.5 h-3.5" />
-            {saving ? "Salvando..." : "Salvar lista de canais"}
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+        <Input
+          data-testid="input-catalog-search"
+          placeholder="Buscar canal ou categoria..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="bg-gray-800 border-gray-700 text-white pl-9 placeholder:text-gray-500"
+        />
+        {search && (
+          <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-12 bg-gray-900 rounded-lg animate-pulse" />)}
+        </div>
+      ) : groups.length === 0 ? (
+        <div className="border-2 border-dashed border-gray-800 rounded-xl p-8 text-center">
+          <p className="text-gray-500 text-sm mb-3">Nenhum canal encontrado</p>
+          <Button size="sm" onClick={() => { setEditingChannel(null); setDialogOpen(true); }} className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5">
+            <Plus className="w-3.5 h-3.5" /> Cadastrar primeiro canal
           </Button>
         </div>
+      ) : (
+        <div className="space-y-4">
+          {groups.map(([groupName, chs]) => (
+            <div key={groupName}>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{groupName} <span className="text-gray-700 normal-case font-normal">({chs.length})</span></p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {chs.map((ch) => (
+                  <div
+                    key={ch.id}
+                    data-testid={`card-channel-${ch.id}`}
+                    className="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2.5 flex items-center gap-3 hover:border-gray-700 transition-colors group"
+                  >
+                    {ch.logoUrl ? (
+                      <img
+                        src={ch.logoUrl}
+                        alt={ch.name}
+                        className="w-8 h-8 object-contain rounded bg-white/5 shrink-0"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded bg-gray-800 flex items-center justify-center shrink-0">
+                        <Tv className="w-4 h-4 text-gray-600" />
+                      </div>
+                    )}
+                    <span className="text-sm text-gray-200 flex-1 truncate">{ch.name}</span>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        data-testid={`button-edit-channel-${ch.id}`}
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => { setEditingChannel(ch); setDialogOpen(true); }}
+                        className="text-gray-400 hover:text-white hover:bg-gray-700 h-7 w-7 p-0"
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        data-testid={`button-delete-channel-${ch.id}`}
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setDeletingId(ch.id)}
+                        className="text-gray-400 hover:text-red-400 hover:bg-red-900/20 h-7 w-7 p-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
+
+      <ChannelCatalogDialog open={dialogOpen} onClose={() => setDialogOpen(false)} channel={editingChannel} password={password} />
+      <DeleteDialog id={deletingId} label="canal" onCancel={() => setDeletingId(null)} onConfirm={() => deletingId !== null && deleteMutation.mutate(deletingId)} loading={deleteMutation.isPending} />
     </div>
   );
 }
@@ -777,48 +818,16 @@ function ChannelEditor({
 // ─── Internet Tab ─────────────────────────────────────────────────────────────
 
 function InternetTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boolean; password: string }) {
+  const internetPlans = plans.filter((p) => p.category === "internet");
+  const sorted = [...internetPlans].sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")));
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-3 gap-3">
-        <StatCard
-          label="Total de Planos"
-          value={plans.filter((p) => p.category === "internet").length}
-          icon={<Wifi className="w-4 h-4 text-blue-400" />}
-          color="text-blue-400"
-        />
-        <StatCard
-          label="Menor Preço"
-          value={
-            plans
-              .filter((p) => p.category === "internet")
-              .sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0]
-              ?.price
-              ? `R$ ${plans.filter((p) => p.category === "internet").sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0].price}`
-              : "—"
-          }
-          icon={<DollarSign className="w-4 h-4 text-green-400" />}
-          color="text-green-400"
-        />
-        <StatCard
-          label="Maior Velocidade"
-          value={
-            plans
-              .filter((p) => p.category === "internet")
-              .sort((a, b) => parseInt(b.speed) - parseInt(a.speed))[0]?.speed ?? "—"
-          }
-          icon={<Zap className="w-4 h-4 text-yellow-400" />}
-          color="text-yellow-400"
-        />
+        <StatCard label="Total de Planos" value={internetPlans.length} icon={<Wifi className="w-4 h-4 text-blue-400" />} color="text-blue-400" />
+        <StatCard label="Menor Preço" value={sorted[0] ? `R$ ${sorted[0].price}` : "—"} icon={<DollarSign className="w-4 h-4 text-green-400" />} color="text-green-400" />
+        <StatCard label="Maior Velocidade" value={[...internetPlans].sort((a, b) => parseInt(b.speed) - parseInt(a.speed))[0]?.speed ?? "—"} icon={<Zap className="w-4 h-4 text-yellow-400" />} color="text-yellow-400" />
       </div>
-      <CategorySection
-        plans={plans}
-        category="internet"
-        label="Planos de Internet"
-        icon={<Wifi className="w-4 h-4 text-blue-400" />}
-        accentColor="text-blue-400"
-        password={password}
-        isLoading={isLoading}
-      />
+      <CategorySection plans={plans} category="internet" label="Planos de Internet" icon={<Wifi className="w-4 h-4 text-blue-400" />} accentColor="text-blue-400" password={password} isLoading={isLoading} />
     </div>
   );
 }
@@ -826,80 +835,30 @@ function InternetTab({ plans, isLoading, password }: { plans: Plan[]; isLoading:
 // ─── TV Tab ───────────────────────────────────────────────────────────────────
 
 function TVTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boolean; password: string }) {
-  const { data: channelsData } = useQuery<{
-    light: ChannelItem[];
-    plus: ChannelItem[];
-    ultra: ChannelItem[];
-    hbo: ChannelItem[];
-  }>({ queryKey: ["/api/channels"] });
-
-  const lightInitial = channelsData ? serializeChannels(channelsData.light) : "";
-  const plusInitial = channelsData ? serializeChannels(channelsData.plus) : "";
-  const ultraInitial = channelsData ? serializeChannels(channelsData.ultra) : "";
-  const hboInitial = channelsData ? serializeChannels(channelsData.hbo) : "";
+  const { data: allChannels = [] } = useQuery<TvChannel[]>({ queryKey: ["/api/tv-channels"] });
+  const tvPlans = plans.filter((p) => p.category === "tv");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="grid grid-cols-2 gap-3">
-        <StatCard
-          label="Planos de TV"
-          value={plans.filter((p) => p.category === "tv").length}
-          icon={<Tv className="w-4 h-4 text-purple-400" />}
-          color="text-purple-400"
-        />
-        <StatCard
-          label="Total de Canais (Ultra)"
-          value={channelsData ? channelsData.ultra.length : "—"}
-          icon={<List className="w-4 h-4 text-purple-400" />}
-          color="text-purple-400"
-        />
+        <StatCard label="Planos de TV" value={tvPlans.length} icon={<Tv className="w-4 h-4 text-purple-400" />} color="text-purple-400" />
+        <StatCard label="Canais no Catálogo" value={allChannels.length} icon={<List className="w-4 h-4 text-purple-400" />} color="text-purple-400" />
       </div>
 
+      {/* TV Plans with channel config */}
       <CategorySection
         plans={plans}
         category="tv"
-        label="Planos de TV / Canais"
+        label="Planos de TV"
         icon={<Tv className="w-4 h-4 text-purple-400" />}
         accentColor="text-purple-400"
         password={password}
         isLoading={isLoading}
+        allChannels={allChannels}
       />
 
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <List className="w-4 h-4 text-purple-400" />
-          <h3 className="text-white font-semibold">Canais por Plano</h3>
-          <span className="text-xs text-gray-500">— clique para expandir e editar</span>
-        </div>
-
-        <ChannelEditor
-          label="Canais Light"
-          settingKey="channels_light"
-          description="Plano 'Canais Light' — 100+ canais"
-          password={password}
-          initialValue={lightInitial}
-        />
-        <ChannelEditor
-          label="Canais Plus"
-          settingKey="channels_plus"
-          description="Plano 'Canais Plus' — 150+ canais"
-          password={password}
-          initialValue={plusInitial}
-        />
-        <ChannelEditor
-          label="Canais Ultra"
-          settingKey="channels_ultra"
-          description="Plano 'Canais Ultra' — 200+ canais"
-          password={password}
-          initialValue={ultraInitial}
-        />
-        <ChannelEditor
-          label="Canais Ultra + HBO"
-          settingKey="channels_hbo"
-          description="Plano 'Canais Ultra 1P + HBO' — 200+ canais + HBO"
-          password={password}
-          initialValue={hboInitial}
-        />
+      <div className="border-t border-gray-800 pt-6">
+        <ChannelCatalog password={password} />
       </div>
     </div>
   );
@@ -908,75 +867,22 @@ function TVTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boole
 // ─── Adicionais Tab ───────────────────────────────────────────────────────────
 
 function AdicionaisTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boolean; password: string }) {
+  const adicPlans = plans.filter((p) => p.category === "adicionais");
+  const sorted = [...adicPlans].sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")));
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3">
-        <StatCard
-          label="Serviços Adicionais"
-          value={plans.filter((p) => p.category === "adicionais").length}
-          icon={<Package className="w-4 h-4 text-orange-400" />}
-          color="text-orange-400"
-        />
-        <StatCard
-          label="Menor Preço"
-          value={
-            plans
-              .filter((p) => p.category === "adicionais")
-              .sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0]
-              ?.price
-              ? `R$ ${plans.filter((p) => p.category === "adicionais").sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")))[0].price}`
-              : "—"
-          }
-          icon={<DollarSign className="w-4 h-4 text-green-400" />}
-          color="text-green-400"
-        />
+        <StatCard label="Serviços Adicionais" value={adicPlans.length} icon={<Package className="w-4 h-4 text-orange-400" />} color="text-orange-400" />
+        <StatCard label="Menor Preço" value={sorted[0] ? `R$ ${sorted[0].price}` : "—"} icon={<DollarSign className="w-4 h-4 text-green-400" />} color="text-green-400" />
       </div>
-      <CategorySection
-        plans={plans}
-        category="adicionais"
-        label="Serviços Adicionais"
-        icon={<Package className="w-4 h-4 text-orange-400" />}
-        accentColor="text-orange-400"
-        password={password}
-        isLoading={isLoading}
-      />
-    </div>
-  );
-}
-
-// ─── Stat Card ────────────────────────────────────────────────────────────────
-
-function StatCard({
-  label,
-  value,
-  icon,
-  color,
-}: {
-  label: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: string;
-}) {
-  return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-      <div className="flex items-center gap-2 mb-1">
-        {icon}
-        <span className="text-xs text-gray-500">{label}</span>
-      </div>
-      <p className={`text-xl font-bold ${color}`}>{value}</p>
+      <CategorySection plans={plans} category="adicionais" label="Serviços Adicionais" icon={<Package className="w-4 h-4 text-orange-400" />} accentColor="text-orange-400" password={password} isLoading={isLoading} />
     </div>
   );
 }
 
 // ─── Settings Tab ─────────────────────────────────────────────────────────────
 
-function SettingsTab({
-  password,
-  onPasswordChange,
-}: {
-  password: string;
-  onPasswordChange: (p: string) => void;
-}) {
+function SettingsTab({ password, onPasswordChange }: { password: string; onPasswordChange: (p: string) => void }) {
   const { toast } = useToast();
   const [whatsapp, setWhatsapp] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
@@ -989,9 +895,7 @@ function SettingsTab({
   const { data: settingsList = [], isLoading } = useQuery<{ id: number; key: string; value: string }[]>({
     queryKey: ["/api/admin/settings"],
     queryFn: async () => {
-      const res = await fetch("/api/admin/settings", {
-        headers: { "x-admin-password": password },
-      });
+      const res = await fetch("/api/admin/settings", { headers: { "x-admin-password": password } });
       if (!res.ok) throw new Error();
       return res.json();
     },
@@ -1004,12 +908,7 @@ function SettingsTab({
     if (logo !== undefined) setLogoUrl(logo.value);
   }, [settingsList]);
 
-  async function saveSetting(
-    key: string,
-    value: string,
-    label: string,
-    setSaving: (v: boolean) => void
-  ) {
+  async function saveSetting(key: string, value: string, label: string, setSaving: (v: boolean) => void) {
     setSaving(true);
     try {
       const res = await fetch(`/api/admin/settings/${key}`, {
@@ -1018,7 +917,6 @@ function SettingsTab({
         body: JSON.stringify({ value }),
       });
       if (!res.ok) throw new Error();
-      queryClient.invalidateQueries({ queryKey: ["/api/settings", key] });
       toast({ title: `${label} atualizado!` });
     } catch {
       toast({ title: "Erro ao salvar configuração", variant: "destructive" });
@@ -1028,14 +926,8 @@ function SettingsTab({
   }
 
   async function changePassword() {
-    if (newPassword.length < 6) {
-      toast({ title: "A senha deve ter pelo menos 6 caracteres", variant: "destructive" });
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast({ title: "As senhas não coincidem", variant: "destructive" });
-      return;
-    }
+    if (newPassword.length < 6) { toast({ title: "A senha deve ter pelo menos 6 caracteres", variant: "destructive" }); return; }
+    if (newPassword !== confirmPassword) { toast({ title: "As senhas não coincidem", variant: "destructive" }); return; }
     setSavingPw(true);
     try {
       const res = await fetch("/api/admin/change-password", {
@@ -1043,14 +935,10 @@ function SettingsTab({
         headers: { "Content-Type": "application/json", "x-admin-password": password },
         body: JSON.stringify({ newPassword }),
       });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || "Erro");
-      }
+      if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
       sessionStorage.setItem(SESSION_KEY, newPassword);
       onPasswordChange(newPassword);
-      setNewPassword("");
-      setConfirmPassword("");
+      setNewPassword(""); setConfirmPassword("");
       toast({ title: "Senha alterada com sucesso!" });
     } catch (err: any) {
       toast({ title: err.message || "Erro ao alterar senha", variant: "destructive" });
@@ -1061,7 +949,6 @@ function SettingsTab({
 
   return (
     <div className="space-y-5 max-w-xl">
-      {/* WhatsApp */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader className="pb-3">
           <CardTitle className="text-white text-base flex items-center gap-2">
@@ -1070,33 +957,14 @@ function SettingsTab({
             </svg>
             WhatsApp de Contato
           </CardTitle>
-          <p className="text-gray-400 text-sm">
-            Número usado nos botões "Contratar" e "Fale com Consultor"
-          </p>
+          <p className="text-gray-400 text-sm">Número usado nos botões "Contratar" e "Fale com Consultor"</p>
         </CardHeader>
         <CardContent className="space-y-3">
-          {isLoading ? (
-            <div className="h-10 bg-gray-800 rounded-md animate-pulse" />
-          ) : (
+          {isLoading ? <div className="h-10 bg-gray-800 rounded-md animate-pulse" /> : (
             <>
-              <Input
-                data-testid="input-whatsapp-number"
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
-                placeholder="Ex: 5553999789222"
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-              />
-              <p className="text-xs text-gray-500">
-                Formato: código do país + DDD + número.{" "}
-                <code className="text-gray-400">5553999789222</code>
-              </p>
-              <Button
-                data-testid="button-save-whatsapp"
-                onClick={() => saveSetting("whatsapp_number", whatsapp, "WhatsApp", setSavingWa)}
-                disabled={savingWa}
-                size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
+              <Input data-testid="input-whatsapp-number" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="Ex: 5553999789222" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+              <p className="text-xs text-gray-500">Formato: código do país + DDD + número. Ex: <code className="text-gray-400">5553999789222</code></p>
+              <Button data-testid="button-save-whatsapp" onClick={() => saveSetting("whatsapp_number", whatsapp, "WhatsApp", setSavingWa)} disabled={savingWa} size="sm" className="bg-green-600 hover:bg-green-700 text-white">
                 {savingWa ? "Salvando..." : "Salvar número"}
               </Button>
             </>
@@ -1104,52 +972,25 @@ function SettingsTab({
         </CardContent>
       </Card>
 
-      {/* Logo */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader className="pb-3">
           <CardTitle className="text-white text-base flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-blue-400" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zm2 2v10h12V7H6zm2 6.5 2.5-3 2 2.5 2.5-3.5 3 4H8z" />
-            </svg>
+            <Image className="w-5 h-5 text-blue-400" />
             Logo do Site
           </CardTitle>
-          <p className="text-gray-400 text-sm">
-            URL de uma imagem para substituir o logo de texto "3D FIBRA"
-          </p>
+          <p className="text-gray-400 text-sm">URL de imagem para substituir o logo de texto "3D FIBRA"</p>
         </CardHeader>
         <CardContent className="space-y-3">
-          {isLoading ? (
-            <div className="h-10 bg-gray-800 rounded-md animate-pulse" />
-          ) : (
+          {isLoading ? <div className="h-10 bg-gray-800 rounded-md animate-pulse" /> : (
             <>
-              <Input
-                data-testid="input-logo-url"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://exemplo.com/logo.png"
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-              />
-              <p className="text-xs text-gray-500">
-                Deixe em branco para usar o logo de texto padrão.
-              </p>
+              <Input data-testid="input-logo-url" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://exemplo.com/logo.png" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
               {logoUrl && (
                 <div className="p-3 rounded-lg bg-gray-800 border border-gray-700">
                   <p className="text-xs text-gray-500 mb-2">Pré-visualização:</p>
-                  <img
-                    src={logoUrl}
-                    alt="Preview do logo"
-                    className="h-10 w-auto object-contain"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                  />
+                  <img src={logoUrl} alt="logo" className="h-10 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                 </div>
               )}
-              <Button
-                data-testid="button-save-logo"
-                onClick={() => saveSetting("logo_url", logoUrl, "Logo", setSavingLogo)}
-                disabled={savingLogo}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
+              <Button data-testid="button-save-logo" onClick={() => saveSetting("logo_url", logoUrl, "Logo", setSavingLogo)} disabled={savingLogo} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                 {savingLogo ? "Salvando..." : "Salvar logo"}
               </Button>
             </>
@@ -1157,48 +998,21 @@ function SettingsTab({
         </CardContent>
       </Card>
 
-      {/* Change Password */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader className="pb-3">
           <CardTitle className="text-white text-base flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
             Trocar Senha do Painel
           </CardTitle>
-          <p className="text-gray-400 text-sm">Altere a senha de acesso ao painel administrativo.</p>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Nova Senha</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Mínimo 6 caracteres"
-              data-testid="input-new-password"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            />
+          <div><label className="block text-xs text-gray-400 mb-1">Nova Senha</label>
+            <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Mínimo 6 caracteres" data-testid="input-new-password" className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500" />
           </div>
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Confirmar Nova Senha</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Repita a nova senha"
-              data-testid="input-confirm-password"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            />
+          <div><label className="block text-xs text-gray-400 mb-1">Confirmar Nova Senha</label>
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a nova senha" data-testid="input-confirm-password" className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500" />
           </div>
-          <Button
-            onClick={changePassword}
-            disabled={savingPw || !newPassword || !confirmPassword}
-            data-testid="button-change-password"
-            size="sm"
-            className="bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold"
-          >
+          <Button onClick={changePassword} disabled={savingPw || !newPassword || !confirmPassword} data-testid="button-change-password" size="sm" className="bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold">
             {savingPw ? "Salvando..." : "Alterar Senha"}
           </Button>
         </CardContent>
@@ -1210,19 +1024,12 @@ function SettingsTab({
 // ─── Main Admin Panel ─────────────────────────────────────────────────────────
 
 export default function Admin() {
-  const [password, setPassword] = useState<string | null>(() =>
-    sessionStorage.getItem(SESSION_KEY)
-  );
+  const [password, setPassword] = useState<string | null>(() => sessionStorage.getItem(SESSION_KEY));
 
   const { data: plans = [], isLoading } = useQuery<Plan[]>({
     queryKey: ["/api/plans"],
     enabled: !!password,
   });
-
-  function handleLogout() {
-    sessionStorage.removeItem(SESSION_KEY);
-    setPassword(null);
-  }
 
   if (!password) return <LoginScreen onLogin={setPassword} />;
 
@@ -1233,7 +1040,6 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Top bar */}
       <header className="border-b border-gray-800 bg-gray-900 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -1243,16 +1049,8 @@ export default function Admin() {
             <span className="text-gray-400 text-sm">Painel Administrativo</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-4 text-xs text-gray-500">
-              <span>{totalPlans} planos cadastrados</span>
-            </div>
-            <Button
-              data-testid="button-logout"
-              variant="ghost"
-              size="sm"
-              onClick={handleLogout}
-              className="text-gray-400 hover:text-white hover:bg-gray-800 gap-2"
-            >
+            <span className="hidden sm:block text-xs text-gray-500">{totalPlans} planos cadastrados</span>
+            <Button data-testid="button-logout" variant="ghost" size="sm" onClick={() => { sessionStorage.removeItem(SESSION_KEY); setPassword(null); }} className="text-gray-400 hover:text-white hover:bg-gray-800 gap-2">
               <LogOut className="w-4 h-4" /> Sair
             </Button>
           </div>
@@ -1262,65 +1060,29 @@ export default function Admin() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-gray-400 text-sm mt-0.5">
-            Gerencie os planos e configurações do site 3D FIBRA
-          </p>
+          <p className="text-gray-400 text-sm mt-0.5">Gerencie os planos e configurações do site 3D FIBRA</p>
         </div>
 
         <Tabs defaultValue="internet">
           <TabsList className="bg-gray-900 border border-gray-800 mb-6 h-auto p-1 flex-wrap gap-1">
-            <TabsTrigger
-              value="internet"
-              data-testid="tab-internet"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-400 gap-2"
-            >
-              <Wifi className="w-4 h-4" />
-              Internet
-              <span className="text-xs opacity-70">({internetCount})</span>
+            <TabsTrigger value="internet" data-testid="tab-internet" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-400 gap-2">
+              <Wifi className="w-4 h-4" /> Internet <span className="text-xs opacity-70">({internetCount})</span>
             </TabsTrigger>
-            <TabsTrigger
-              value="tv"
-              data-testid="tab-tv"
-              className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 gap-2"
-            >
-              <Tv className="w-4 h-4" />
-              TV / Canais
-              <span className="text-xs opacity-70">({tvCount})</span>
+            <TabsTrigger value="tv" data-testid="tab-tv" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-400 gap-2">
+              <Tv className="w-4 h-4" /> TV / Canais <span className="text-xs opacity-70">({tvCount})</span>
             </TabsTrigger>
-            <TabsTrigger
-              value="adicionais"
-              data-testid="tab-adicionais"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white text-gray-400 gap-2"
-            >
-              <Package className="w-4 h-4" />
-              Adicionais
-              <span className="text-xs opacity-70">({adicionaisCount})</span>
+            <TabsTrigger value="adicionais" data-testid="tab-adicionais" className="data-[state=active]:bg-orange-600 data-[state=active]:text-white text-gray-400 gap-2">
+              <Package className="w-4 h-4" /> Adicionais <span className="text-xs opacity-70">({adicionaisCount})</span>
             </TabsTrigger>
-            <TabsTrigger
-              value="settings"
-              data-testid="tab-settings"
-              className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400 gap-2"
-            >
-              <Settings className="w-4 h-4" />
-              Configurações
+            <TabsTrigger value="settings" data-testid="tab-settings" className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400 gap-2">
+              <Settings className="w-4 h-4" /> Configurações
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="internet">
-            <InternetTab plans={plans} isLoading={isLoading} password={password} />
-          </TabsContent>
-
-          <TabsContent value="tv">
-            <TVTab plans={plans} isLoading={isLoading} password={password} />
-          </TabsContent>
-
-          <TabsContent value="adicionais">
-            <AdicionaisTab plans={plans} isLoading={isLoading} password={password} />
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <SettingsTab password={password} onPasswordChange={setPassword} />
-          </TabsContent>
+          <TabsContent value="internet"><InternetTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
+          <TabsContent value="tv"><TVTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
+          <TabsContent value="adicionais"><AdicionaisTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
+          <TabsContent value="settings"><SettingsTab password={password} onPasswordChange={setPassword} /></TabsContent>
         </Tabs>
       </main>
     </div>

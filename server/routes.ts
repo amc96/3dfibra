@@ -2,7 +2,7 @@ import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
-import { insertPlanSchema, updatePlanSchema } from "@shared/schema";
+import { insertPlanSchema, updatePlanSchema, insertTvChannelSchema, updateTvChannelSchema } from "@shared/schema";
 
 const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
@@ -24,110 +24,46 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  if (storage.seedPlans) {
-    await storage.seedPlans();
-  }
-  if (storage.seedSettings) {
-    await storage.seedSettings();
-  }
+  if (storage.seedPlans) await storage.seedPlans();
+  if (storage.seedSettings) await storage.seedSettings();
+  if (storage.seedTvChannels) await storage.seedTvChannels();
 
-  // Public: list plans
+  // ── Public: plans ──────────────────────────────────────────────────────────
+
   app.get(api.plans.list.path, async (_req, res) => {
     const plans = await storage.getPlans();
     res.json(plans);
   });
 
-  // Public: get single plan
   app.get(api.plans.get.path, async (req, res) => {
     const plan = await storage.getPlan(Number(req.params.id));
-    if (!plan) {
-      return res.status(404).json({ message: "Plano não encontrado" });
-    }
+    if (!plan) return res.status(404).json({ message: "Plano não encontrado" });
     res.json(plan);
   });
 
-  // Admin: verify password
-  app.post("/api/admin/login", async (req, res) => {
-    const { password } = req.body;
-    const active = await getActivePassword();
-    if (password === active) {
-      res.json({ ok: true });
-    } else {
-      res.status(401).json({ message: "Senha incorreta" });
-    }
+  // ── Public: TV channels ────────────────────────────────────────────────────
+
+  app.get("/api/tv-channels", async (_req, res) => {
+    const channels = await storage.getTvChannels();
+    res.json(channels);
   });
 
-  // Admin: change password
-  app.post("/api/admin/change-password", requireAdmin, async (req, res) => {
-    const { newPassword } = req.body;
-    if (!newPassword || typeof newPassword !== "string" || newPassword.trim().length < 6) {
-      return res.status(400).json({ message: "A nova senha deve ter pelo menos 6 caracteres" });
-    }
-    await storage.setSetting("admin_password", newPassword.trim());
-    res.json({ ok: true });
+  // Get enabled channel IDs for a specific TV plan (public)
+  app.get("/api/plans/:id/channels", async (req, res) => {
+    const planId = Number(req.params.id);
+    const channelIds = await storage.getPlanChannelIds(planId);
+    res.json(channelIds);
   });
 
-  // Admin: create plan
-  app.post("/api/admin/plans", requireAdmin, async (req, res) => {
-    const parsed = insertPlanSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.errors });
-    }
-    const plan = await storage.createPlan(parsed.data);
-    res.status(201).json(plan);
-  });
+  // ── Public: settings ───────────────────────────────────────────────────────
 
-  // Admin: update plan
-  app.patch("/api/admin/plans/:id", requireAdmin, async (req, res) => {
-    const id = Number(req.params.id);
-    const parsed = updatePlanSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.errors });
-    }
-    const plan = await storage.updatePlan(id, parsed.data);
-    if (!plan) {
-      return res.status(404).json({ message: "Plano não encontrado" });
-    }
-    res.json(plan);
-  });
-
-  // Admin: delete plan
-  app.delete("/api/admin/plans/:id", requireAdmin, async (req, res) => {
-    const id = Number(req.params.id);
-    const ok = await storage.deletePlan(id);
-    if (!ok) {
-      return res.status(404).json({ message: "Plano não encontrado" });
-    }
-    res.json({ ok: true });
-  });
-
-  // Admin: get all settings
-  app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
-    const allSettings = await storage.getAllSettings();
-    res.json(allSettings);
-  });
-
-  // Admin: update a setting
-  app.patch("/api/admin/settings/:key", requireAdmin, async (req, res) => {
-    const { key } = req.params;
-    const { value } = req.body;
-    if (typeof value !== "string") {
-      return res.status(400).json({ message: "Valor inválido" });
-    }
-    await storage.setSetting(key, value);
-    res.json({ ok: true, key, value });
-  });
-
-  // Public: get a specific setting (for use in the frontend)
   app.get("/api/settings/:key", async (req, res) => {
     const value = await storage.getSetting(req.params.key);
-    if (value === undefined) {
-      return res.status(404).json({ message: "Configuração não encontrada" });
-    }
+    if (value === undefined) return res.status(404).json({ message: "Configuração não encontrada" });
     res.json({ key: req.params.key, value });
   });
 
-  // Public: get all TV channel lists
+  // Legacy channel lists endpoint
   app.get("/api/channels", async (_req, res) => {
     const [light, plus, ultra, hbo] = await Promise.all([
       storage.getSetting("channels_light"),
@@ -141,6 +77,101 @@ export async function registerRoutes(
       ultra: ultra ? JSON.parse(ultra) : [],
       hbo: hbo ? JSON.parse(hbo) : [],
     });
+  });
+
+  // ── Admin: auth ────────────────────────────────────────────────────────────
+
+  app.post("/api/admin/login", async (req, res) => {
+    const { password } = req.body;
+    const active = await getActivePassword();
+    if (password === active) {
+      res.json({ ok: true });
+    } else {
+      res.status(401).json({ message: "Senha incorreta" });
+    }
+  });
+
+  app.post("/api/admin/change-password", requireAdmin, async (req, res) => {
+    const { newPassword } = req.body;
+    if (!newPassword || typeof newPassword !== "string" || newPassword.trim().length < 6) {
+      return res.status(400).json({ message: "A nova senha deve ter pelo menos 6 caracteres" });
+    }
+    await storage.setSetting("admin_password", newPassword.trim());
+    res.json({ ok: true });
+  });
+
+  // ── Admin: plans ───────────────────────────────────────────────────────────
+
+  app.post("/api/admin/plans", requireAdmin, async (req, res) => {
+    const parsed = insertPlanSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.errors });
+    const plan = await storage.createPlan(parsed.data);
+    res.status(201).json(plan);
+  });
+
+  app.patch("/api/admin/plans/:id", requireAdmin, async (req, res) => {
+    const id = Number(req.params.id);
+    const parsed = updatePlanSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.errors });
+    const plan = await storage.updatePlan(id, parsed.data);
+    if (!plan) return res.status(404).json({ message: "Plano não encontrado" });
+    res.json(plan);
+  });
+
+  app.delete("/api/admin/plans/:id", requireAdmin, async (req, res) => {
+    const id = Number(req.params.id);
+    const ok = await storage.deletePlan(id);
+    if (!ok) return res.status(404).json({ message: "Plano não encontrado" });
+    res.json({ ok: true });
+  });
+
+  // Plan-channel assignments (admin set, public read)
+  app.put("/api/admin/plans/:id/channels", requireAdmin, async (req, res) => {
+    const planId = Number(req.params.id);
+    const { channelIds } = req.body;
+    if (!Array.isArray(channelIds)) return res.status(400).json({ message: "channelIds deve ser um array" });
+    await storage.setPlanChannelIds(planId, channelIds.map(Number));
+    res.json({ ok: true, planId, channelIds });
+  });
+
+  // ── Admin: TV channels ─────────────────────────────────────────────────────
+
+  app.post("/api/admin/tv-channels", requireAdmin, async (req, res) => {
+    const parsed = insertTvChannelSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.errors });
+    const channel = await storage.createTvChannel(parsed.data);
+    res.status(201).json(channel);
+  });
+
+  app.patch("/api/admin/tv-channels/:id", requireAdmin, async (req, res) => {
+    const id = Number(req.params.id);
+    const parsed = updateTvChannelSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.errors });
+    const channel = await storage.updateTvChannel(id, parsed.data);
+    if (!channel) return res.status(404).json({ message: "Canal não encontrado" });
+    res.json(channel);
+  });
+
+  app.delete("/api/admin/tv-channels/:id", requireAdmin, async (req, res) => {
+    const id = Number(req.params.id);
+    const ok = await storage.deleteTvChannel(id);
+    if (!ok) return res.status(404).json({ message: "Canal não encontrado" });
+    res.json({ ok: true });
+  });
+
+  // ── Admin: settings ────────────────────────────────────────────────────────
+
+  app.get("/api/admin/settings", requireAdmin, async (_req, res) => {
+    const allSettings = await storage.getAllSettings();
+    res.json(allSettings);
+  });
+
+  app.patch("/api/admin/settings/:key", requireAdmin, async (req, res) => {
+    const { key } = req.params;
+    const { value } = req.body;
+    if (typeof value !== "string") return res.status(400).json({ message: "Valor inválido" });
+    await storage.setSetting(key, value);
+    res.json({ ok: true, key, value });
   });
 
   return httpServer;

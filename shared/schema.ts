@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -29,3 +29,19 @@ export const settings = pgTable("settings", {
 export const insertSettingSchema = createInsertSchema(settings).omit({ id: true });
 export type Setting = typeof settings.$inferSelect;
 export type InsertSetting = z.infer<typeof insertSettingSchema>;
+
+// TV Channels catalog
+export const tvChannels = pgTable("tv_channels", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  logoUrl: text("logo_url").notNull().default(""),
+  group: text("group").notNull().default("Geral"),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
+export const insertTvChannelSchema = createInsertSchema(tvChannels).omit({ id: true });
+export const updateTvChannelSchema = insertTvChannelSchema.partial();
+
+export type TvChannel = typeof tvChannels.$inferSelect;
+export type InsertTvChannel = z.infer<typeof insertTvChannelSchema>;
+export type UpdateTvChannel = z.infer<typeof updateTvChannelSchema>;
