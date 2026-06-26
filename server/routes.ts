@@ -10,6 +10,9 @@ import fs from "fs";
 const uploadsChannelsDir = path.resolve(process.cwd(), "uploads/channels");
 if (!fs.existsSync(uploadsChannelsDir)) fs.mkdirSync(uploadsChannelsDir, { recursive: true });
 
+const uploadsSiteDir = path.resolve(process.cwd(), "uploads/site");
+if (!fs.existsSync(uploadsSiteDir)) fs.mkdirSync(uploadsSiteDir, { recursive: true });
+
 const channelLogoStorage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadsChannelsDir),
   filename: (_req, file, cb) => {
@@ -27,6 +30,24 @@ const uploadChannelLogo = multer({
     else cb(new Error("Apenas imagens são permitidas"));
   },
 }).single("logo");
+
+const siteAssetStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsSiteDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname) || ".png";
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
+    cb(null, unique);
+  },
+});
+
+const uploadSiteAsset = multer({
+  storage: siteAssetStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Apenas imagens são permitidas"));
+  },
+});
 
 const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
@@ -158,13 +179,37 @@ export async function registerRoutes(
     res.json({ ok: true, planId, channelIds });
   });
 
-  // ── Admin: logo upload ────────────────────────────────────────────────────
+  // ── Admin: logo upload (channel) ─────────────────────────────────────────
 
   app.post("/api/admin/upload-logo", requireAdmin, (req, res) => {
     uploadChannelLogo(req, res, (err) => {
       if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
       if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
       const url = `/uploads/channels/${req.file.filename}`;
+      res.json({ url });
+    });
+  });
+
+  // ── Admin: site logo upload ───────────────────────────────────────────────
+
+  app.post("/api/admin/upload-site-logo", requireAdmin, (req, res) => {
+    uploadSiteAsset.single("logo")(req, res, async (err) => {
+      if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
+      if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
+      const url = `/uploads/site/${req.file.filename}`;
+      await storage.setSetting("logo_url", url);
+      res.json({ url });
+    });
+  });
+
+  // ── Admin: favicon upload ─────────────────────────────────────────────────
+
+  app.post("/api/admin/upload-favicon", requireAdmin, (req, res) => {
+    uploadSiteAsset.single("favicon")(req, res, async (err) => {
+      if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
+      if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
+      const url = `/uploads/site/${req.file.filename}`;
+      await storage.setSetting("favicon_url", url);
       res.json({ url });
     });
   });

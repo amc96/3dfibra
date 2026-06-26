@@ -1020,12 +1020,131 @@ function AdicionaisTab({ plans, isLoading, password }: { plans: Plan[]; isLoadin
 
 // ─── Settings Tab ─────────────────────────────────────────────────────────────
 
+function ImageUploadCard({
+  title, description, icon, settingKey, uploadEndpoint, fieldName, password, isLoading, currentUrl,
+}: {
+  title: string; description: string; icon: React.ReactNode; settingKey: string;
+  uploadEndpoint: string; fieldName: string; password: string; isLoading: boolean; currentUrl: string;
+}) {
+  const { toast } = useToast();
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => { setPreviewUrl(currentUrl); }, [currentUrl]);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPreviewUrl(URL.createObjectURL(file));
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append(fieldName, file);
+      const res = await fetch(uploadEndpoint, {
+        method: "POST",
+        headers: { "x-admin-password": password },
+        body: formData,
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setPreviewUrl(data.url);
+      queryClient.invalidateQueries({ queryKey: ["/api/settings", settingKey] });
+      toast({ title: `${title} enviado com sucesso!` });
+    } catch {
+      toast({ title: `Erro ao enviar ${title.toLowerCase()}`, variant: "destructive" });
+      setPreviewUrl(currentUrl);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  }
+
+  function remove() {
+    setPreviewUrl("");
+  }
+
+  return (
+    <Card className="bg-gray-900 border-gray-800">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-white text-base flex items-center gap-2">
+          {icon}
+          {title}
+        </CardTitle>
+        <p className="text-gray-400 text-sm">{description}</p>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="h-28 bg-gray-800 rounded-lg animate-pulse" />
+        ) : previewUrl ? (
+          <div className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg border border-gray-700">
+            <img
+              src={previewUrl}
+              alt={title}
+              className="w-16 h-16 object-contain rounded bg-white/5 shrink-0"
+              onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0.2"; }}
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-300 truncate">{uploading ? "Enviando..." : "Imagem carregada"}</p>
+              <label
+                data-testid={`label-upload-${settingKey}`}
+                className="mt-1 inline-block text-xs text-blue-400 hover:text-blue-300 cursor-pointer underline"
+              >
+                Trocar imagem
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={uploading}
+                  onChange={handleFileChange}
+                />
+              </label>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={remove}
+              disabled={uploading}
+              className="text-gray-400 hover:text-red-400 hover:bg-red-900/20 h-8 w-8 p-0 shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          <label
+            data-testid={`label-upload-${settingKey}`}
+            className={`flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${uploading ? "border-blue-500 bg-blue-500/5" : "border-gray-700 bg-gray-800/50 hover:border-blue-600 hover:bg-gray-800"}`}
+          >
+            {uploading ? (
+              <>
+                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-2" />
+                <span className="text-sm text-blue-400">Enviando...</span>
+              </>
+            ) : (
+              <>
+                <Image className="w-8 h-8 text-gray-600 mb-2" />
+                <span className="text-sm text-gray-400">Clique para selecionar a imagem</span>
+                <span className="text-xs text-gray-600 mt-0.5">PNG, JPG, SVG, WebP — máx. 5MB</span>
+              </>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={uploading}
+              onChange={handleFileChange}
+            />
+          </label>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 function SettingsTab({ password, onPasswordChange }: { password: string; onPasswordChange: (p: string) => void }) {
   const { toast } = useToast();
   const [whatsapp, setWhatsapp] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
   const [savingWa, setSavingWa] = useState(false);
-  const [savingLogo, setSavingLogo] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingPw, setSavingPw] = useState(false);
@@ -1042,9 +1161,10 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
   useEffect(() => {
     const wa = settingsList.find((s) => s.key === "whatsapp_number");
     if (wa) setWhatsapp(wa.value);
-    const logo = settingsList.find((s) => s.key === "logo_url");
-    if (logo !== undefined) setLogoUrl(logo.value);
   }, [settingsList]);
+
+  const currentLogoUrl = settingsList.find((s) => s.key === "logo_url")?.value ?? "";
+  const currentFaviconUrl = settingsList.find((s) => s.key === "favicon_url")?.value ?? "";
 
   async function saveSetting(key: string, value: string, label: string, setSaving: (v: boolean) => void) {
     setSaving(true);
@@ -1110,31 +1230,29 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
         </CardContent>
       </Card>
 
-      <Card className="bg-gray-900 border-gray-800">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-white text-base flex items-center gap-2">
-            <Image className="w-5 h-5 text-blue-400" />
-            Logo do Site
-          </CardTitle>
-          <p className="text-gray-400 text-sm">URL de imagem para substituir o logo de texto "3D FIBRA"</p>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {isLoading ? <div className="h-10 bg-gray-800 rounded-md animate-pulse" /> : (
-            <>
-              <Input data-testid="input-logo-url" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://exemplo.com/logo.png" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
-              {logoUrl && (
-                <div className="p-3 rounded-lg bg-gray-800 border border-gray-700">
-                  <p className="text-xs text-gray-500 mb-2">Pré-visualização:</p>
-                  <img src={logoUrl} alt="logo" className="h-10 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                </div>
-              )}
-              <Button data-testid="button-save-logo" onClick={() => saveSetting("logo_url", logoUrl, "Logo", setSavingLogo)} disabled={savingLogo} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                {savingLogo ? "Salvando..." : "Salvar logo"}
-              </Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      <ImageUploadCard
+        title="Logo do Site"
+        description='Imagem exibida no topo e rodapé do site em vez do texto "3D FIBRA"'
+        icon={<Image className="w-5 h-5 text-blue-400" />}
+        settingKey="logo_url"
+        uploadEndpoint="/api/admin/upload-site-logo"
+        fieldName="logo"
+        password={password}
+        isLoading={isLoading}
+        currentUrl={currentLogoUrl}
+      />
+
+      <ImageUploadCard
+        title="Favicon do Site"
+        description="Ícone exibido na aba do navegador (recomendado: PNG ou ICO quadrado, mín. 32×32px)"
+        icon={<Star className="w-5 h-5 text-yellow-400" />}
+        settingKey="favicon_url"
+        uploadEndpoint="/api/admin/upload-favicon"
+        fieldName="favicon"
+        password={password}
+        isLoading={isLoading}
+        currentUrl={currentFaviconUrl}
+      />
 
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader className="pb-3">
