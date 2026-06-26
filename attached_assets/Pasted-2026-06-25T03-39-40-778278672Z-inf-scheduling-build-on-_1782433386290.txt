@@ -1,0 +1,74 @@
+2026-06-25T03:39:40.778278672Z [inf]  scheduling build on Metal builder "production-builderv3-us-west1-jdz1"
+2026-06-25T03:39:41.897118177Z [inf]  unpacking archive
+2026-06-25T03:39:42.070756078Z [inf]  uploading snapshot
+2026-06-25T03:39:42.140158483Z [inf]  [internal] load build definition from Dockerfile
+2026-06-25T03:39:42.140160292Z [inf]  [internal] load build definition from Dockerfile
+2026-06-25T03:39:42.140160947Z [inf]  [internal] load build definition from Dockerfile
+2026-06-25T03:40:02.246184264Z [inf]  [internal] load build definition from Dockerfile
+2026-06-25T03:40:02.255533660Z [inf]  [internal] load metadata for docker.io/library/node:20-slim
+2026-06-25T03:40:02.702651717Z [inf]  [internal] load metadata for docker.io/library/node:20-slim
+2026-06-25T03:40:02.702914798Z [inf]  [internal] load .dockerignore
+2026-06-25T03:40:02.711997124Z [inf]  [internal] load .dockerignore
+2026-06-25T03:40:02.712001905Z [inf]  [internal] load .dockerignore
+2026-06-25T03:40:02.743515635Z [inf]  [internal] load .dockerignore
+2026-06-25T03:40:02.756494613Z [inf]  [stage-1 6/6] COPY --from=builder /app/migrations ./migrations
+2026-06-25T03:40:02.756495658Z [inf]  [stage-1 5/6] COPY --from=builder /app/dist ./dist
+2026-06-25T03:40:02.756497606Z [inf]  [builder 7/7] RUN npx drizzle-kit generate
+2026-06-25T03:40:02.756498043Z [inf]  [builder 6/7] RUN npm run build
+2026-06-25T03:40:02.756498647Z [inf]  [builder 5/7] COPY . .
+2026-06-25T03:40:02.756498996Z [inf]  [builder 4/7] RUN npm install
+2026-06-25T03:40:02.756499446Z [inf]  [stage-1 4/6] RUN npm install --omit=dev
+2026-06-25T03:40:02.756499816Z [inf]  [builder 3/7] COPY package*.json ./
+2026-06-25T03:40:02.756500686Z [inf]  [internal] load build context
+2026-06-25T03:40:02.756501068Z [inf]  [builder 2/7] WORKDIR /app
+2026-06-25T03:40:02.756501444Z [inf]  [builder 1/7] FROM docker.io/library/node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+2026-06-25T03:40:02.756527316Z [inf]  [builder 1/7] FROM docker.io/library/node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+2026-06-25T03:40:02.756527764Z [inf]  [internal] load build context
+2026-06-25T03:40:02.769963075Z [inf]  [builder 1/7] FROM docker.io/library/node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+2026-06-25T03:40:02.773579526Z [inf]  [internal] load build context
+2026-06-25T03:40:02.827282243Z [inf]  [internal] load build context
+2026-06-25T03:40:02.844974182Z [inf]  [builder 2/7] WORKDIR /app
+2026-06-25T03:40:02.845269192Z [inf]  [builder 2/7] WORKDIR /app
+2026-06-25T03:40:02.845396689Z [inf]  [builder 3/7] COPY package*.json ./
+2026-06-25T03:40:03.810679863Z [inf]  [builder 3/7] COPY package*.json ./
+2026-06-25T03:40:03.819661660Z [inf]  [stage-1 4/6] RUN npm install --omit=dev
+2026-06-25T03:40:03.819662450Z [inf]  [builder 4/7] RUN npm install
+2026-06-25T03:41:15.786857132Z [inf]  npm error code ENOTFOUND
+npm error syscall getaddrinfo
+npm error errno ENOTFOUND
+npm error network request to http://package-firewall.replit.local/npm/typedarray/-/typedarray-0.0.6.tgz failed, reason: getaddrinfo ENOTFOUND package-firewall.replit.local
+npm error network This is a problem related to network connectivity.
+npm error network In most cases you are behind a proxy or have bad network settings.
+npm error network
+npm error network If you are behind a proxy, please make sure that the
+npm error network 'proxy' config is set properly.  See: 'npm help config'
+
+2026-06-25T03:41:15.787971744Z [inf]  npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.17.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0
+npm notice To update run: npm install -g npm@11.17.0
+npm notice
+
+2026-06-25T03:41:15.788030836Z [inf]  npm error A complete log of this run can be found in: /root/.npm/_logs/2026-06-25T03_40_04_107Z-debug-0.log
+
+2026-06-25T03:41:15.894705857Z [inf]  npm error code ENOTFOUND
+npm error syscall getaddrinfo
+npm error errno ENOTFOUND
+npm error network request to http://package-firewall.replit.local/npm/typedarray/-/typedarray-0.0.6.tgz failed, reason: getaddrinfo ENOTFOUND package-firewall.replit.local
+npm error network This is a problem related to network connectivity.
+npm error network In most cases you are behind a proxy or have bad network settings.
+npm error network
+npm error network If you are behind a proxy, please make sure that the
+npm error network 'proxy' config is set properly.  See: 'npm help config'
+
+2026-06-25T03:41:15.895702292Z [inf]  npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.17.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0
+npm notice To update run: npm install -g npm@11.17.0
+npm notice
+
+2026-06-25T03:41:15.895768761Z [inf]  npm error A complete log of this run can be found in: /root/.npm/_logs/2026-06-25T03_40_04_107Z-debug-0.log
+
+2026-06-25T03:41:16.082121542Z [err]  [stage-1 4/6] RUN npm install --omit=dev
+2026-06-25T03:41:16.097544097Z [err]  [builder 4/7] RUN npm install
+2026-06-25T03:41:21.456121171Z [err]  Build Failed: build daemon returned an error < failed to solve: process "/bin/sh -c npm install --omit=dev" did not complete successfully: exit code: 1 >

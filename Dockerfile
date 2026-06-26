@@ -1,40 +1,31 @@
-# Use Node 20 as base image
 FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Install dependencies
+# Force public npm registry — avoids any Replit-internal proxy URLs in lock file
+RUN npm config set registry https://registry.npmjs.org/
+
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-# Copy source code
 COPY . .
-
-# Build the application
 RUN npm run build
 
-# Generate migrations
-RUN npx drizzle-kit generate
-
-# Production image
+# ── Production image ────────────────────────────────────────────────────────
 FROM node:20-slim
 
 WORKDIR /app
 
-# Install production dependencies
+RUN npm config set registry https://registry.npmjs.org/
+
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
-# Copy built assets and migrations
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/migrations ./migrations
 
-# Set environment variables
 ENV NODE_ENV=production
-ENV PORT=5000
+ENV PORT=3000
 
-# Expose port
-EXPOSE 5000
+EXPOSE 3000
 
-# Start command
 CMD ["node", "dist/index.cjs"]
