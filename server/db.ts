@@ -6,13 +6,15 @@ import fs from "fs";
 
 const { Pool } = pg;
 
-if (!process.env.DATABASE_URL) {
-  console.error("DATABASE_URL must be set. Exiting.");
+const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
+
+if (!connectionString) {
+  console.error("DATABASE_URL (or POSTGRES_URL) must be set. Exiting.");
   process.exit(1);
 }
 
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 

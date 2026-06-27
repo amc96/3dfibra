@@ -45,3 +45,8 @@ waitForPort = 5000
 expertMode = true
 integrations = ["javascript_database:1.0.0"]
 stack = "FULLSTACK_JS"
+
+[userenv]
+
+[userenv.production]
+POSTGRES_URL = "postgresql://postgres:password@helium/heliumdb?sslmode=disable"
