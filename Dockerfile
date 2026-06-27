@@ -2,7 +2,6 @@ FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Force public npm registry — avoids any Replit-internal proxy URLs in lock file
 RUN npm config set registry https://registry.npmjs.org/
 
 COPY package*.json ./
@@ -10,6 +9,9 @@ RUN npm ci
 
 COPY . .
 RUN npm run build
+
+# Generate migration files (no DB connection needed)
+RUN npx drizzle-kit generate
 
 # ── Production image ────────────────────────────────────────────────────────
 FROM node:20-slim
@@ -22,9 +24,9 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/migrations ./migrations
 
 ENV NODE_ENV=production
-ENV PORT=3000
 
 EXPOSE 3000
 
