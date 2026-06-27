@@ -313,61 +313,18 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Arquivo de backup inválido ou corrompido" });
       }
 
-      const { pool } = await import("./db");
-      const client = await pool.connect();
-      try {
-        await client.query("BEGIN");
-
-        // Restore plans with explicit IDs
-        await client.query("TRUNCATE plans RESTART IDENTITY CASCADE");
-        for (const p of bkPlans) {
-          await client.query(
-            `INSERT INTO plans (id, name, speed, price, description, features, is_highlighted, category)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-            [p.id, p.name, p.speed, p.price, p.description ?? null, JSON.stringify(p.features), p.isHighlighted ?? false, p.category ?? "internet"]
-          );
-        }
-        if (bkPlans.length > 0) {
-          await client.query(`SELECT setval('plans_id_seq', (SELECT MAX(id) FROM plans))`);
-        }
-
-        // Restore TV channels with explicit IDs
-        await client.query("TRUNCATE tv_channels RESTART IDENTITY CASCADE");
-        for (const c of bkChannels) {
-          await client.query(
-            `INSERT INTO tv_channels (id, name, logo_url, "group", sort_order)
-             VALUES ($1,$2,$3,$4,$5)`,
-            [c.id, c.name, c.logoUrl ?? "", c.group ?? "Geral", c.sortOrder ?? 0]
-          );
-        }
-        if (bkChannels.length > 0) {
-          await client.query(`SELECT setval('tv_channels_id_seq', (SELECT MAX(id) FROM tv_channels))`);
-        }
-
-        // Upsert settings — never overwrite admin_password
-        for (const s of bkSettings) {
-          if (s.key === "admin_password") continue;
-          await client.query(
-            `INSERT INTO settings (key, value) VALUES ($1, $2)
-             ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
-            [s.key, s.value]
-          );
-        }
-
-        await client.query("COMMIT");
-      } catch (err) {
-        await client.query("ROLLBACK");
-        throw err;
-      } finally {
-        client.release();
-      }
+      // Restore all data via file-based storage
+      await storage.restoreAll({
+        plans: bkPlans,
+        settings: bkSettings,
+        tvChannels: bkChannels,
+      });
 
       // Restore uploaded files from base64
       if (bkUploads && typeof bkUploads === "object") {
         const uploadsDir = path.resolve(process.cwd(), "uploads");
         for (const [relPath, b64] of Object.entries(bkUploads as Record<string, string>)) {
           if (typeof b64 !== "string") continue;
-          // Sanitize path — prevent directory traversal
           const safePath = relPath.replace(/\.\./g, "").replace(/^\/+/, "");
           const fullPath = path.join(uploadsDir, safePath);
           if (!fullPath.startsWith(uploadsDir)) continue;

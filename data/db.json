@@ -1,0 +1,1080 @@
+{
+  "plans": [
+    {
+      "name": "Básico",
+      "speed": "300 MEGA",
+      "price": "77,90",
+      "features": [
+        "Wi-Fi Grátis",
+        "Instalação Grátis",
+        "Suporte 24h",
+        "Fibra Óptica"
+      ],
+      "category": "internet",
+      "isHighlighted": false,
+      "id": 1,
+      "description": null
+    },
+    {
+      "name": "Essencial",
+      "speed": "400 MEGA",
+      "price": "87,90",
+      "features": [
+        "Wi-Fi Grátis",
+        "Instalação Grátis",
+        "Suporte 24h",
+        "Fibra Óptica"
+      ],
+      "category": "internet",
+      "isHighlighted": false,
+      "id": 2,
+      "description": null
+    },
+    {
+      "name": "Intermediário",
+      "speed": "500 MEGA",
+      "price": "97,90",
+      "features": [
+        "Wi-Fi Grátis",
+        "Instalação Grátis",
+        "Suporte 24h",
+        "Fibra Óptica"
+      ],
+      "category": "internet",
+      "isHighlighted": true,
+      "id": 3,
+      "description": null
+    },
+    {
+      "name": "Avançado",
+      "speed": "600 MEGA",
+      "price": "107,90",
+      "features": [
+        "Wi-Fi Grátis",
+        "Instalação Grátis",
+        "Suporte 24h",
+        "Fibra Óptica"
+      ],
+      "category": "internet",
+      "isHighlighted": false,
+      "id": 4,
+      "description": null
+    },
+    {
+      "name": "Ultra",
+      "speed": "700 MEGA",
+      "price": "117,90",
+      "features": [
+        "Wi-Fi Grátis",
+        "Instalação Grátis",
+        "Suporte 24h",
+        "Fibra Óptica"
+      ],
+      "category": "internet",
+      "isHighlighted": false,
+      "id": 5,
+      "description": null
+    },
+    {
+      "name": "Gamer",
+      "speed": "800 MEGA",
+      "price": "127,90",
+      "features": [
+        "Wi-Fi Grátis",
+        "Instalação Grátis",
+        "Suporte 24h",
+        "Fibra Óptica"
+      ],
+      "category": "internet",
+      "isHighlighted": false,
+      "id": 6,
+      "description": null
+    },
+    {
+      "name": "Premium",
+      "speed": "900 MEGA",
+      "price": "137,90",
+      "features": [
+        "Wi-Fi Grátis",
+        "Instalação Grátis",
+        "Suporte 24h",
+        "Fibra Óptica"
+      ],
+      "category": "internet",
+      "isHighlighted": false,
+      "id": 7,
+      "description": null
+    },
+    {
+      "name": "Canais Light",
+      "speed": "100+ Canais",
+      "price": "17,90",
+      "features": [
+        "Canais abertos entre outros",
+        "Qualidade HD",
+        "Suporte para TV, iOS, Android e Web",
+        "Lista de canais"
+      ],
+      "category": "tv",
+      "isHighlighted": false,
+      "id": 8,
+      "description": null
+    },
+    {
+      "name": "Canais Plus",
+      "speed": "150+ Canais",
+      "price": "39,90",
+      "features": [
+        "Canais abertos entre outros",
+        "Qualidade HD",
+        "Suporte para TV, iOS, Android e Web",
+        "Lista de canais"
+      ],
+      "category": "tv",
+      "isHighlighted": false,
+      "id": 9,
+      "description": null
+    },
+    {
+      "name": "Canais Ultra",
+      "speed": "200+ Canais",
+      "price": "53,90",
+      "features": [
+        "Canais abertos entre outros",
+        "Qualidade HD",
+        "Suporte para TV, iOS, Android e Web",
+        "Lista de canais"
+      ],
+      "category": "tv",
+      "isHighlighted": true,
+      "id": 10,
+      "description": null
+    },
+    {
+      "name": "Canais Ultra 1P + HBO",
+      "speed": "200+ Canais + HBO",
+      "price": "70,90",
+      "features": [
+        "Canais abertos entre outros",
+        "Qualidade HD",
+        "Suporte para TV, iOS, Android e Web",
+        "Lista de canais"
+      ],
+      "category": "tv",
+      "isHighlighted": false,
+      "id": 11,
+      "description": null
+    },
+    {
+      "name": "Câmera de Segurança",
+      "speed": "Câmera",
+      "price": "25,00",
+      "features": [
+        "Acesse de onde estiver",
+        "Aplicativo para Android e iOS",
+        "Visão Noturna",
+        "Câmera Full HD"
+      ],
+      "category": "adicionais",
+      "isHighlighted": false,
+      "id": 12,
+      "description": null
+    },
+    {
+      "name": "Roteador Extra",
+      "speed": "WIFI 6",
+      "price": "25,00",
+      "features": [
+        "Maior Alcance",
+        "Tecnologia Mesh",
+        "Fácil Configuração",
+        "Gigabit"
+      ],
+      "category": "adicionais",
+      "isHighlighted": false,
+      "id": 13,
+      "description": null
+    },
+    {
+      "name": "TV Box",
+      "speed": "Android TV",
+      "price": "25,00",
+      "features": [
+        "Transforma sua TV",
+        "Acesso a Apps",
+        "Resolução Full HD",
+        "Controle Remoto"
+      ],
+      "category": "adicionais",
+      "isHighlighted": false,
+      "id": 14,
+      "description": null
+    }
+  ],
+  "settings": [
+    {
+      "id": 1,
+      "key": "whatsapp_number",
+      "value": "5553999789222"
+    },
+    {
+      "id": 2,
+      "key": "logo_url",
+      "value": ""
+    },
+    {
+      "id": 3,
+      "key": "favicon_url",
+      "value": ""
+    },
+    {
+      "id": 4,
+      "key": "admin_password",
+      "value": ""
+    },
+    {
+      "id": 5,
+      "key": "channels_light",
+      "value": "[{\"category\":\"Cultura e Variedades\",\"name\":\"Brozo\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV Pampa\"},{\"category\":\"Cultura e Variedades\",\"name\":\"SBT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"RECORD\"},{\"category\":\"Cultura e Variedades\",\"name\":\"BAND\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TRAVEL\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV BLITS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Planalto Norte\"},{\"category\":\"Cultura e Variedades\",\"name\":\"GAZETA\"},{\"category\":\"Cultura e Variedades\",\"name\":\"VRT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"DOCS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Unique\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Artel\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Brazuca\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV História\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Music Box Brazil\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Home & Health\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TLC\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Food Network\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Int Novelas\"},{\"category\":\"Públicos\",\"name\":\"TV Justiça\"},{\"category\":\"Públicos\",\"name\":\"TV Brasil\"},{\"category\":\"Públicos\",\"name\":\"RESERVADO COMUNITÁRIO\"},{\"category\":\"Públicos\",\"name\":\"TV Senado\"},{\"category\":\"Públicos\",\"name\":\"TV Câmara\"},{\"category\":\"Notícias\",\"name\":\"RedeTV\"},{\"category\":\"Notícias\",\"name\":\"New\"},{\"category\":\"Notícias\",\"name\":\"TVD News\"},{\"category\":\"Notícias\",\"name\":\"Euro News\"},{\"category\":\"Notícias\",\"name\":\"Band News\"},{\"category\":\"Notícias\",\"name\":\"RN\"},{\"category\":\"Notícias\",\"name\":\"CNN Brasil\"},{\"category\":\"Notícias\",\"name\":\"Telesur\"},{\"category\":\"Notícias\",\"name\":\"Exitosa\"},{\"category\":\"Notícias\",\"name\":\"JP News\"},{\"category\":\"Notícias\",\"name\":\"Fox News\"},{\"category\":\"Filmes e Séries\",\"name\":\"Mider\"},{\"category\":\"Filmes e Séries\",\"name\":\"LMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"Retro\"},{\"category\":\"Filmes e Séries\",\"name\":\"Ultra\"},{\"category\":\"Filmes e Séries\",\"name\":\"Family Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Movies\"},{\"category\":\"Filmes e Séries\",\"name\":\"Prime Box Brazil\"},{\"category\":\"Filmes e Séries\",\"name\":\"Film & Arts\"},{\"category\":\"Filmes e Séries\",\"name\":\"AMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"ISTV\"},{\"category\":\"Filmes e Séries\",\"name\":\"Canal Sony\"},{\"category\":\"Filmes e Séries\",\"name\":\"TNT Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Space\"},{\"category\":\"Filmes e Séries\",\"name\":\"TCM HD\"},{\"category\":\"Filmes e Séries\",\"name\":\"Top Action\"},{\"category\":\"Infantil\",\"name\":\"Kios\"},{\"category\":\"Infantil\",\"name\":\"ID\"},{\"category\":\"Infantil\",\"name\":\"Otaku\"},{\"category\":\"Infantil\",\"name\":\"Lolly / Leo & Lully\"},{\"category\":\"Infantil\",\"name\":\"Yupi\"},{\"category\":\"Infantil\",\"name\":\"Hallo!\"},{\"category\":\"Infantil\",\"name\":\"Discovery Kids\"},{\"category\":\"Infantil\",\"name\":\"Cartoon Network\"},{\"category\":\"Infantil\",\"name\":\"Tooncast\"},{\"category\":\"Infantil\",\"name\":\"Cartoonito\"},{\"category\":\"Esportes\",\"name\":\"Fish TV\"},{\"category\":\"Esportes\",\"name\":\"Unique Sports\"},{\"category\":\"Esportes\",\"name\":\"Cazé TV\"},{\"category\":\"Esportes\",\"name\":\"Band Sports HD\"},{\"category\":\"Esportes\",\"name\":\"Fuel TV\"},{\"category\":\"Esportes\",\"name\":\"ESPN\"},{\"category\":\"Esportes\",\"name\":\"ESPN 4\"},{\"category\":\"Esportes\",\"name\":\"ESPN 5\"},{\"category\":\"Esportes\",\"name\":\"TNT Sports\"},{\"category\":\"Agronegócio\",\"name\":\"Canal Rural\"},{\"category\":\"Agronegócio\",\"name\":\"AgroBrasil\"},{\"category\":\"Agronegócio\",\"name\":\"Terra Viva\"},{\"category\":\"Agronegócio\",\"name\":\"AgroCanal\"},{\"category\":\"Agronegócio\",\"name\":\"Canal do Boi\"},{\"category\":\"Documentários\",\"name\":\"Discovery\"},{\"category\":\"Documentários\",\"name\":\"Animal Planet\"},{\"category\":\"Documentários\",\"name\":\"Discovery Turbo\"},{\"category\":\"Documentários\",\"name\":\"HGTV\"},{\"category\":\"Educativos\",\"name\":\"TV Cultura\"},{\"category\":\"Educativos\",\"name\":\"Tvescala\"},{\"category\":\"Educativos\",\"name\":\"RESERVADO UNIVERSITÁRIO\"},{\"category\":\"Educativos\",\"name\":\"SescTV\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Mundo Maior\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Canção Nova\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Vida\"},{\"category\":\"Religiosos / Outros\",\"name\":\"RS21\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Evangelizar\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Novo Tempo\"},{\"category\":\"Religiosos / Outros\",\"name\":\"EWTN\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Gênesis\"},{\"category\":\"Étnicos\",\"name\":\"NHK\"}]"
+    },
+    {
+      "id": 6,
+      "key": "channels_plus",
+      "value": "[{\"category\":\"Cultura e Variedades\",\"name\":\"Brozo\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV Pampa\"},{\"category\":\"Cultura e Variedades\",\"name\":\"SBT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"RECORD\"},{\"category\":\"Cultura e Variedades\",\"name\":\"BAND\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TRAVEL\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV BLITS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Planalto Norte\"},{\"category\":\"Cultura e Variedades\",\"name\":\"GAZETA\"},{\"category\":\"Cultura e Variedades\",\"name\":\"VRT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"DOCS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Unique\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Artel\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Brazuca\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV História\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Music Box Brazil\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Home & Health\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TLC\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Food Network\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Int Novelas\"},{\"category\":\"Públicos\",\"name\":\"TV Justiça\"},{\"category\":\"Públicos\",\"name\":\"TV Brasil\"},{\"category\":\"Públicos\",\"name\":\"RESERVADO COMUNITÁRIO\"},{\"category\":\"Públicos\",\"name\":\"TV Senado\"},{\"category\":\"Públicos\",\"name\":\"TV Câmara\"},{\"category\":\"Notícias\",\"name\":\"RedeTV\"},{\"category\":\"Notícias\",\"name\":\"New\"},{\"category\":\"Notícias\",\"name\":\"TVD News\"},{\"category\":\"Notícias\",\"name\":\"Euro News\"},{\"category\":\"Notícias\",\"name\":\"Band News\"},{\"category\":\"Notícias\",\"name\":\"RN\"},{\"category\":\"Notícias\",\"name\":\"CNN Brasil\"},{\"category\":\"Notícias\",\"name\":\"Telesur\"},{\"category\":\"Notícias\",\"name\":\"Exitosa\"},{\"category\":\"Notícias\",\"name\":\"JP News\"},{\"category\":\"Notícias\",\"name\":\"Fox News\"},{\"category\":\"Filmes e Séries\",\"name\":\"Mider\"},{\"category\":\"Filmes e Séries\",\"name\":\"LMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"Retro\"},{\"category\":\"Filmes e Séries\",\"name\":\"Ultra\"},{\"category\":\"Filmes e Séries\",\"name\":\"Family Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Movies\"},{\"category\":\"Filmes e Séries\",\"name\":\"Prime Box Brazil\"},{\"category\":\"Filmes e Séries\",\"name\":\"Film & Arts\"},{\"category\":\"Filmes e Séries\",\"name\":\"AMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"ISTV\"},{\"category\":\"Filmes e Séries\",\"name\":\"Canal Sony\"},{\"category\":\"Filmes e Séries\",\"name\":\"TNT Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Space\"},{\"category\":\"Filmes e Séries\",\"name\":\"TCM HD\"},{\"category\":\"Filmes e Séries\",\"name\":\"Top Action\"},{\"category\":\"Infantil\",\"name\":\"Kios\"},{\"category\":\"Infantil\",\"name\":\"ID\"},{\"category\":\"Infantil\",\"name\":\"Otaku\"},{\"category\":\"Infantil\",\"name\":\"Lolly / Leo & Lully\"},{\"category\":\"Infantil\",\"name\":\"Yupi\"},{\"category\":\"Infantil\",\"name\":\"Hallo!\"},{\"category\":\"Infantil\",\"name\":\"Discovery Kids\"},{\"category\":\"Infantil\",\"name\":\"Cartoon Network\"},{\"category\":\"Infantil\",\"name\":\"Tooncast\"},{\"category\":\"Infantil\",\"name\":\"Cartoonito\"},{\"category\":\"Esportes\",\"name\":\"Fish TV\"},{\"category\":\"Esportes\",\"name\":\"Unique Sports\"},{\"category\":\"Esportes\",\"name\":\"Cazé TV\"},{\"category\":\"Esportes\",\"name\":\"Band Sports HD\"},{\"category\":\"Esportes\",\"name\":\"Fuel TV\"},{\"category\":\"Esportes\",\"name\":\"ESPN\"},{\"category\":\"Esportes\",\"name\":\"ESPN 4\"},{\"category\":\"Esportes\",\"name\":\"ESPN 5\"},{\"category\":\"Esportes\",\"name\":\"TNT Sports\"},{\"category\":\"Agronegócio\",\"name\":\"Canal Rural\"},{\"category\":\"Agronegócio\",\"name\":\"AgroBrasil\"},{\"category\":\"Agronegócio\",\"name\":\"Terra Viva\"},{\"category\":\"Agronegócio\",\"name\":\"AgroCanal\"},{\"category\":\"Agronegócio\",\"name\":\"Canal do Boi\"},{\"category\":\"Documentários\",\"name\":\"Discovery\"},{\"category\":\"Documentários\",\"name\":\"Animal Planet\"},{\"category\":\"Documentários\",\"name\":\"Discovery Turbo\"},{\"category\":\"Documentários\",\"name\":\"HGTV\"},{\"category\":\"Educativos\",\"name\":\"TV Cultura\"},{\"category\":\"Educativos\",\"name\":\"Tvescala\"},{\"category\":\"Educativos\",\"name\":\"RESERVADO UNIVERSITÁRIO\"},{\"category\":\"Educativos\",\"name\":\"SescTV\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Mundo Maior\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Canção Nova\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Vida\"},{\"category\":\"Religiosos / Outros\",\"name\":\"RS21\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Evangelizar\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Novo Tempo\"},{\"category\":\"Religiosos / Outros\",\"name\":\"EWTN\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Gênesis\"},{\"category\":\"Étnicos\",\"name\":\"NHK\"}]"
+    },
+    {
+      "id": 7,
+      "key": "channels_ultra",
+      "value": "[{\"category\":\"Cultura e Variedades\",\"name\":\"Brozo\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV Pampa\"},{\"category\":\"Cultura e Variedades\",\"name\":\"SBT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"RECORD\"},{\"category\":\"Cultura e Variedades\",\"name\":\"BAND\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TRAVEL\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV BLITS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Planalto Norte\"},{\"category\":\"Cultura e Variedades\",\"name\":\"GAZETA\"},{\"category\":\"Cultura e Variedades\",\"name\":\"VRT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"DOCS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Unique\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Artel\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Brazuca\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Latina\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Urban\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV História\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Music Box Brazil\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Home & Health\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TLC\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Food Network\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Int Novelas\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Rai Italia\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Adult Swim\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Sabor & Arte\"},{\"category\":\"Públicos\",\"name\":\"TV Justiça\"},{\"category\":\"Públicos\",\"name\":\"TV Brasil\"},{\"category\":\"Públicos\",\"name\":\"RESERVADO COMUNITÁRIO\"},{\"category\":\"Públicos\",\"name\":\"TV Senado\"},{\"category\":\"Públicos\",\"name\":\"TV Câmara\"},{\"category\":\"Notícias\",\"name\":\"RedeTV\"},{\"category\":\"Notícias\",\"name\":\"New\"},{\"category\":\"Notícias\",\"name\":\"TVD News\"},{\"category\":\"Notícias\",\"name\":\"Euro News\"},{\"category\":\"Notícias\",\"name\":\"Band News\"},{\"category\":\"Notícias\",\"name\":\"RN\"},{\"category\":\"Notícias\",\"name\":\"CNN Brasil\"},{\"category\":\"Notícias\",\"name\":\"Telesur\"},{\"category\":\"Notícias\",\"name\":\"Exitosa\"},{\"category\":\"Notícias\",\"name\":\"JP News\"},{\"category\":\"Notícias\",\"name\":\"Fox News\"},{\"category\":\"Notícias\",\"name\":\"Bloomberg\"},{\"category\":\"Notícias\",\"name\":\"CNBC\"},{\"category\":\"Notícias\",\"name\":\"Times Now\"},{\"category\":\"Filmes e Séries\",\"name\":\"Mider\"},{\"category\":\"Filmes e Séries\",\"name\":\"LMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"Retro\"},{\"category\":\"Filmes e Séries\",\"name\":\"Ultra\"},{\"category\":\"Filmes e Séries\",\"name\":\"Family Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Movies\"},{\"category\":\"Filmes e Séries\",\"name\":\"Prime Box Brazil\"},{\"category\":\"Filmes e Séries\",\"name\":\"Film & Arts\"},{\"category\":\"Filmes e Séries\",\"name\":\"AMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"ISTV\"},{\"category\":\"Filmes e Séries\",\"name\":\"Canal Sony\"},{\"category\":\"Filmes e Séries\",\"name\":\"TNT Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Space\"},{\"category\":\"Filmes e Séries\",\"name\":\"TCM HD\"},{\"category\":\"Filmes e Séries\",\"name\":\"Cinemax\"},{\"category\":\"Filmes e Séries\",\"name\":\"Lifetime HD\"},{\"category\":\"Filmes e Séries\",\"name\":\"Top Action\"},{\"category\":\"Infantil\",\"name\":\"Kios\"},{\"category\":\"Infantil\",\"name\":\"ID\"},{\"category\":\"Infantil\",\"name\":\"Otaku\"},{\"category\":\"Infantil\",\"name\":\"Leo & Lully\"},{\"category\":\"Infantil\",\"name\":\"Yupi\"},{\"category\":\"Infantil\",\"name\":\"Hallo!\"},{\"category\":\"Infantil\",\"name\":\"Discovery Kids\"},{\"category\":\"Infantil\",\"name\":\"Cartoon Network\"},{\"category\":\"Infantil\",\"name\":\"Tooncast\"},{\"category\":\"Infantil\",\"name\":\"Cartoonito\"},{\"category\":\"Esportes\",\"name\":\"Fish TV\"},{\"category\":\"Esportes\",\"name\":\"Unique Sports\"},{\"category\":\"Esportes\",\"name\":\"Cazé TV\"},{\"category\":\"Esportes\",\"name\":\"Band Sports HD\"},{\"category\":\"Esportes\",\"name\":\"Fuel TV\"},{\"category\":\"Esportes\",\"name\":\"ESPN\"},{\"category\":\"Esportes\",\"name\":\"ESPN 2\"},{\"category\":\"Esportes\",\"name\":\"ESPN 3\"},{\"category\":\"Esportes\",\"name\":\"ESPN 4\"},{\"category\":\"Esportes\",\"name\":\"ESPN 5\"},{\"category\":\"Esportes\",\"name\":\"TNT Sports\"},{\"category\":\"Esportes\",\"name\":\"Trace Sport Stars\"},{\"category\":\"Agronegócio\",\"name\":\"Canal Rural\"},{\"category\":\"Agronegócio\",\"name\":\"AgroBrasil\"},{\"category\":\"Agronegócio\",\"name\":\"Terra Viva\"},{\"category\":\"Agronegócio\",\"name\":\"AgroCanal\"},{\"category\":\"Agronegócio\",\"name\":\"Canal do Boi\"},{\"category\":\"Documentários\",\"name\":\"Discovery\"},{\"category\":\"Documentários\",\"name\":\"Animal Planet\"},{\"category\":\"Documentários\",\"name\":\"Discovery Turbo\"},{\"category\":\"Documentários\",\"name\":\"Discovery Science\"},{\"category\":\"Documentários\",\"name\":\"Discovery Theater\"},{\"category\":\"Documentários\",\"name\":\"Discovery World\"},{\"category\":\"Documentários\",\"name\":\"HGTV\"},{\"category\":\"Documentários\",\"name\":\"History\"},{\"category\":\"Educativos\",\"name\":\"TV Cultura\"},{\"category\":\"Educativos\",\"name\":\"Tvescala\"},{\"category\":\"Educativos\",\"name\":\"RESERVADO UNIVERSITÁRIO\"},{\"category\":\"Educativos\",\"name\":\"SescTV\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Mundo Maior\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Canção Nova\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Vida\"},{\"category\":\"Religiosos / Outros\",\"name\":\"RS21\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Evangelizar\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Novo Tempo\"},{\"category\":\"Religiosos / Outros\",\"name\":\"EWTN\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Gênesis\"},{\"category\":\"Étnicos\",\"name\":\"NHK\"}]"
+    },
+    {
+      "id": 8,
+      "key": "channels_hbo",
+      "value": "[{\"category\":\"Cultura e Variedades\",\"name\":\"Brozo\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV Pampa\"},{\"category\":\"Cultura e Variedades\",\"name\":\"SBT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"RECORD\"},{\"category\":\"Cultura e Variedades\",\"name\":\"BAND\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TRAVEL\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV BLITS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Planalto Norte\"},{\"category\":\"Cultura e Variedades\",\"name\":\"GAZETA\"},{\"category\":\"Cultura e Variedades\",\"name\":\"VRT\"},{\"category\":\"Cultura e Variedades\",\"name\":\"DOCS\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Unique\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Artel\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Brazuca\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Latina\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Trace Urban\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TV História\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Music Box Brazil\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Home & Health\"},{\"category\":\"Cultura e Variedades\",\"name\":\"TLC\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Food Network\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Int Novelas\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Rai Italia\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Adult Swim\"},{\"category\":\"Cultura e Variedades\",\"name\":\"Sabor & Arte\"},{\"category\":\"Públicos\",\"name\":\"TV Justiça\"},{\"category\":\"Públicos\",\"name\":\"TV Brasil\"},{\"category\":\"Públicos\",\"name\":\"RESERVADO COMUNITÁRIO\"},{\"category\":\"Públicos\",\"name\":\"TV Senado\"},{\"category\":\"Públicos\",\"name\":\"TV Câmara\"},{\"category\":\"Notícias\",\"name\":\"RedeTV\"},{\"category\":\"Notícias\",\"name\":\"New\"},{\"category\":\"Notícias\",\"name\":\"TVD News\"},{\"category\":\"Notícias\",\"name\":\"Euro News\"},{\"category\":\"Notícias\",\"name\":\"Band News\"},{\"category\":\"Notícias\",\"name\":\"RN\"},{\"category\":\"Notícias\",\"name\":\"CNN Brasil\"},{\"category\":\"Notícias\",\"name\":\"Telesur\"},{\"category\":\"Notícias\",\"name\":\"Exitosa\"},{\"category\":\"Notícias\",\"name\":\"JP News\"},{\"category\":\"Notícias\",\"name\":\"Fox News\"},{\"category\":\"Notícias\",\"name\":\"Bloomberg\"},{\"category\":\"Notícias\",\"name\":\"CNBC\"},{\"category\":\"Notícias\",\"name\":\"Times Now\"},{\"category\":\"Filmes e Séries\",\"name\":\"Mider\"},{\"category\":\"Filmes e Séries\",\"name\":\"LMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"Retro\"},{\"category\":\"Filmes e Séries\",\"name\":\"Ultra\"},{\"category\":\"Filmes e Séries\",\"name\":\"Family Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Movies\"},{\"category\":\"Filmes e Séries\",\"name\":\"Prime Box Brazil\"},{\"category\":\"Filmes e Séries\",\"name\":\"Film & Arts\"},{\"category\":\"Filmes e Séries\",\"name\":\"AMC\"},{\"category\":\"Filmes e Séries\",\"name\":\"ISTV\"},{\"category\":\"Filmes e Séries\",\"name\":\"Canal Sony\"},{\"category\":\"Filmes e Séries\",\"name\":\"TNT Series\"},{\"category\":\"Filmes e Séries\",\"name\":\"Space\"},{\"category\":\"Filmes e Séries\",\"name\":\"TCM HD\"},{\"category\":\"Filmes e Séries\",\"name\":\"Cinemax\"},{\"category\":\"Filmes e Séries\",\"name\":\"Lifetime HD\"},{\"category\":\"Filmes e Séries\",\"name\":\"Top Action\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO 2 (HBO Hits)\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO Family\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO Signature (HBO Drama)\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO Mundi (HBO Movies)\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO Pop\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO Xtreme\"},{\"category\":\"Filmes e Séries (HBO)\",\"name\":\"HBO Plus\"},{\"category\":\"Infantil\",\"name\":\"Kios\"},{\"category\":\"Infantil\",\"name\":\"ID\"},{\"category\":\"Infantil\",\"name\":\"Otaku\"},{\"category\":\"Infantil\",\"name\":\"Leo & Lully\"},{\"category\":\"Infantil\",\"name\":\"Yupi\"},{\"category\":\"Infantil\",\"name\":\"Hallo!\"},{\"category\":\"Infantil\",\"name\":\"Discovery Kids\"},{\"category\":\"Infantil\",\"name\":\"Cartoon Network\"},{\"category\":\"Infantil\",\"name\":\"Tooncast\"},{\"category\":\"Infantil\",\"name\":\"Cartoonito\"},{\"category\":\"Esportes\",\"name\":\"Fish TV\"},{\"category\":\"Esportes\",\"name\":\"Unique Sports\"},{\"category\":\"Esportes\",\"name\":\"Cazé TV\"},{\"category\":\"Esportes\",\"name\":\"Band Sports HD\"},{\"category\":\"Esportes\",\"name\":\"Fuel TV\"},{\"category\":\"Esportes\",\"name\":\"ESPN\"},{\"category\":\"Esportes\",\"name\":\"ESPN 2\"},{\"category\":\"Esportes\",\"name\":\"ESPN 3\"},{\"category\":\"Esportes\",\"name\":\"ESPN 4\"},{\"category\":\"Esportes\",\"name\":\"ESPN 5\"},{\"category\":\"Esportes\",\"name\":\"TNT Sports\"},{\"category\":\"Esportes\",\"name\":\"Trace Sport Stars\"},{\"category\":\"Agronegócio\",\"name\":\"Canal Rural\"},{\"category\":\"Agronegócio\",\"name\":\"AgroBrasil\"},{\"category\":\"Agronegócio\",\"name\":\"Terra Viva\"},{\"category\":\"Agronegócio\",\"name\":\"AgroCanal\"},{\"category\":\"Agronegócio\",\"name\":\"Canal do Boi\"},{\"category\":\"Documentários\",\"name\":\"Discovery\"},{\"category\":\"Documentários\",\"name\":\"Animal Planet\"},{\"category\":\"Documentários\",\"name\":\"Discovery Turbo\"},{\"category\":\"Documentários\",\"name\":\"Discovery Science\"},{\"category\":\"Documentários\",\"name\":\"Discovery Theater\"},{\"category\":\"Documentários\",\"name\":\"Discovery World\"},{\"category\":\"Documentários\",\"name\":\"HGTV\"},{\"category\":\"Documentários\",\"name\":\"History\"},{\"category\":\"Educativos\",\"name\":\"TV Cultura\"},{\"category\":\"Educativos\",\"name\":\"Tvescala\"},{\"category\":\"Educativos\",\"name\":\"RESERVADO UNIVERSITÁRIO\"},{\"category\":\"Educativos\",\"name\":\"SescTV\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Mundo Maior\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Canção Nova\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Vida\"},{\"category\":\"Religiosos / Outros\",\"name\":\"RS21\"},{\"category\":\"Religiosos / Outros\",\"name\":\"TV Evangelizar\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Novo Tempo\"},{\"category\":\"Religiosos / Outros\",\"name\":\"EWTN\"},{\"category\":\"Religiosos / Outros\",\"name\":\"Rede Gênesis\"},{\"category\":\"Étnicos\",\"name\":\"NHK\"}]"
+    }
+  ],
+  "tvChannels": [
+    {
+      "name": "Brozo",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 0,
+      "id": 1
+    },
+    {
+      "name": "TV Pampa",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 1,
+      "id": 2
+    },
+    {
+      "name": "SBT",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 2,
+      "id": 3
+    },
+    {
+      "name": "RECORD",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 3,
+      "id": 4
+    },
+    {
+      "name": "BAND",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 4,
+      "id": 5
+    },
+    {
+      "name": "TRAVEL",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 5,
+      "id": 6
+    },
+    {
+      "name": "TV BLITS",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 6,
+      "id": 7
+    },
+    {
+      "name": "Planalto Norte",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 7,
+      "id": 8
+    },
+    {
+      "name": "GAZETA",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 8,
+      "id": 9
+    },
+    {
+      "name": "VRT",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 9,
+      "id": 10
+    },
+    {
+      "name": "DOCS",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 10,
+      "id": 11
+    },
+    {
+      "name": "Unique",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 11,
+      "id": 12
+    },
+    {
+      "name": "Artel",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 12,
+      "id": 13
+    },
+    {
+      "name": "Trace Brazuca",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 13,
+      "id": 14
+    },
+    {
+      "name": "Trace Latina",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 14,
+      "id": 15
+    },
+    {
+      "name": "Trace Urban",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 15,
+      "id": 16
+    },
+    {
+      "name": "TV História",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 16,
+      "id": 17
+    },
+    {
+      "name": "Music Box Brazil",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 17,
+      "id": 18
+    },
+    {
+      "name": "Home & Health",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 18,
+      "id": 19
+    },
+    {
+      "name": "TLC",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 19,
+      "id": 20
+    },
+    {
+      "name": "Food Network",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 20,
+      "id": 21
+    },
+    {
+      "name": "Int Novelas",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 21,
+      "id": 22
+    },
+    {
+      "name": "Rai Italia",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 22,
+      "id": 23
+    },
+    {
+      "name": "Adult Swim",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 23,
+      "id": 24
+    },
+    {
+      "name": "Sabor & Arte",
+      "logoUrl": "",
+      "group": "Cultura e Variedades",
+      "sortOrder": 24,
+      "id": 25
+    },
+    {
+      "name": "TV Justiça",
+      "logoUrl": "",
+      "group": "Públicos",
+      "sortOrder": 25,
+      "id": 26
+    },
+    {
+      "name": "TV Brasil",
+      "logoUrl": "",
+      "group": "Públicos",
+      "sortOrder": 26,
+      "id": 27
+    },
+    {
+      "name": "RESERVADO COMUNITÁRIO",
+      "logoUrl": "",
+      "group": "Públicos",
+      "sortOrder": 27,
+      "id": 28
+    },
+    {
+      "name": "TV Senado",
+      "logoUrl": "",
+      "group": "Públicos",
+      "sortOrder": 28,
+      "id": 29
+    },
+    {
+      "name": "TV Câmara",
+      "logoUrl": "",
+      "group": "Públicos",
+      "sortOrder": 29,
+      "id": 30
+    },
+    {
+      "name": "RedeTV",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 30,
+      "id": 31
+    },
+    {
+      "name": "New",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 31,
+      "id": 32
+    },
+    {
+      "name": "TVD News",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 32,
+      "id": 33
+    },
+    {
+      "name": "Euro News",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 33,
+      "id": 34
+    },
+    {
+      "name": "Band News",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 34,
+      "id": 35
+    },
+    {
+      "name": "RN",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 35,
+      "id": 36
+    },
+    {
+      "name": "CNN Brasil",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 36,
+      "id": 37
+    },
+    {
+      "name": "Telesur",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 37,
+      "id": 38
+    },
+    {
+      "name": "Exitosa",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 38,
+      "id": 39
+    },
+    {
+      "name": "JP News",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 39,
+      "id": 40
+    },
+    {
+      "name": "Fox News",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 40,
+      "id": 41
+    },
+    {
+      "name": "Bloomberg",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 41,
+      "id": 42
+    },
+    {
+      "name": "CNBC",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 42,
+      "id": 43
+    },
+    {
+      "name": "Times Now",
+      "logoUrl": "",
+      "group": "Notícias",
+      "sortOrder": 43,
+      "id": 44
+    },
+    {
+      "name": "Mider",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 44,
+      "id": 45
+    },
+    {
+      "name": "LMC",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 45,
+      "id": 46
+    },
+    {
+      "name": "Retro",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 46,
+      "id": 47
+    },
+    {
+      "name": "Ultra",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 47,
+      "id": 48
+    },
+    {
+      "name": "Family Series",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 48,
+      "id": 49
+    },
+    {
+      "name": "Movies",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 49,
+      "id": 50
+    },
+    {
+      "name": "Prime Box Brazil",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 50,
+      "id": 51
+    },
+    {
+      "name": "Film & Arts",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 51,
+      "id": 52
+    },
+    {
+      "name": "AMC",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 52,
+      "id": 53
+    },
+    {
+      "name": "ISTV",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 53,
+      "id": 54
+    },
+    {
+      "name": "Canal Sony",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 54,
+      "id": 55
+    },
+    {
+      "name": "TNT Series",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 55,
+      "id": 56
+    },
+    {
+      "name": "Space",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 56,
+      "id": 57
+    },
+    {
+      "name": "TCM HD",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 57,
+      "id": 58
+    },
+    {
+      "name": "Cinemax",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 58,
+      "id": 59
+    },
+    {
+      "name": "Lifetime HD",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 59,
+      "id": 60
+    },
+    {
+      "name": "Top Action",
+      "logoUrl": "",
+      "group": "Filmes e Séries",
+      "sortOrder": 60,
+      "id": 61
+    },
+    {
+      "name": "Kios",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 61,
+      "id": 62
+    },
+    {
+      "name": "ID",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 62,
+      "id": 63
+    },
+    {
+      "name": "Otaku",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 63,
+      "id": 64
+    },
+    {
+      "name": "Leo & Lully",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 64,
+      "id": 65
+    },
+    {
+      "name": "Yupi",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 65,
+      "id": 66
+    },
+    {
+      "name": "Hallo!",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 66,
+      "id": 67
+    },
+    {
+      "name": "Discovery Kids",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 67,
+      "id": 68
+    },
+    {
+      "name": "Cartoon Network",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 68,
+      "id": 69
+    },
+    {
+      "name": "Tooncast",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 69,
+      "id": 70
+    },
+    {
+      "name": "Cartoonito",
+      "logoUrl": "",
+      "group": "Infantil",
+      "sortOrder": 70,
+      "id": 71
+    },
+    {
+      "name": "Fish TV",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 71,
+      "id": 72
+    },
+    {
+      "name": "Unique Sports",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 72,
+      "id": 73
+    },
+    {
+      "name": "Cazé TV",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 73,
+      "id": 74
+    },
+    {
+      "name": "Band Sports HD",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 74,
+      "id": 75
+    },
+    {
+      "name": "Fuel TV",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 75,
+      "id": 76
+    },
+    {
+      "name": "ESPN",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 76,
+      "id": 77
+    },
+    {
+      "name": "ESPN 2",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 77,
+      "id": 78
+    },
+    {
+      "name": "ESPN 3",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 78,
+      "id": 79
+    },
+    {
+      "name": "ESPN 4",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 79,
+      "id": 80
+    },
+    {
+      "name": "ESPN 5",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 80,
+      "id": 81
+    },
+    {
+      "name": "TNT Sports",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 81,
+      "id": 82
+    },
+    {
+      "name": "Trace Sport Stars",
+      "logoUrl": "",
+      "group": "Esportes",
+      "sortOrder": 82,
+      "id": 83
+    },
+    {
+      "name": "Canal Rural",
+      "logoUrl": "",
+      "group": "Agronegócio",
+      "sortOrder": 83,
+      "id": 84
+    },
+    {
+      "name": "AgroBrasil",
+      "logoUrl": "",
+      "group": "Agronegócio",
+      "sortOrder": 84,
+      "id": 85
+    },
+    {
+      "name": "Terra Viva",
+      "logoUrl": "",
+      "group": "Agronegócio",
+      "sortOrder": 85,
+      "id": 86
+    },
+    {
+      "name": "AgroCanal",
+      "logoUrl": "",
+      "group": "Agronegócio",
+      "sortOrder": 86,
+      "id": 87
+    },
+    {
+      "name": "Canal do Boi",
+      "logoUrl": "",
+      "group": "Agronegócio",
+      "sortOrder": 87,
+      "id": 88
+    },
+    {
+      "name": "Discovery",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 88,
+      "id": 89
+    },
+    {
+      "name": "Animal Planet",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 89,
+      "id": 90
+    },
+    {
+      "name": "Discovery Turbo",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 90,
+      "id": 91
+    },
+    {
+      "name": "Discovery Science",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 91,
+      "id": 92
+    },
+    {
+      "name": "Discovery Theater",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 92,
+      "id": 93
+    },
+    {
+      "name": "Discovery World",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 93,
+      "id": 94
+    },
+    {
+      "name": "HGTV",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 94,
+      "id": 95
+    },
+    {
+      "name": "History",
+      "logoUrl": "",
+      "group": "Documentários",
+      "sortOrder": 95,
+      "id": 96
+    },
+    {
+      "name": "TV Cultura",
+      "logoUrl": "",
+      "group": "Educativos",
+      "sortOrder": 96,
+      "id": 97
+    },
+    {
+      "name": "Tvescala",
+      "logoUrl": "",
+      "group": "Educativos",
+      "sortOrder": 97,
+      "id": 98
+    },
+    {
+      "name": "RESERVADO UNIVERSITÁRIO",
+      "logoUrl": "",
+      "group": "Educativos",
+      "sortOrder": 98,
+      "id": 99
+    },
+    {
+      "name": "SescTV",
+      "logoUrl": "",
+      "group": "Educativos",
+      "sortOrder": 99,
+      "id": 100
+    },
+    {
+      "name": "TV Mundo Maior",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 100,
+      "id": 101
+    },
+    {
+      "name": "Canção Nova",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 101,
+      "id": 102
+    },
+    {
+      "name": "Rede Vida",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 102,
+      "id": 103
+    },
+    {
+      "name": "RS21",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 103,
+      "id": 104
+    },
+    {
+      "name": "TV Evangelizar",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 104,
+      "id": 105
+    },
+    {
+      "name": "Novo Tempo",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 105,
+      "id": 106
+    },
+    {
+      "name": "EWTN",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 106,
+      "id": 107
+    },
+    {
+      "name": "Rede Gênesis",
+      "logoUrl": "",
+      "group": "Religiosos / Outros",
+      "sortOrder": 107,
+      "id": 108
+    },
+    {
+      "name": "NHK",
+      "logoUrl": "",
+      "group": "Étnicos",
+      "sortOrder": 108,
+      "id": 109
+    },
+    {
+      "name": "HBO",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 109,
+      "id": 110
+    },
+    {
+      "name": "HBO 2 (HBO Hits)",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 110,
+      "id": 111
+    },
+    {
+      "name": "HBO Family",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 111,
+      "id": 112
+    },
+    {
+      "name": "HBO Signature (HBO Drama)",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 112,
+      "id": 113
+    },
+    {
+      "name": "HBO Mundi (HBO Movies)",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 113,
+      "id": 114
+    },
+    {
+      "name": "HBO Pop",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 114,
+      "id": 115
+    },
+    {
+      "name": "HBO Xtreme",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 115,
+      "id": 116
+    },
+    {
+      "name": "HBO Plus",
+      "logoUrl": "",
+      "group": "Filmes e Séries (HBO)",
+      "sortOrder": 116,
+      "id": 117
+    }
+  ],
+  "nextPlanId": 15,
+  "nextSettingId": 9,
+  "nextChannelId": 118
+}

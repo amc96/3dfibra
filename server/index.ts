@@ -1,7 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
-import { runMigrations } from "./db";
 import { createServer } from "http";
 import path from "path";
 import fs from "fs";
@@ -63,9 +62,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Apply DB migrations before anything else
-  await runMigrations();
-
   // Serve uploaded files (channel logos, etc.)
   const uploadsDir = path.resolve(process.cwd(), "uploads");
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
