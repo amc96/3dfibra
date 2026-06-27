@@ -64,6 +64,10 @@ import {
   Search,
   X,
   CheckCheck,
+  Download,
+  RotateCcw,
+  DatabaseBackup,
+  AlertTriangle,
 } from "lucide-react";
 
 const SESSION_KEY = "admin_password";
@@ -1148,6 +1152,11 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingPw, setSavingPw] = useState(false);
+  const [backingUp, setBackingUp] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
+  const [pendingRestoreData, setPendingRestoreData] = useState<object | null>(null);
+  const [restoreFileName, setRestoreFileName] = useState("");
 
   const { data: settingsList = [], isLoading } = useQuery<{ id: number; key: string; value: string }[]>({
     queryKey: ["/api/admin/settings"],
@@ -1202,6 +1211,71 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
       toast({ title: err.message || "Erro ao alterar senha", variant: "destructive" });
     } finally {
       setSavingPw(false);
+    }
+  }
+
+  async function downloadBackup() {
+    setBackingUp(true);
+    try {
+      const res = await fetch("/api/admin/backup", { headers: { "x-admin-password": password } });
+      if (!res.ok) throw new Error("Falha ao gerar backup");
+      const blob = await res.blob();
+      const date = new Date().toISOString().slice(0, 10);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup-3dfibra-${date}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: "Backup baixado com sucesso!" });
+    } catch (err: any) {
+      toast({ title: err.message || "Erro ao gerar backup", variant: "destructive" });
+    } finally {
+      setBackingUp(false);
+    }
+  }
+
+  function handleRestoreFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setRestoreFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        if (!data.plans || !data.settings || !data.tvChannels) {
+          toast({ title: "Arquivo inválido ou não é um backup válido", variant: "destructive" });
+          return;
+        }
+        setPendingRestoreData(data);
+        setShowRestoreConfirm(true);
+      } catch {
+        toast({ title: "Não foi possível ler o arquivo. Verifique se é um JSON válido.", variant: "destructive" });
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }
+
+  async function confirmRestore() {
+    if (!pendingRestoreData) return;
+    setRestoring(true);
+    setShowRestoreConfirm(false);
+    try {
+      const res = await fetch("/api/admin/restore", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
+        body: JSON.stringify(pendingRestoreData),
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
+      queryClient.invalidateQueries();
+      toast({ title: "Backup restaurado com sucesso!", description: "Todos os dados foram recuperados." });
+    } catch (err: any) {
+      toast({ title: err.message || "Erro ao restaurar backup", variant: "destructive" });
+    } finally {
+      setRestoring(false);
+      setPendingRestoreData(null);
+      setRestoreFileName("");
     }
   }
 
@@ -1273,6 +1347,94 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
           </Button>
         </CardContent>
       </Card>
+
+      {/* ── Backup e Restauração ─────────────────────────────────────────── */}
+      <Card className="bg-gray-900 border-gray-800">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-white text-base flex items-center gap-2">
+            <DatabaseBackup className="w-5 h-5 text-purple-400" />
+            Backup e Restauração
+          </CardTitle>
+          <p className="text-gray-400 text-sm">Salve todos os planos, canais e configurações do site em um único arquivo. Use para migrar dados ou recuperar tudo após qualquer problema.</p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Download backup */}
+          <div className="rounded-lg bg-gray-800/60 border border-gray-700 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <p className="text-white text-sm font-medium">Fazer Backup Agora</p>
+              <p className="text-gray-400 text-xs mt-0.5">Baixa um arquivo <code className="text-gray-300">.json</code> com todos os dados e imagens do site</p>
+            </div>
+            <Button
+              data-testid="button-download-backup"
+              onClick={downloadBackup}
+              disabled={backingUp}
+              size="sm"
+              className="bg-purple-600 hover:bg-purple-500 text-white shrink-0"
+            >
+              <Download className="w-4 h-4 mr-1.5" />
+              {backingUp ? "Gerando..." : "Baixar Backup"}
+            </Button>
+          </div>
+
+          {/* Restore backup */}
+          <div className="rounded-lg bg-gray-800/60 border border-dashed border-gray-600 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <p className="text-white text-sm font-medium">Restaurar Backup</p>
+              <p className="text-gray-400 text-xs mt-0.5">
+                {restoring
+                  ? "Restaurando dados, aguarde..."
+                  : "Selecione um arquivo de backup para recuperar todos os dados"}
+              </p>
+            </div>
+            <label data-testid="label-restore-backup" className={`cursor-pointer shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${restoring ? "bg-gray-700 text-gray-500 pointer-events-none" : "bg-gray-700 hover:bg-gray-600 text-white"}`}>
+              <RotateCcw className={`w-4 h-4 ${restoring ? "animate-spin" : ""}`} />
+              {restoring ? "Restaurando..." : "Selecionar arquivo"}
+              <input
+                type="file"
+                accept=".json,application/json"
+                className="hidden"
+                disabled={restoring}
+                onChange={handleRestoreFileChange}
+                data-testid="input-restore-file"
+              />
+            </label>
+          </div>
+
+          <p className="text-xs text-gray-500 flex items-start gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-yellow-500 shrink-0 mt-0.5" />
+            A restauração substitui <strong className="text-gray-400">todos</strong> os planos, canais e configurações atuais. A senha do painel <strong className="text-gray-400">não</strong> é alterada.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Confirmation dialog for restore */}
+      <AlertDialog open={showRestoreConfirm} onOpenChange={setShowRestoreConfirm}>
+        <AlertDialogContent className="bg-gray-900 border-gray-700 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-white">
+              <AlertTriangle className="w-5 h-5 text-yellow-400" />
+              Confirmar Restauração
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400 space-y-2">
+              <span className="block">Você está prestes a restaurar o arquivo:</span>
+              <span className="block font-mono text-sm text-gray-300 bg-gray-800 px-3 py-1.5 rounded">{restoreFileName}</span>
+              <span className="block mt-2 text-yellow-400/90">⚠️ Isso irá substituir permanentemente todos os planos, canais de TV e configurações atuais.</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" onClick={() => { setPendingRestoreData(null); setRestoreFileName(""); }}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              data-testid="button-confirm-restore"
+              className="bg-red-600 hover:bg-red-500 text-white"
+              onClick={confirmRestore}
+            >
+              Restaurar Dados
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

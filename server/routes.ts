@@ -1,3 +1,4 @@
+import express from "express";
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
@@ -252,6 +253,133 @@ export async function registerRoutes(
     if (typeof value !== "string") return res.status(400).json({ message: "Valor inválido" });
     await storage.setSetting(key, value);
     res.json({ ok: true, key, value });
+  });
+
+  // ── Admin: backup ──────────────────────────────────────────────────────────
+
+  app.get("/api/admin/backup", requireAdmin, async (_req, res) => {
+    try {
+      const [allPlans, allSettings, allTvChannels] = await Promise.all([
+        storage.getPlans(),
+        storage.getAllSettings(),
+        storage.getTvChannels(),
+      ]);
+
+      // Collect all uploaded files as base64
+      const uploadFiles: Record<string, string> = {};
+      const uploadsDir = path.resolve(process.cwd(), "uploads");
+
+      function walkDir(dir: string, base: string) {
+        if (!fs.existsSync(dir)) return;
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          const full = path.join(dir, entry.name);
+          const rel = path.posix.join(base, entry.name);
+          if (entry.isDirectory()) {
+            walkDir(full, rel);
+          } else {
+            try {
+              uploadFiles[rel] = fs.readFileSync(full).toString("base64");
+            } catch {}
+          }
+        }
+      }
+      walkDir(uploadsDir, "");
+
+      const backup = {
+        version: "1.0",
+        timestamp: new Date().toISOString(),
+        plans: allPlans,
+        settings: allSettings.filter((s) => s.key !== "admin_password"),
+        tvChannels: allTvChannels,
+        uploads: uploadFiles,
+      };
+
+      const date = new Date().toISOString().slice(0, 10);
+      res.setHeader("Content-Disposition", `attachment; filename="backup-3dfibra-${date}.json"`);
+      res.setHeader("Content-Type", "application/json");
+      res.json(backup);
+    } catch (err: any) {
+      res.status(500).json({ message: "Erro ao gerar backup: " + err.message });
+    }
+  });
+
+  // ── Admin: restore ─────────────────────────────────────────────────────────
+
+  app.post("/api/admin/restore", requireAdmin, express.json({ limit: "50mb" }), async (req, res) => {
+    try {
+      const { plans: bkPlans, settings: bkSettings, tvChannels: bkChannels, uploads: bkUploads } = req.body;
+
+      if (!Array.isArray(bkPlans) || !Array.isArray(bkSettings) || !Array.isArray(bkChannels)) {
+        return res.status(400).json({ message: "Arquivo de backup inválido ou corrompido" });
+      }
+
+      const { pool } = await import("./db");
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        // Restore plans with explicit IDs
+        await client.query("TRUNCATE plans RESTART IDENTITY CASCADE");
+        for (const p of bkPlans) {
+          await client.query(
+            `INSERT INTO plans (id, name, speed, price, description, features, is_highlighted, category)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+            [p.id, p.name, p.speed, p.price, p.description ?? null, JSON.stringify(p.features), p.isHighlighted ?? false, p.category ?? "internet"]
+          );
+        }
+        if (bkPlans.length > 0) {
+          await client.query(`SELECT setval('plans_id_seq', (SELECT MAX(id) FROM plans))`);
+        }
+
+        // Restore TV channels with explicit IDs
+        await client.query("TRUNCATE tv_channels RESTART IDENTITY CASCADE");
+        for (const c of bkChannels) {
+          await client.query(
+            `INSERT INTO tv_channels (id, name, logo_url, "group", sort_order)
+             VALUES ($1,$2,$3,$4,$5)`,
+            [c.id, c.name, c.logoUrl ?? "", c.group ?? "Geral", c.sortOrder ?? 0]
+          );
+        }
+        if (bkChannels.length > 0) {
+          await client.query(`SELECT setval('tv_channels_id_seq', (SELECT MAX(id) FROM tv_channels))`);
+        }
+
+        // Upsert settings — never overwrite admin_password
+        for (const s of bkSettings) {
+          if (s.key === "admin_password") continue;
+          await client.query(
+            `INSERT INTO settings (key, value) VALUES ($1, $2)
+             ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+            [s.key, s.value]
+          );
+        }
+
+        await client.query("COMMIT");
+      } catch (err) {
+        await client.query("ROLLBACK");
+        throw err;
+      } finally {
+        client.release();
+      }
+
+      // Restore uploaded files from base64
+      if (bkUploads && typeof bkUploads === "object") {
+        const uploadsDir = path.resolve(process.cwd(), "uploads");
+        for (const [relPath, b64] of Object.entries(bkUploads as Record<string, string>)) {
+          if (typeof b64 !== "string") continue;
+          // Sanitize path — prevent directory traversal
+          const safePath = relPath.replace(/\.\./g, "").replace(/^\/+/, "");
+          const fullPath = path.join(uploadsDir, safePath);
+          if (!fullPath.startsWith(uploadsDir)) continue;
+          fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+          fs.writeFileSync(fullPath, Buffer.from(b64, "base64"));
+        }
+      }
+
+      res.json({ ok: true });
+    } catch (err: any) {
+      res.status(500).json({ message: "Erro ao restaurar backup: " + err.message });
+    }
   });
 
   return httpServer;
