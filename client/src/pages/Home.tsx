@@ -4,18 +4,25 @@ import { Footer } from "@/components/Footer";
 import { Features } from "@/components/Features";
 import { PlanCard } from "@/components/PlanCard";
 import { usePlans } from "@/hooks/use-plans";
+import { HeroBanner } from "@/components/HeroBanner";
+import { useBanners } from "@/hooks/use-banners";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Wifi } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
   const { data: plans, isLoading, error } = usePlans();
+  const { data: banners } = useBanners();
+  const hasBanner = Boolean(banners?.enabled && banners.slides.length > 0);
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans text-foreground overflow-x-hidden">
       <main className="flex-grow">
+        {/* ROTATING BANNER (managed in Admin > Configurações) */}
+        <HeroBanner />
+
         {/* HERO SECTION */}
-        <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <section className={`relative overflow-hidden ${hasBanner ? "pt-16 pb-20 lg:pt-24 lg:pb-32" : "pt-32 pb-20 lg:pt-48 lg:pb-32"}`}>
           {/* Background Elements */}
           <div className="absolute inset-0 z-0">
             <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full translate-x-1/4 -translate-y-1/4" />

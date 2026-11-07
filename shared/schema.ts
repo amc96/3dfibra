@@ -45,3 +45,24 @@ export const updateTvChannelSchema = insertTvChannelSchema.partial();
 export type TvChannel = typeof tvChannels.$inferSelect;
 export type InsertTvChannel = z.infer<typeof insertTvChannelSchema>;
 export type UpdateTvChannel = z.infer<typeof updateTvChannelSchema>;
+
+// Home page rotating banner (stored as JSON in the "banners" setting)
+export const bannerSlideSchema = z.object({
+  id: z.string().min(1),
+  imageUrl: z.string().default(""),
+  mobileImageUrl: z.string().default(""),
+  title: z.string().default(""),
+  subtitle: z.string().default(""),
+  buttonText: z.string().default(""),
+  link: z.string().default(""),
+  active: z.boolean().default(true),
+});
+export const bannerSlidesSchema = z.array(bannerSlideSchema);
+
+export type BannerSlide = z.infer<typeof bannerSlideSchema>;
+
+export interface BannerConfig {
+  enabled: boolean;
+  interval: number; // seconds
+  slides: BannerSlide[];
+}

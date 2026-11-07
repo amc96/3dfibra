@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { queryClient } from "@/lib/queryClient";
-import { insertPlanSchema, insertTvChannelSchema, type Plan, type TvChannel } from "@shared/schema";
+import { insertPlanSchema, insertTvChannelSchema, bannerSlidesSchema, type Plan, type TvChannel, type BannerSlide } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,6 +68,9 @@ import {
   RotateCcw,
   DatabaseBackup,
   AlertTriangle,
+  ChevronUp,
+  ChevronDown,
+  GalleryHorizontal,
 } from "lucide-react";
 
 const SESSION_KEY = "admin_password";
@@ -1145,6 +1148,289 @@ function ImageUploadCard({
   );
 }
 
+// ─── Banner rotativo (Home) ──────────────────────────────────────────────────
+
+function newBannerSlide(): BannerSlide {
+  return {
+    id: `${Date.now()}-${Math.round(Math.random() * 1e6)}`,
+    imageUrl: "",
+    mobileImageUrl: "",
+    title: "",
+    subtitle: "",
+    buttonText: "",
+    link: "",
+    active: true,
+  };
+}
+
+function BannerImageSlot({
+  label, hint, url, password, onChange, testId,
+}: {
+  label: string; hint: string; url: string; password: string; onChange: (url: string) => void; testId: string;
+}) {
+  const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await fetch("/api/admin/upload-banner", {
+        method: "POST",
+        headers: { "x-admin-password": password },
+        body: formData,
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.message);
+      }
+      const data = await res.json();
+      onChange(data.url);
+    } catch (err: any) {
+      toast({ title: err?.message || "Erro ao enviar imagem", variant: "destructive" });
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-1">
+        <span className="text-xs text-gray-400">{label}</span>
+        <span className="text-[11px] text-gray-600">{hint}</span>
+      </div>
+      <label
+        data-testid={testId}
+        className={`relative flex items-center justify-center w-full h-24 rounded-lg border-2 border-dashed cursor-pointer overflow-hidden transition-colors ${
+          uploading ? "border-blue-500 bg-blue-500/5" : url ? "border-gray-700 hover:border-blue-600" : "border-gray-700 bg-gray-800/50 hover:border-blue-600 hover:bg-gray-800"
+        }`}
+      >
+        {url && <img src={url} alt="" className="absolute inset-0 w-full h-full object-cover" />}
+        <span className={`relative z-10 text-xs px-2 py-1 rounded ${url ? "bg-black/60 text-white" : "text-gray-400"}`}>
+          {uploading ? "Enviando..." : url ? "Trocar imagem" : "Selecionar imagem"}
+        </span>
+        <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={handleFile} />
+      </label>
+      {url && (
+        <button type="button" onClick={() => onChange("")} className="mt-1 text-[11px] text-gray-500 hover:text-red-400">
+          Remover
+        </button>
+      )}
+    </div>
+  );
+}
+
+function BannerSettingsCard({
+  password, isLoading, settingsList,
+}: {
+  password: string; isLoading: boolean; settingsList: { id: number; key: string; value: string }[];
+}) {
+  const { toast } = useToast();
+  const [enabled, setEnabled] = useState(false);
+  const [interval, setIntervalSec] = useState("6");
+  const [slides, setSlides] = useState<BannerSlide[]>([]);
+  const [dirty, setDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (isLoading || dirty) return;
+    const get = (k: string) => settingsList.find((s) => s.key === k)?.value;
+    setEnabled(get("banner_enabled") === "true");
+    setIntervalSec(get("banner_interval") || "6");
+    try {
+      const parsed = bannerSlidesSchema.safeParse(JSON.parse(get("banners") || "[]"));
+      setSlides(parsed.success ? parsed.data : []);
+    } catch {
+      setSlides([]);
+    }
+  }, [settingsList, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function touch() { setDirty(true); }
+
+  function updateSlide(id: string, patch: Partial<BannerSlide>) {
+    setSlides((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+    touch();
+  }
+
+  function moveSlide(index: number, dir: -1 | 1) {
+    setSlides((prev) => {
+      const next = [...prev];
+      const target = index + dir;
+      if (target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    touch();
+  }
+
+  function removeSlide(id: string) {
+    setSlides((prev) => prev.filter((s) => s.id !== id));
+    touch();
+  }
+
+  function addSlide() {
+    setSlides((prev) => [...prev, newBannerSlide()]);
+    touch();
+  }
+
+  async function save() {
+    const seconds = Number(interval);
+    if (!Number.isFinite(seconds) || seconds < 2 || seconds > 60) {
+      toast({ title: "O tempo de troca deve ficar entre 2 e 60 segundos", variant: "destructive" });
+      return;
+    }
+    if (enabled && !slides.some((s) => s.active && s.imageUrl)) {
+      toast({ title: "Adicione pelo menos um banner ativo com imagem", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const entries: [string, string][] = [
+        ["banners", JSON.stringify(slides)],
+        ["banner_interval", String(seconds)],
+        ["banner_enabled", enabled ? "true" : "false"],
+      ];
+      for (const [key, value] of entries) {
+        const res = await fetch(`/api/admin/settings/${key}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", "x-admin-password": password },
+          body: JSON.stringify({ value }),
+        });
+        if (!res.ok) {
+          const d = await res.json().catch(() => ({}));
+          throw new Error(d.message);
+        }
+      }
+      setDirty(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/banners"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/settings"] });
+      toast({ title: "Banner rotativo salvo!" });
+    } catch (err: any) {
+      toast({ title: err?.message || "Erro ao salvar o banner", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Card className="bg-gray-900 border-gray-800" data-testid="card-banner-settings">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle className="text-white text-base flex items-center gap-2">
+              <GalleryHorizontal className="w-5 h-5 text-sky-400" />
+              Banner Rotativo
+            </CardTitle>
+            <p className="text-gray-400 text-sm mt-1">Imagens que se alternam no topo da página inicial</p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0 pt-0.5">
+            <span className="text-xs text-gray-400">{enabled ? "Ligado" : "Desligado"}</span>
+            <Switch data-testid="switch-banner-enabled" checked={enabled} onCheckedChange={(v) => { setEnabled(v); touch(); }} />
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {isLoading ? (
+          <div className="h-24 bg-gray-800 rounded-lg animate-pulse" />
+        ) : (
+          <>
+            <div className="flex items-center gap-3">
+              <Label htmlFor="banner-interval" className="text-sm text-gray-300 shrink-0">Trocar a cada</Label>
+              <Input
+                id="banner-interval"
+                data-testid="input-banner-interval"
+                type="number"
+                min={2}
+                max={60}
+                value={interval}
+                onChange={(e) => { setIntervalSec(e.target.value); touch(); }}
+                className="w-20 bg-gray-800 border-gray-700 text-white"
+              />
+              <span className="text-sm text-gray-400">segundos</span>
+            </div>
+
+            {slides.length === 0 && (
+              <p className="text-sm text-gray-500 text-center py-4 border border-dashed border-gray-800 rounded-lg">
+                Nenhum banner cadastrado ainda.
+              </p>
+            )}
+
+            {slides.map((slide, i) => (
+              <div
+                key={slide.id}
+                data-testid={`banner-slide-${i}`}
+                className={`rounded-lg border p-3 space-y-3 ${slide.active ? "border-gray-700 bg-gray-800/40" : "border-gray-800 bg-gray-900 opacity-70"}`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-semibold text-white">Banner {i + 1}</span>
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5 mr-2">
+                      <span className="text-xs text-gray-400">Ativo</span>
+                      <Switch checked={slide.active} onCheckedChange={(v) => updateSlide(slide.id, { active: v })} />
+                    </div>
+                    <Button type="button" size="sm" variant="ghost" disabled={i === 0} onClick={() => moveSlide(i, -1)} aria-label="Mover para cima" className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700">
+                      <ChevronUp className="w-4 h-4" />
+                    </Button>
+                    <Button type="button" size="sm" variant="ghost" disabled={i === slides.length - 1} onClick={() => moveSlide(i, 1)} aria-label="Mover para baixo" className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700">
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                    <Button type="button" size="sm" variant="ghost" onClick={() => removeSlide(slide.id)} aria-label="Excluir banner" className="h-8 w-8 p-0 text-gray-400 hover:text-red-400 hover:bg-red-900/20">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-3">
+                  <BannerImageSlot
+                    label="Imagem (computador)"
+                    hint="1920×640"
+                    url={slide.imageUrl}
+                    password={password}
+                    onChange={(url) => updateSlide(slide.id, { imageUrl: url })}
+                    testId={`upload-banner-desktop-${i}`}
+                  />
+                  <BannerImageSlot
+                    label="Celular (opcional)"
+                    hint="1080×1080"
+                    url={slide.mobileImageUrl}
+                    password={password}
+                    onChange={(url) => updateSlide(slide.id, { mobileImageUrl: url })}
+                    testId={`upload-banner-mobile-${i}`}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input value={slide.title} onChange={(e) => updateSlide(slide.id, { title: e.target.value })} placeholder="Título (opcional)" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                  <Input value={slide.subtitle} onChange={(e) => updateSlide(slide.id, { subtitle: e.target.value })} placeholder="Subtítulo (opcional)" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                  <Input value={slide.buttonText} onChange={(e) => updateSlide(slide.id, { buttonText: e.target.value })} placeholder="Texto do botão (opcional)" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                  <Input value={slide.link} onChange={(e) => updateSlide(slide.id, { link: e.target.value })} placeholder="Link: /planos ou https://..." className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                </div>
+                <p className="text-[11px] text-gray-500">
+                  Com link e sem texto de botão, o banner inteiro fica clicável. Se a arte já tem texto, deixe título e subtítulo em branco.
+                </p>
+              </div>
+            ))}
+
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <Button type="button" data-testid="button-add-banner" onClick={addSlide} size="sm" variant="outline" className="border-gray-700 text-gray-200 bg-transparent hover:bg-gray-800 hover:text-white gap-1">
+                <Plus className="w-4 h-4" /> Adicionar banner
+              </Button>
+              <Button type="button" data-testid="button-save-banners" onClick={save} disabled={saving} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white gap-1">
+                <Save className="w-4 h-4" /> {saving ? "Salvando..." : "Salvar banners"}
+              </Button>
+              {dirty && !saving && <span className="text-xs text-yellow-400">Alterações não salvas</span>}
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 function SettingsTab({ password, onPasswordChange }: { password: string; onPasswordChange: (p: string) => void }) {
   const { toast } = useToast();
   const [whatsapp, setWhatsapp] = useState("");
@@ -1303,6 +1589,8 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
           )}
         </CardContent>
       </Card>
+
+      <BannerSettingsCard password={password} isLoading={isLoading} settingsList={settingsList} />
 
       <ImageUploadCard
         title="Logo do Site"

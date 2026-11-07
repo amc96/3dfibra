@@ -3,7 +3,7 @@ import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
-import { insertPlanSchema, updatePlanSchema, insertTvChannelSchema, updateTvChannelSchema } from "@shared/schema";
+import { insertPlanSchema, updatePlanSchema, insertTvChannelSchema, updateTvChannelSchema, bannerSlidesSchema, type BannerConfig, type BannerSlide } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -49,6 +49,17 @@ const uploadSiteAsset = multer({
     else cb(new Error("Apenas imagens são permitidas"));
   },
 });
+
+async function readBannerSlides(): Promise<BannerSlide[]> {
+  const raw = await storage.getSetting("banners");
+  if (!raw) return [];
+  try {
+    const parsed = bannerSlidesSchema.safeParse(JSON.parse(raw));
+    return parsed.success ? parsed.data : [];
+  } catch {
+    return [];
+  }
+}
 
 const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
@@ -107,6 +118,22 @@ export async function registerRoutes(
     const value = await storage.getSetting(req.params.key);
     if (value === undefined) return res.status(404).json({ message: "Configuração não encontrada" });
     res.json({ key: req.params.key, value });
+  });
+
+  // Rotating banner for the home page: only active slides that have an image
+  app.get("/api/banners", async (_req, res) => {
+    const [enabled, interval, slides] = await Promise.all([
+      storage.getSetting("banner_enabled"),
+      storage.getSetting("banner_interval"),
+      readBannerSlides(),
+    ]);
+    const seconds = Number(interval);
+    const config: BannerConfig = {
+      enabled: enabled === "true",
+      interval: Number.isFinite(seconds) && seconds >= 2 ? Math.min(seconds, 60) : 6,
+      slides: slides.filter((s) => s.active && s.imageUrl),
+    };
+    res.json(config);
   });
 
   // Legacy channel lists endpoint
@@ -215,6 +242,16 @@ export async function registerRoutes(
     });
   });
 
+  // ── Admin: banner image upload (returns the URL; slides are saved via settings)
+
+  app.post("/api/admin/upload-banner", requireAdmin, (req, res) => {
+    uploadSiteAsset.single("image")(req, res, (err) => {
+      if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
+      if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
+      res.json({ url: `/uploads/site/${req.file.filename}` });
+    });
+  });
+
   // ── Admin: TV channels ─────────────────────────────────────────────────────
 
   app.post("/api/admin/tv-channels", requireAdmin, async (req, res) => {
@@ -251,6 +288,14 @@ export async function registerRoutes(
     const { key } = req.params;
     const { value } = req.body;
     if (typeof value !== "string") return res.status(400).json({ message: "Valor inválido" });
+    if (key === "banners") {
+      try {
+        const parsed = bannerSlidesSchema.safeParse(JSON.parse(value));
+        if (!parsed.success) return res.status(400).json({ message: "Lista de banners inválida" });
+      } catch {
+        return res.status(400).json({ message: "Lista de banners inválida" });
+      }
+    }
     await storage.setSetting(key, value);
     res.json({ ok: true, key, value });
   });
