@@ -7,13 +7,15 @@ import { usePlans } from "@/hooks/use-plans";
 import { HeroBanner } from "@/components/HeroBanner";
 import { useBanners } from "@/hooks/use-banners";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Wifi } from "lucide-react";
+import { ArrowRight, Wifi, Layers } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
   const { data: plans, isLoading, error } = usePlans();
   const { data: banners } = useBanners();
   const hasBanner = Boolean(banners?.enabled && banners.slides.length > 0);
+  const combos = (plans ?? []).filter((p) => p.category === "combo");
+  const featuredCombos = combos.slice(0, 3);
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans text-foreground overflow-x-hidden">
@@ -123,6 +125,54 @@ export default function Home() {
 
         {/* FEATURES SECTION */}
         <Features />
+
+        {/* COMBOS SECTION (managed in Admin > Combos; hidden when there are none) */}
+        {featuredCombos.length > 0 && (
+          <section id="combos" className="py-24 relative">
+            <div className="absolute inset-0 -z-0 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-emerald-500/5 blur-[120px] rounded-full" />
+            </div>
+            <div className="container mx-auto px-4 relative z-10">
+              <div className="text-center mb-14 max-w-3xl mx-auto">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-5">
+                  <Layers className="w-3 h-3" />
+                  Combos
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-black font-display mb-4">
+                  Tudo junto, num preço só
+                </h2>
+                <p className="text-muted-foreground text-lg">
+                  Internet e serviços combinados para você economizar.
+                </p>
+              </div>
+
+              <div
+                className={`grid gap-6 mx-auto ${
+                  featuredCombos.length === 1
+                    ? "max-w-md"
+                    : featuredCombos.length === 2
+                      ? "md:grid-cols-2 max-w-4xl"
+                      : "md:grid-cols-2 lg:grid-cols-3"
+                }`}
+              >
+                {featuredCombos.map((plan, index) => (
+                  <PlanCard key={plan.id} plan={plan} index={index} />
+                ))}
+              </div>
+
+              {combos.length > featuredCombos.length && (
+                <div className="text-center mt-10">
+                  <Link href="/planos#combos">
+                    <Button variant="outline" size="lg" className="rounded-full border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 px-8">
+                      Ver todos os combos
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* PLANS SECTION */}
         <section id="plans" className="py-24 relative">

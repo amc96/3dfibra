@@ -24,9 +24,9 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
         return prev.filter((p) => p.id !== plan.id);
       }
       
-      // If selecting an internet plan, remove any other internet plan
-      if (plan.category === "internet") {
-        return [...prev.filter(p => p.category !== "internet"), { ...plan, quantity: 1 }];
+      // Internet plans and combos are both the base plan: only one of them at a time
+      if (plan.category === "internet" || plan.category === "combo") {
+        return [...prev.filter(p => p.category !== "internet" && p.category !== "combo"), { ...plan, quantity: 1 }];
       }
 
       // If selecting a TV plan, remove any other TV plan

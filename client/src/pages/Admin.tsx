@@ -73,6 +73,7 @@ import {
   ChevronDown,
   GalleryHorizontal,
   ExternalLink,
+  Layers,
 } from "lucide-react";
 
 // Switch with colors that stay visible on the dark admin background
@@ -265,6 +266,7 @@ function PlanDialog({ open, onClose, plan, password, defaultCategory }: { open: 
                       <SelectItem value="internet">Internet</SelectItem>
                       <SelectItem value="tv">TV / Canais</SelectItem>
                       <SelectItem value="adicionais">Adicionais</SelectItem>
+                      <SelectItem value="combo">Combo</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage /></FormItem>
@@ -273,8 +275,8 @@ function PlanDialog({ open, onClose, plan, password, defaultCategory }: { open: 
             <div className="grid grid-cols-2 gap-4">
               <FormField control={form.control} name="speed" render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">{cat === "internet" ? "Velocidade" : cat === "tv" ? "Qtd. de Canais" : "Tipo / Info"}</FormLabel>
-                  <FormControl><Input data-testid="input-plan-speed" placeholder={cat === "internet" ? "500 MEGA" : cat === "tv" ? "150+ Canais" : "Câmera"} {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                  <FormLabel className="text-gray-300">{cat === "internet" ? "Velocidade" : cat === "tv" ? "Qtd. de Canais" : cat === "combo" ? "Destaque do combo" : "Tipo / Info"}</FormLabel>
+                  <FormControl><Input data-testid="input-plan-speed" placeholder={cat === "internet" ? "500 MEGA" : cat === "tv" ? "150+ Canais" : cat === "combo" ? "500 MEGA + TV" : "Câmera"} {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
                   <FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="price" render={({ field }) => (
@@ -1040,6 +1042,27 @@ function AdicionaisTab({ plans, isLoading, password }: { plans: Plan[]; isLoadin
   );
 }
 
+// ─── Combos Tab ───────────────────────────────────────────────────────────────
+
+function CombosTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: boolean; password: string }) {
+  const comboPlans = plans.filter((p) => p.category === "combo");
+  const sorted = [...comboPlans].sort((a, b) => parseFloat(a.price.replace(",", ".")) - parseFloat(b.price.replace(",", ".")));
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard label="Combos" value={comboPlans.length} icon={<Layers className="w-4 h-4 text-emerald-400" />} color="text-emerald-400" />
+        <StatCard label="Menor Preço" value={sorted[0] ? `R$ ${sorted[0].price}` : "—"} icon={<DollarSign className="w-4 h-4 text-green-400" />} color="text-green-400" />
+      </div>
+      <p className="text-sm text-gray-400 bg-gray-900 border border-gray-800 rounded-lg px-4 py-3">
+        Os combos aparecem no topo da página <span className="text-white">Planos</span> e numa seção da <span className="text-white">página inicial</span> (os 3 primeiros).
+        Use <span className="text-white">Destaque</span> para o resumo (ex.: <code className="text-gray-300">500 MEGA + TV</code>), <span className="text-white">Descrição</span> para uma frase curta e
+        <span className="text-white"> Benefícios</span> para listar o que o combo inclui.
+      </p>
+      <CategorySection plans={plans} category="combo" label="Combos" icon={<Layers className="w-4 h-4 text-emerald-400" />} accentColor="text-emerald-400" password={password} isLoading={isLoading} />
+    </div>
+  );
+}
+
 // ─── Settings Tab ─────────────────────────────────────────────────────────────
 
 function ImageUploadCard({
@@ -1758,6 +1781,7 @@ export default function Admin() {
   const internetCount = plans.filter((p) => p.category === "internet").length;
   const tvCount = plans.filter((p) => p.category === "tv").length;
   const adicionaisCount = plans.filter((p) => p.category === "adicionais").length;
+  const comboCount = plans.filter((p) => p.category === "combo").length;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -1800,6 +1824,9 @@ export default function Admin() {
             <TabsTrigger value="adicionais" data-testid="tab-adicionais" className="data-[state=active]:bg-orange-600 data-[state=active]:text-white text-gray-400 gap-2">
               <Package className="w-4 h-4" /> Adicionais <span className="text-xs opacity-70">({adicionaisCount})</span>
             </TabsTrigger>
+            <TabsTrigger value="combos" data-testid="tab-combos" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-gray-400 gap-2">
+              <Layers className="w-4 h-4" /> Combos <span className="text-xs opacity-70">({comboCount})</span>
+            </TabsTrigger>
             <TabsTrigger value="settings" data-testid="tab-settings" className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400 gap-2">
               <Settings className="w-4 h-4" /> Configurações
             </TabsTrigger>
@@ -1808,6 +1835,7 @@ export default function Admin() {
           <TabsContent value="internet"><InternetTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
           <TabsContent value="tv"><TVTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
           <TabsContent value="adicionais"><AdicionaisTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
+          <TabsContent value="combos"><CombosTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
           <TabsContent value="settings"><SettingsTab password={password} onPasswordChange={setPassword} /></TabsContent>
         </Tabs>
       </main>

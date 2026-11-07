@@ -10,11 +10,19 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function Planos() {
   const { data: plans, isLoading } = useQuery<Plan[]>({
     queryKey: ["/api/plans"],
   });
+
+  // Links like /planos#combos: scroll to the section once the plans have loaded
+  useEffect(() => {
+    if (isLoading || !window.location.hash) return;
+    const el = document.getElementById(window.location.hash.slice(1));
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+  }, [isLoading]);
 
   if (isLoading) {
     return (
@@ -24,6 +32,7 @@ export default function Planos() {
     );
   }
 
+  const comboPlans = plans?.filter(p => p.category === "combo") || [];
   const internetPlans = plans?.filter(p => p.category === "internet") || [];
   const tvPlans = plans?.filter(p => p.category === "tv") || [];
   const addOnPlans = plans?.filter(p => p.category === "adicionais") || [];
@@ -48,6 +57,30 @@ export default function Planos() {
             Escolha a melhor conexão para sua casa ou empresa com a ultra velocidade da 3D FIBRA.
           </motion.p>
         </div>
+
+        {/* Section 0: Combos (only when there are combos registered) */}
+        {comboPlans.length > 0 && (
+          <div id="combos" className="mb-24 scroll-mt-28">
+            <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+              <span className="w-2 h-8 bg-emerald-500 rounded-full"></span>
+              Combos
+            </h2>
+            <p className="text-muted-foreground mb-8 ml-5">Internet e serviços juntos, num preço só.</p>
+            <Carousel className="w-full">
+              <CarouselContent className="-ml-4">
+                {comboPlans.map((plan, index) => (
+                  <CarouselItem key={plan.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                    <PlanCard plan={plan} index={index} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="hidden md:block">
+                <CarouselPrevious />
+                <CarouselNext />
+              </div>
+            </Carousel>
+          </div>
+        )}
 
         {/* Section 1: Internet */}
         <div className="mb-24">

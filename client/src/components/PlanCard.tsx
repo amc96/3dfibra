@@ -1,5 +1,5 @@
 import { Plan, TvChannel } from "@shared/schema";
-import { Check, Wifi, ArrowRight, Tv } from "lucide-react";
+import { Check, Wifi, ArrowRight, Tv, Layers } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
@@ -57,15 +57,18 @@ export function PlanCard({ plan, index }: PlanCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const isTv = plan.category === "tv";
+  const isCombo = plan.category === "combo";
   const { groups, total } = usePlanChannels(plan.id, isTv && isOpen);
 
   const handleToggle = () => {
-    const isInternetPlanSelected = selectedPlans.some(p => p.category === "internet");
+    // A combo already includes internet, so it counts as the base plan
+    const isBasePlanSelected = selectedPlans.some(p => p.category === "internet" || p.category === "combo");
+    const isBasePlan = plan.category === "internet" || plan.category === "combo";
 
-    if (plan.category !== "internet" && !isInternetPlanSelected) {
+    if (!isBasePlan && !isBasePlanSelected) {
       toast({
         title: "Plano Requerido",
-        description: "Selecione um plano de internet antes de adicionar TV ou outros serviços.",
+        description: "Selecione um plano de internet ou um combo antes de adicionar TV ou outros serviços.",
         variant: "destructive",
       });
       return;
@@ -82,7 +85,9 @@ export function PlanCard({ plan, index }: PlanCardProps) {
     togglePlan(plan);
   };
 
-  const buttonText = plan.category === "adicionais" ? "Selecionar" : (isSelected ? "Remover" : "Selecionar Plano");
+  const buttonText = plan.category === "adicionais"
+    ? "Selecionar"
+    : isSelected ? "Remover" : isCombo ? "Selecionar Combo" : "Selecionar Plano";
 
   return (
     <motion.div
@@ -101,6 +106,12 @@ export function PlanCard({ plan, index }: PlanCardProps) {
       <div className="h-full bg-card rounded-[1.4rem] p-6 sm:p-8 flex flex-col relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10" />
 
+        {isCombo && !isHighlighted && !isSelected && (
+          <div className="absolute top-4 right-4 inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/20 uppercase tracking-wide">
+            <Layers className="w-3 h-3" /> Combo
+          </div>
+        )}
+
         {(isHighlighted || isSelected) && (
           <div className="absolute top-4 right-4 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/20 uppercase tracking-wide">
             {isSelected ? "Selecionado" : "Mais Popular"}
@@ -108,12 +119,15 @@ export function PlanCard({ plan, index }: PlanCardProps) {
         )}
 
         <div className="mb-6">
-          <h3 className="text-lg font-medium text-muted-foreground mb-2">{plan.name}</h3>
+          <h3 className={`text-lg font-medium text-muted-foreground mb-2 ${isCombo ? "pr-24" : ""}`}>{plan.name}</h3>
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl sm:text-5xl font-black text-foreground tracking-tight font-display">
+            <span className={`${isCombo ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl"} font-black text-foreground tracking-tight font-display`}>
               {plan.speed}
             </span>
           </div>
+          {isCombo && plan.description && (
+            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{plan.description}</p>
+          )}
           <div className="mt-4 flex items-baseline gap-1">
             <span className="text-sm text-muted-foreground font-medium">R$</span>
             <span className={`text-3xl font-bold ${(isHighlighted || isSelected) ? 'text-primary' : 'text-foreground'}`}>
