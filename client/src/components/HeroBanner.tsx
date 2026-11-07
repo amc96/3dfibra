@@ -59,14 +59,11 @@ function Slide({ slide, index, hasMobileArt }: { slide: BannerSlide; index: numb
     >
       {image}
 
-      {/* Keeps the transparent navbar readable over any image */}
-      <div className="hidden md:block absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
-
       {hasText && (
         <>
           <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/75 via-black/30 to-transparent pointer-events-none" />
           <div className="absolute inset-0 flex items-end md:items-center">
-            <div className="container mx-auto px-4 pb-10 md:pb-0 md:pt-16">
+            <div className="container mx-auto px-4 pb-10 md:pb-0">
               <div className="max-w-xl text-left">
                 {slide.title && (
                   <h2 className="text-2xl sm:text-4xl lg:text-6xl font-black font-display text-white leading-[1.1] mb-2 md:mb-3 drop-shadow-lg">
@@ -163,7 +160,7 @@ export function HeroBanner() {
 
   return (
     <section
-      className="relative w-full pt-[72px] md:pt-0"
+      className="relative w-full pt-[88px]"
       aria-roledescription="carousel"
       aria-label="Destaques"
       onMouseEnter={() => setPaused(true)}
