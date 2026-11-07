@@ -1,4 +1,4 @@
-import { Facebook, Instagram, MapPin, Mail, Phone } from "lucide-react";
+import { Facebook, Instagram, MapPin, Mail, Phone, Lock } from "lucide-react";
 import { Link } from "wouter";
 import { useLogoUrl } from "@/hooks/use-logo";
 
@@ -89,10 +89,18 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border pt-8 text-center">
+        <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} 3D FIBRA. Todos os direitos reservados.
           </p>
+          <Link
+            href="/admin"
+            data-testid="link-admin-panel"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            Painel administrativo
+          </Link>
         </div>
       </div>
     </footer>

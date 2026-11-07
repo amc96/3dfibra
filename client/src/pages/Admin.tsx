@@ -71,6 +71,7 @@ import {
   ChevronUp,
   ChevronDown,
   GalleryHorizontal,
+  ExternalLink,
 } from "lucide-react";
 
 const SESSION_KEY = "admin_password";
@@ -1756,6 +1757,11 @@ export default function Admin() {
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden sm:block text-xs text-gray-500">{totalPlans} planos cadastrados</span>
+            <a href="/" target="_blank" rel="noopener noreferrer" data-testid="link-view-site">
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800 gap-2">
+                <ExternalLink className="w-4 h-4" /> Ver site
+              </Button>
+            </a>
             <Button data-testid="button-logout" variant="ghost" size="sm" onClick={() => { sessionStorage.removeItem(SESSION_KEY); setPassword(null); }} className="text-gray-400 hover:text-white hover:bg-gray-800 gap-2">
               <LogOut className="w-4 h-4" /> Sair
             </Button>
