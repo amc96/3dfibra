@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
+import { Switch as BaseSwitch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -73,6 +74,19 @@ import {
   GalleryHorizontal,
   ExternalLink,
 } from "lucide-react";
+
+// Switch with colors that stay visible on the dark admin background
+function Switch({ className, ...props }: React.ComponentProps<typeof BaseSwitch>) {
+  return (
+    <BaseSwitch
+      className={cn(
+        "data-[state=unchecked]:bg-gray-600 data-[state=checked]:bg-green-500 [&>span]:bg-white focus-visible:ring-offset-gray-900",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 const SESSION_KEY = "admin_password";
 
