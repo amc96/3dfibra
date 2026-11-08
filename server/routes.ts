@@ -114,10 +114,28 @@ export async function registerRoutes(
 
   // ── Public: settings ───────────────────────────────────────────────────────
 
+  // Only these keys may be read without the admin password (never admin_password!)
+  const PUBLIC_SETTING_KEYS = new Set(["logo_url", "favicon_url", "whatsapp_number", "facebook_url", "instagram_url"]);
+
   app.get("/api/settings/:key", async (req, res) => {
+    if (!PUBLIC_SETTING_KEYS.has(req.params.key)) return res.status(404).json({ message: "Configuração não encontrada" });
     const value = await storage.getSetting(req.params.key);
     if (value === undefined) return res.status(404).json({ message: "Configuração não encontrada" });
     res.json({ key: req.params.key, value });
+  });
+
+  // Contact and social links used across the public site
+  app.get("/api/site-config", async (_req, res) => {
+    const [whatsapp, facebook, instagram] = await Promise.all([
+      storage.getSetting("whatsapp_number"),
+      storage.getSetting("facebook_url"),
+      storage.getSetting("instagram_url"),
+    ]);
+    res.json({
+      whatsapp: (whatsapp ?? "").replace(/\D/g, ""),
+      facebook: facebook ?? "",
+      instagram: instagram ?? "",
+    });
   });
 
   // Rotating banner for the home page: only active slides that have an image

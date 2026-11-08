@@ -2,9 +2,11 @@ import { useSelection } from "@/hooks/use-selection";
 import { Button } from "./ui/button";
 import { X, ShoppingCart, Send, Plus, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSiteConfig } from "@/hooks/use-site-config";
 
 export function SelectionBar() {
   const { selectedPlans, togglePlan, updateQuantity, clearSelection } = useSelection();
+  const site = useSiteConfig();
 
   if (selectedPlans.length === 0) return null;
 
@@ -16,7 +18,7 @@ export function SelectionBar() {
       return text;
     }).join("%0A");
     
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=5553999789222&text=Olá! Gostaria de assinar os seguintes planos:%0A${plansText}%0A%0A*Total Estimado: R$ ${totalPrice}*`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${site.whatsapp}&text=Olá! Gostaria de assinar os seguintes planos:%0A${plansText}%0A%0A*Total Estimado: R$ ${totalPrice}*`;
     window.open(whatsappUrl, '_blank');
   };
 

@@ -6,6 +6,7 @@ import { PlanCard } from "@/components/PlanCard";
 import { usePlans } from "@/hooks/use-plans";
 import { HeroBanner } from "@/components/HeroBanner";
 import { useBanners } from "@/hooks/use-banners";
+import { useSiteConfig, whatsappLink } from "@/hooks/use-site-config";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Wifi, Layers } from "lucide-react";
 import { motion } from "framer-motion";
@@ -13,6 +14,7 @@ import { motion } from "framer-motion";
 export default function Home() {
   const { data: plans, isLoading, error } = usePlans();
   const { data: banners } = useBanners();
+  const site = useSiteConfig();
   const hasBanner = Boolean(banners?.enabled && banners.slides.length > 0);
   const combos = (plans ?? []).filter((p) => p.category === "combo");
   const featuredCombos = combos.slice(0, 3);
@@ -71,7 +73,7 @@ export default function Home() {
                     </Button>
                   </Link>
                   <a 
-                    href="https://wa.me/5553999789222?text=Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20internet" 
+                    href={whatsappLink(site.whatsapp, "Gostaria de mais informações sobre a internet")} 
                     target="_blank" 
                     rel="noopener noreferrer"
                   >
@@ -211,7 +213,7 @@ export default function Home() {
               Não perca mais tempo com internet lenta. Migre agora para a 3D FIBRA e descubra o que é velocidade de verdade.
             </p>
             <a 
-              href="https://wa.me/5553999789222?text=Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20internet" 
+              href={whatsappLink(site.whatsapp, "Gostaria de mais informações sobre a internet")} 
               target="_blank" 
               rel="noopener noreferrer"
             >

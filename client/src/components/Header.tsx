@@ -1,11 +1,13 @@
 import { Link } from "wouter";
 import { User, Menu, Phone } from "lucide-react";
+import { useSiteConfig, whatsappLink } from "@/hooks/use-site-config";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Header() {
+  const site = useSiteConfig();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -80,7 +82,7 @@ export function Header() {
                   </a>
                   <Button 
                     className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-full px-6"
-                    onClick={() => window.open('https://api.whatsapp.com/send?phone=5553999789222&text=Olá, gostaria de falar com um consultor.', '_blank')}
+                    onClick={() => window.open(whatsappLink(site.whatsapp, "Olá, gostaria de falar com um consultor."), '_blank')}
                   >
                     Selecionar Plano
                   </Button>

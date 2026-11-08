@@ -74,6 +74,9 @@ import {
   GalleryHorizontal,
   ExternalLink,
   Layers,
+  Share2,
+  Facebook,
+  Instagram,
 } from "lucide-react";
 
 // Switch with colors that stay visible on the dark admin background
@@ -1473,6 +1476,9 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
   const { toast } = useToast();
   const [whatsapp, setWhatsapp] = useState("");
   const [savingWa, setSavingWa] = useState(false);
+  const [facebookUrl, setFacebookUrl] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [savingSocial, setSavingSocial] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingPw, setSavingPw] = useState(false);
@@ -1494,10 +1500,46 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
   useEffect(() => {
     const wa = settingsList.find((s) => s.key === "whatsapp_number");
     if (wa) setWhatsapp(wa.value);
+    setFacebookUrl(settingsList.find((s) => s.key === "facebook_url")?.value ?? "");
+    setInstagramUrl(settingsList.find((s) => s.key === "instagram_url")?.value ?? "");
   }, [settingsList]);
 
   const currentLogoUrl = settingsList.find((s) => s.key === "logo_url")?.value ?? "";
   const currentFaviconUrl = settingsList.find((s) => s.key === "favicon_url")?.value ?? "";
+
+  // Accepts "instagram.com/x", "@x" (Instagram) or full URLs; returns "" for blank
+  function normalizeSocialUrl(value: string, base: string) {
+    const v = value.trim();
+    if (!v) return "";
+    if (/^https?:\/\//i.test(v)) return v;
+    if (v.startsWith("@")) return `${base}${v.slice(1)}`;
+    if (/^(www\.)?(instagram|facebook|fb)\.com\//i.test(v)) return `https://${v}`;
+    return `${base}${v}`;
+  }
+
+  async function saveSocial() {
+    const ig = normalizeSocialUrl(instagramUrl, "https://www.instagram.com/");
+    const fb = normalizeSocialUrl(facebookUrl, "https://www.facebook.com/");
+    setInstagramUrl(ig);
+    setFacebookUrl(fb);
+    setSavingSocial(true);
+    try {
+      for (const [key, value] of [["instagram_url", ig], ["facebook_url", fb]] as const) {
+        const res = await fetch(`/api/admin/settings/${key}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", "x-admin-password": password },
+          body: JSON.stringify({ value }),
+        });
+        if (!res.ok) throw new Error();
+      }
+      queryClient.invalidateQueries({ queryKey: ["/api/site-config"] });
+      toast({ title: "Redes sociais atualizadas!" });
+    } catch {
+      toast({ title: "Erro ao salvar redes sociais", variant: "destructive" });
+    } finally {
+      setSavingSocial(false);
+    }
+  }
 
   async function saveSetting(key: string, value: string, label: string, setSaving: (v: boolean) => void) {
     setSaving(true);
@@ -1508,6 +1550,7 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
         body: JSON.stringify({ value }),
       });
       if (!res.ok) throw new Error();
+      queryClient.invalidateQueries({ queryKey: ["/api/site-config"] });
       toast({ title: `${label} atualizado!` });
     } catch {
       toast({ title: "Erro ao salvar configuração", variant: "destructive" });
@@ -1622,6 +1665,37 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
               <p className="text-xs text-gray-500">Formato: código do país + DDD + número. Ex: <code className="text-gray-400">5553999789222</code></p>
               <Button data-testid="button-save-whatsapp" onClick={() => saveSetting("whatsapp_number", whatsapp, "WhatsApp", setSavingWa)} disabled={savingWa} size="sm" className="bg-green-600 hover:bg-green-700 text-white">
                 {savingWa ? "Salvando..." : "Salvar número"}
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gray-900 border-gray-800" data-testid="card-social-settings">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-white text-base flex items-center gap-2">
+            <Share2 className="w-5 h-5 text-pink-400" />
+            Redes Sociais
+          </CardTitle>
+          <p className="text-gray-400 text-sm">Links dos ícones no rodapé do site. Deixe em branco para esconder o ícone.</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {isLoading ? <div className="h-24 bg-gray-800 rounded-md animate-pulse" /> : (
+            <>
+              <div className="space-y-1.5">
+                <Label htmlFor="input-instagram" className="text-sm text-gray-300 flex items-center gap-2">
+                  <Instagram className="w-4 h-4 text-pink-400" /> Instagram
+                </Label>
+                <Input id="input-instagram" data-testid="input-instagram-url" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} placeholder="https://www.instagram.com/suaempresa" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="input-facebook" className="text-sm text-gray-300 flex items-center gap-2">
+                  <Facebook className="w-4 h-4 text-blue-400" /> Facebook
+                </Label>
+                <Input id="input-facebook" data-testid="input-facebook-url" value={facebookUrl} onChange={(e) => setFacebookUrl(e.target.value)} placeholder="https://www.facebook.com/suaempresa" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+              </div>
+              <Button data-testid="button-save-social" onClick={saveSocial} disabled={savingSocial} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                {savingSocial ? "Salvando..." : "Salvar redes sociais"}
               </Button>
             </>
           )}

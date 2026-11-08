@@ -1,8 +1,10 @@
 import { Facebook, Instagram, MapPin, Mail, Phone, Lock } from "lucide-react";
 import { Link } from "wouter";
 import { useLogoUrl } from "@/hooks/use-logo";
+import { useSiteConfig, whatsappLink, formatWhatsapp } from "@/hooks/use-site-config";
 
 export function Footer() {
+  const site = useSiteConfig();
   const { data: logoSetting } = useLogoUrl();
   const logoUrl = logoSetting?.value || "";
 
@@ -31,12 +33,14 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               {[
-                { Icon: Instagram, href: "https://www.instagram.com/3dnetworkrs?igsh=MWE0a3I5Zmxrb3VlaQ==" },
-                { Icon: Facebook, href: "https://www.facebook.com/3DNetworkRS?mibextid=ZbWKwL" }
-              ].map(({ Icon, href }, i) => (
+                { Icon: Instagram, href: site.instagram, label: "Instagram" },
+                { Icon: Facebook, href: site.facebook, label: "Facebook" }
+              ].filter(({ href }) => href).map(({ Icon, href, label }) => (
                 <a 
-                  key={i}
+                  key={label}
                   href={href}
+                  aria-label={label}
+                  data-testid={`link-social-${label.toLowerCase()}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-200"
@@ -72,13 +76,13 @@ export function Footer() {
               </div>
               <div className="space-y-3">
                 <a 
-                  href="https://wa.me/5553999789222" 
+                  href={whatsappLink(site.whatsapp)} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Phone className="w-5 h-5 text-primary" />
-                  (53) 99978-9222
+                  {formatWhatsapp(site.whatsapp)}
                 </a>
                 <a href="mailto:contato@3dnetwork.com.br" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Mail className="w-5 h-5 text-primary" />

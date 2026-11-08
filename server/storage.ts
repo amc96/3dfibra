@@ -80,6 +80,8 @@ const INITIAL_PLANS: InsertPlan[] = [
 
 const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "whatsapp_number", value: "5553999789222" },
+  { key: "facebook_url", value: "https://www.facebook.com/3DNetworkRS" },
+  { key: "instagram_url", value: "https://www.instagram.com/3dnetworkrs" },
   { key: "logo_url", value: "" },
   { key: "favicon_url", value: "" },
   { key: "admin_password", value: "" },
