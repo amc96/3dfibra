@@ -14,8 +14,10 @@ declare module "http" {
   }
 }
 
+// Backups carry the uploaded images, so they need a bigger body limit than the default 100kb
 app.use(
   express.json({
+    limit: "50mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },

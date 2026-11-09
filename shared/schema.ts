@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, integer, primaryKey, customType, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -45,6 +45,28 @@ export const updateTvChannelSchema = insertTvChannelSchema.partial();
 export type TvChannel = typeof tvChannels.$inferSelect;
 export type InsertTvChannel = z.infer<typeof insertTvChannelSchema>;
 export type UpdateTvChannel = z.infer<typeof updateTvChannelSchema>;
+
+const bytea = customType<{ data: Buffer }>({ dataType: () => "bytea" });
+
+// Images sent through the admin panel (logos, banners, channel logos).
+// Kept in the database so they survive deploys on hosts without a disk volume.
+export const uploadedFiles = pgTable("uploaded_files", {
+  path: text("path").primaryKey(), // e.g. "site/123.png" (served at /uploads/site/123.png)
+  mimeType: text("mime_type").notNull().default("application/octet-stream"),
+  data: bytea("data").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Which channels each TV plan includes (removed automatically with the plan or channel)
+export const planChannels = pgTable(
+  "plan_channels",
+  {
+    planId: integer("plan_id").notNull().references(() => plans.id, { onDelete: "cascade" }),
+    channelId: integer("channel_id").notNull().references(() => tvChannels.id, { onDelete: "cascade" }),
+    position: integer("position").notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.planId, t.channelId] })],
+);
 
 // Home page rotating banner (stored as JSON in the "banners" setting)
 export const bannerSlideSchema = z.object({

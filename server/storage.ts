@@ -11,9 +11,9 @@ import type {
 } from "@shared/schema";
 import { PLUS_CHANNELS, ULTRA_CHANNELS, HBO_CHANNELS } from "@shared/channels";
 
-const DATA_FILE = path.resolve(process.cwd(), "data/db.json");
+export const DATA_FILE = path.resolve(process.cwd(), "data/db.json");
 
-interface DbData {
+export interface DbData {
   plans: Plan[];
   settings: Setting[];
   tvChannels: TvChannel[];
@@ -59,9 +59,13 @@ export interface IStorage {
   getPlanChannelIds(planId: number): Promise<number[]>;
   setPlanChannelIds(planId: number, channelIds: number[]): Promise<void>;
   restoreAll(data: { plans: Plan[]; settings: Setting[]; tvChannels: TvChannel[] }): Promise<void>;
+  // Uploaded images (only the database storage keeps them; the file storage uses the disk)
+  saveFile(relPath: string, mimeType: string, data: Buffer): Promise<void>;
+  getFile(relPath: string): Promise<{ mimeType: string; data: Buffer } | undefined>;
+  getAllFiles(): Promise<{ path: string; data: Buffer }[]>;
 }
 
-const INITIAL_PLANS: InsertPlan[] = [
+export const INITIAL_PLANS: InsertPlan[] = [
   { name: "Básico", speed: "300 MEGA", price: "77,90", features: ["Wi-Fi Grátis", "Instalação Grátis", "Suporte 24h", "Fibra Óptica"], category: "internet", isHighlighted: false },
   { name: "Essencial", speed: "400 MEGA", price: "87,90", features: ["Wi-Fi Grátis", "Instalação Grátis", "Suporte 24h", "Fibra Óptica"], category: "internet", isHighlighted: false },
   { name: "Intermediário", speed: "500 MEGA", price: "97,90", features: ["Wi-Fi Grátis", "Instalação Grátis", "Suporte 24h", "Fibra Óptica"], category: "internet", isHighlighted: true },
@@ -78,7 +82,7 @@ const INITIAL_PLANS: InsertPlan[] = [
   { name: "TV Box", speed: "Android TV", price: "25,00", features: ["Transforma sua TV", "Acesso a Apps", "Resolução Full HD", "Controle Remoto"], category: "adicionais", isHighlighted: false },
 ];
 
-const DEFAULT_SETTINGS: { key: string; value: string }[] = [
+export const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "whatsapp_number", value: "5553999789222" },
   { key: "facebook_url", value: "https://www.facebook.com/3DNetworkRS" },
   { key: "instagram_url", value: "https://www.instagram.com/3dnetworkrs" },
@@ -94,7 +98,7 @@ const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "channels_hbo", value: JSON.stringify(HBO_CHANNELS) },
 ];
 
-function buildInitialTvChannels(): InsertTvChannel[] {
+export function buildInitialTvChannels(): InsertTvChannel[] {
   const seen = new Set<string>();
   const result: InsertTvChannel[] = [];
   let order = 0;
@@ -278,6 +282,18 @@ export class JsonStorage implements IStorage {
     };
     this.save();
   }
+
+  async saveFile(): Promise<void> {}
+  async getFile(): Promise<undefined> { return undefined; }
+  async getAllFiles(): Promise<{ path: string; data: Buffer }[]> { return []; }
 }
 
-export const storage = new JsonStorage();
+import { PgStorage } from "./pg-storage";
+
+// With DATABASE_URL (Railway PostgreSQL) everything lives in the database;
+// without it the site keeps working from data/db.json as before.
+export const storage: IStorage = process.env.DATABASE_URL
+  ? new PgStorage(process.env.DATABASE_URL)
+  : new JsonStorage();
+
+console.log(process.env.DATABASE_URL ? "Armazenamento: PostgreSQL" : "Armazenamento: arquivo data/db.json");

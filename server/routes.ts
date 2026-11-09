@@ -61,6 +61,23 @@ async function readBannerSlides(): Promise<BannerSlide[]> {
   }
 }
 
+const UPLOADS_ROOT = path.resolve(process.cwd(), "uploads");
+
+const MIME_BY_EXT: Record<string, string> = {
+  ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif",
+  ".webp": "image/webp", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".avif": "image/avif",
+};
+
+function mimeFor(file: string) {
+  return MIME_BY_EXT[path.extname(file).toLowerCase()] ?? "application/octet-stream";
+}
+
+// Copies a just-uploaded file into the database so it survives redeploys
+async function persistUpload(file: Express.Multer.File) {
+  const rel = path.relative(UPLOADS_ROOT, file.path).split(path.sep).join("/");
+  await storage.saveFile(rel, file.mimetype || mimeFor(file.path), fs.readFileSync(file.path));
+}
+
 const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
 async function getActivePassword(): Promise<string> {
@@ -81,6 +98,29 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Uploaded images: served from disk by express.static; when the disk copy is
+  // missing (fresh deploy), fetch it from the database and cache it on disk.
+  app.get("/uploads/*", async (req, res, next) => {
+    try {
+      const rel = decodeURIComponent(req.path.replace(/^\/uploads\//, ""));
+      if (!rel || rel.includes("..")) return next();
+      const file = await storage.getFile(rel);
+      if (!file) return next();
+      const full = path.join(UPLOADS_ROOT, rel);
+      if (full.startsWith(UPLOADS_ROOT)) {
+        try {
+          fs.mkdirSync(path.dirname(full), { recursive: true });
+          fs.writeFileSync(full, file.data);
+        } catch {}
+      }
+      res.setHeader("Content-Type", file.mimeType);
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.end(file.data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
   if (storage.seedPlans) await storage.seedPlans();
   if (storage.seedSettings) await storage.seedSettings();
   if (storage.seedTvChannels) await storage.seedTvChannels();
@@ -232,7 +272,9 @@ export async function registerRoutes(
       if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
       if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
       const url = `/uploads/channels/${req.file.filename}`;
-      res.json({ url });
+      persistUpload(req.file)
+        .then(() => res.json({ url }))
+        .catch((e) => res.status(500).json({ message: "Erro ao salvar imagem: " + e.message }));
     });
   });
 
@@ -243,6 +285,7 @@ export async function registerRoutes(
       if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
       if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
       const url = `/uploads/site/${req.file.filename}`;
+      try { await persistUpload(req.file); } catch (e: any) { return res.status(500).json({ message: "Erro ao salvar imagem: " + e.message }); }
       await storage.setSetting("logo_url", url);
       res.json({ url });
     });
@@ -255,6 +298,7 @@ export async function registerRoutes(
       if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
       if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
       const url = `/uploads/site/${req.file.filename}`;
+      try { await persistUpload(req.file); } catch (e: any) { return res.status(500).json({ message: "Erro ao salvar imagem: " + e.message }); }
       await storage.setSetting("favicon_url", url);
       res.json({ url });
     });
@@ -266,7 +310,10 @@ export async function registerRoutes(
     uploadSiteAsset.single("image")(req, res, (err) => {
       if (err) return res.status(400).json({ message: err.message || "Erro no upload" });
       if (!req.file) return res.status(400).json({ message: "Nenhum arquivo enviado" });
-      res.json({ url: `/uploads/site/${req.file.filename}` });
+      const url = `/uploads/site/${req.file.filename}`;
+      persistUpload(req.file)
+        .then(() => res.json({ url }))
+        .catch((e) => res.status(500).json({ message: "Erro ao salvar imagem: " + e.message }));
     });
   });
 
@@ -347,6 +394,10 @@ export async function registerRoutes(
         }
       }
       walkDir(uploadsDir, "");
+      // Images kept in the database (after a redeploy the disk copy may be gone)
+      for (const f of await storage.getAllFiles()) {
+        if (!uploadFiles[f.path]) uploadFiles[f.path] = f.data.toString("base64");
+      }
 
       const backup = {
         version: "1.0",
@@ -392,7 +443,9 @@ export async function registerRoutes(
           const fullPath = path.join(uploadsDir, safePath);
           if (!fullPath.startsWith(uploadsDir)) continue;
           fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-          fs.writeFileSync(fullPath, Buffer.from(b64, "base64"));
+          const buf = Buffer.from(b64, "base64");
+          fs.writeFileSync(fullPath, buf);
+          await storage.saveFile(safePath.split(path.sep).join("/"), mimeFor(safePath), buf);
         }
       }
 

@@ -8,6 +8,13 @@
       "when": 1782574441370,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794186376886,
+      "tag": "0001_smooth_vin_gonzales",
+      "breakpoints": true
     }
   ]
 }
