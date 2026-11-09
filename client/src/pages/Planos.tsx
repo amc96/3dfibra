@@ -36,6 +36,7 @@ export default function Planos() {
   const internetPlans = plans?.filter(p => p.category === "internet") || [];
   const tvPlans = plans?.filter(p => p.category === "tv") || [];
   const addOnPlans = plans?.filter(p => p.category === "adicionais") || [];
+  const mobilePlans = plans?.filter(p => p.category === "movel") || [];
 
   return (
     <div className="min-h-screen bg-background pt-32 pb-20">
@@ -123,6 +124,30 @@ export default function Planos() {
             </div>
           </Carousel>
         </div>
+
+        {/* Section 2b: Planos Móveis (only when there are mobile plans registered) */}
+        {mobilePlans.length > 0 && (
+          <div id="moveis" className="mb-24 scroll-mt-28">
+            <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+              <span className="w-2 h-8 bg-primary rounded-full"></span>
+              Planos Móveis
+            </h2>
+            <p className="text-muted-foreground mb-8 ml-5">Chip com internet e ligações. Pode contratar mesmo sem a fibra.</p>
+            <Carousel className="w-full">
+              <CarouselContent className="-ml-4">
+                {mobilePlans.map((plan, index) => (
+                  <CarouselItem key={plan.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                    <PlanCard plan={plan} index={index} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="hidden md:block">
+                <CarouselPrevious />
+                <CarouselNext />
+              </div>
+            </Carousel>
+          </div>
+        )}
 
         {/* Section 3: Adicionais */}
         <div>

@@ -14,6 +14,7 @@ export function SelectionBar() {
     const plansText = selectedPlans.map(p => {
       let text = `- ${p.name} (${p.speed})`;
       if (p.category === "adicionais") text += ` x${p.quantity}`;
+      if (p.category === "movel") text += ` x${p.quantity} ${p.quantity === 1 ? "linha" : "linhas"}`;
       if (p.category === "tv" && p.quantity > 1) text += ` + ${p.quantity - 1} ponto(s) adicional(ais)`;
       return text;
     }).join("%0A");
@@ -34,7 +35,7 @@ export function SelectionBar() {
       let planPrice = parseFloat(plan.price.replace(',', '.'));
       let total = planPrice;
 
-      if (plan.category === "adicionais") {
+      if (plan.category === "adicionais" || plan.category === "movel") {
         total = planPrice * plan.quantity;
       } else if (plan.category === "tv") {
         const pointPrice = getTvPointPrice(plan.name);
@@ -70,7 +71,8 @@ export function SelectionBar() {
             <div className="flex gap-4">
               {selectedPlans.map((plan) => {
                 const isTvWithPoints = plan.category === "tv" && !plan.name.includes("HBO");
-                const maxQuantity = plan.category === "tv" ? 3 : 99; // 1 principal + 2 adicionais = 3 total
+                const isMovel = plan.category === "movel";
+                const maxQuantity = plan.category === "tv" ? 3 : isMovel ? 10 : 99; // TV: 1 principal + 2 adicionais = 3 total
 
                 return (
                   <div 
@@ -89,9 +91,10 @@ export function SelectionBar() {
                       </span>
                     </div>
 
-                    {(plan.category === "adicionais" || isTvWithPoints) && (
+                    {(plan.category === "adicionais" || isTvWithPoints || isMovel) && (
                       <div className="flex flex-col items-center gap-1 ml-2">
                         {plan.category === "tv" && <span className="text-[10px] uppercase font-bold opacity-50">Pontos</span>}
+                        {isMovel && <span className="text-[10px] uppercase font-bold opacity-50">Linhas</span>}
                         <div className="flex items-center gap-2 bg-background/50 rounded-lg px-2 py-1">
                           <button 
                             onClick={() => updateQuantity(plan.id, plan.quantity - 1)}

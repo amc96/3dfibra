@@ -75,6 +75,7 @@ import {
   ExternalLink,
   Layers,
   Share2,
+  Smartphone,
   Facebook,
   Instagram,
 } from "lucide-react";
@@ -270,6 +271,7 @@ function PlanDialog({ open, onClose, plan, password, defaultCategory }: { open: 
                       <SelectItem value="tv">TV / Canais</SelectItem>
                       <SelectItem value="adicionais">Adicionais</SelectItem>
                       <SelectItem value="combo">Combo</SelectItem>
+                      <SelectItem value="movel">Móvel</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage /></FormItem>
@@ -278,8 +280,8 @@ function PlanDialog({ open, onClose, plan, password, defaultCategory }: { open: 
             <div className="grid grid-cols-2 gap-4">
               <FormField control={form.control} name="speed" render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">{cat === "internet" ? "Velocidade" : cat === "tv" ? "Qtd. de Canais" : cat === "combo" ? "Destaque do combo" : "Tipo / Info"}</FormLabel>
-                  <FormControl><Input data-testid="input-plan-speed" placeholder={cat === "internet" ? "500 MEGA" : cat === "tv" ? "150+ Canais" : cat === "combo" ? "500 MEGA + TV" : "Câmera"} {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
+                  <FormLabel className="text-gray-300">{cat === "internet" ? "Velocidade" : cat === "tv" ? "Qtd. de Canais" : cat === "combo" ? "Destaque do combo" : cat === "movel" ? "Franquia de internet" : "Tipo / Info"}</FormLabel>
+                  <FormControl><Input data-testid="input-plan-speed" placeholder={cat === "internet" ? "500 MEGA" : cat === "tv" ? "150+ Canais" : cat === "combo" ? "500 MEGA + TV" : cat === "movel" ? "20 GB" : "Câmera"} {...field} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" /></FormControl>
                   <FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="price" render={({ field }) => (
@@ -1856,6 +1858,7 @@ export default function Admin() {
   const tvCount = plans.filter((p) => p.category === "tv").length;
   const adicionaisCount = plans.filter((p) => p.category === "adicionais").length;
   const comboCount = plans.filter((p) => p.category === "combo").length;
+  const movelCount = plans.filter((p) => p.category === "movel").length;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -1901,6 +1904,9 @@ export default function Admin() {
             <TabsTrigger value="combos" data-testid="tab-combos" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-gray-400 gap-2">
               <Layers className="w-4 h-4" /> Combos <span className="text-xs opacity-70">({comboCount})</span>
             </TabsTrigger>
+            <TabsTrigger value="movel" data-testid="tab-movel" className="data-[state=active]:bg-cyan-600 data-[state=active]:text-white text-gray-400 gap-2">
+              <Smartphone className="w-4 h-4" /> Móvel <span className="text-xs opacity-70">({movelCount})</span>
+            </TabsTrigger>
             <TabsTrigger value="settings" data-testid="tab-settings" className="data-[state=active]:bg-gray-700 data-[state=active]:text-white text-gray-400 gap-2">
               <Settings className="w-4 h-4" /> Configurações
             </TabsTrigger>
@@ -1910,6 +1916,15 @@ export default function Admin() {
           <TabsContent value="tv"><TVTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
           <TabsContent value="adicionais"><AdicionaisTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
           <TabsContent value="combos"><CombosTab plans={plans} isLoading={isLoading} password={password} /></TabsContent>
+          <TabsContent value="movel">
+            <div className="space-y-6">
+              <p className="text-sm text-gray-400 bg-gray-900 border border-gray-800 rounded-lg px-4 py-3">
+                Os planos móveis aparecem na página <span className="text-white">Planos</span>, depois da TV. O cliente pode contratar sem ter a fibra e escolher quantas linhas quer.
+                Use <span className="text-white">Franquia</span> para os GB (ex.: <code className="text-gray-300">20 GB</code>) e <span className="text-white">Benefícios</span> para ligações, apps inclusos, portabilidade etc.
+              </p>
+              <CategorySection plans={plans} category="movel" label="Planos Móveis" icon={<Smartphone className="w-4 h-4 text-cyan-400" />} accentColor="text-cyan-400" password={password} isLoading={isLoading} />
+            </div>
+          </TabsContent>
           <TabsContent value="settings"><SettingsTab password={password} onPasswordChange={setPassword} /></TabsContent>
         </Tabs>
       </main>

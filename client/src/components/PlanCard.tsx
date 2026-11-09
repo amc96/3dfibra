@@ -1,5 +1,5 @@
 import { Plan, TvChannel } from "@shared/schema";
-import { Check, Wifi, ArrowRight, Tv, Layers } from "lucide-react";
+import { Check, Wifi, ArrowRight, Tv, Layers, Smartphone } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useSelection } from "@/hooks/use-selection";
@@ -58,6 +58,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
 
   const isTv = plan.category === "tv";
   const isCombo = plan.category === "combo";
+  const isMovel = plan.category === "movel";
   const { groups, total } = usePlanChannels(plan.id, isTv && isOpen);
 
   const handleToggle = () => {
@@ -65,7 +66,8 @@ export function PlanCard({ plan, index }: PlanCardProps) {
     const isBasePlanSelected = selectedPlans.some(p => p.category === "internet" || p.category === "combo");
     const isBasePlan = plan.category === "internet" || plan.category === "combo";
 
-    if (!isBasePlan && !isBasePlanSelected) {
+    // Mobile plans can be bought on their own
+    if (!isBasePlan && !isMovel && !isBasePlanSelected) {
       toast({
         title: "Plano Requerido",
         description: "Selecione um plano de internet ou um combo antes de adicionar TV ou outros serviços.",
@@ -142,9 +144,9 @@ export function PlanCard({ plan, index }: PlanCardProps) {
 
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
-              <Wifi className="w-4 h-4" />
+              {isMovel ? <Smartphone className="w-4 h-4" /> : <Wifi className="w-4 h-4" />}
             </div>
-            <span className="text-sm font-medium">Fibra Óptica 100%</span>
+            <span className="text-sm font-medium">{isMovel ? "Linha Móvel" : "Fibra Óptica 100%"}</span>
           </div>
 
           {plan.features.map((feature, i) => {
