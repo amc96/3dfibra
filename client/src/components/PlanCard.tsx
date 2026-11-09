@@ -97,7 +97,7 @@ export function PlanCard({ plan, index }: PlanCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      className={`relative rounded-3xl p-1 ${
+      className={`relative h-full rounded-3xl p-1 ${
         isSelected
           ? "bg-primary shadow-2xl shadow-primary/40 scale-[1.02]"
           : isHighlighted
