@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { UserPlus, Wrench, Gift, ArrowDown, Send, CheckCircle2, ShieldCheck, BadgePercent, Sparkles } from "lucide-react";
 import { Footer } from "@/components/Footer";
@@ -91,6 +91,15 @@ export default function Indique() {
   const [audience, setAudience] = useState<Audience>("client");
   const [form, setForm] = useState({ myName: "", myPhone: "", myCity: "", friendName: "", friendPhone: "", friendCity: "" });
   const offer = site.referral[audience];
+
+  // Hidden page for now (only reachable by its link): keep it out of search engines
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+    return () => meta.remove();
+  }, []);
   const isNew = audience === "newCustomer";
 
   const set = (key: keyof typeof form, mask = false) => (e: React.ChangeEvent<HTMLInputElement>) =>

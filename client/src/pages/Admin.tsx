@@ -1695,7 +1695,7 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
             Indicou, Instalou, Ganhou
           </CardTitle>
           <p className="text-gray-400 text-sm">
-            Textos da página <a href="/indique" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">/indique</a>. As indicações chegam no WhatsApp configurado acima.
+            Textos da página <a href="/indique" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">/indique</a>. A página está oculta (fora do menu): divulgue pelo link. As indicações chegam no WhatsApp configurado acima.
           </p>
         </CardHeader>
         <CardContent className="space-y-5">
