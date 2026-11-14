@@ -4,8 +4,16 @@ export interface SiteConfig {
   whatsapp: string;
   facebook: string;
   instagram: string;
-  referralReward: string;
-  referralRules: string[];
+  referral: {
+    client: ReferralOffer;
+    newCustomer: ReferralOffer;
+  };
+}
+
+export interface ReferralOffer {
+  highlight: string;
+  text: string;
+  rules: string[];
 }
 
 // Used while loading or if the API fails, so links never break
@@ -13,8 +21,10 @@ export const FALLBACK_SITE_CONFIG: SiteConfig = {
   whatsapp: "5553999789222",
   facebook: "",
   instagram: "",
-  referralReward: "desconto na sua próxima fatura",
-  referralRules: [],
+  referral: {
+    client: { highlight: "50%", text: "de desconto na sua próxima fatura a cada amigo indicado que instalar", rules: [] },
+    newCustomer: { highlight: "R$ 47,90", text: "nas duas primeiras mensalidades: instale e traga um amigo", rules: [] },
+  },
 };
 
 export function useSiteConfig(): SiteConfig {
@@ -31,8 +41,7 @@ export function useSiteConfig(): SiteConfig {
     whatsapp: data?.whatsapp || FALLBACK_SITE_CONFIG.whatsapp,
     facebook: data?.facebook ?? "",
     instagram: data?.instagram ?? "",
-    referralReward: data?.referralReward || FALLBACK_SITE_CONFIG.referralReward,
-    referralRules: data?.referralRules ?? [],
+    referral: data?.referral ?? FALLBACK_SITE_CONFIG.referral,
   };
 }
 

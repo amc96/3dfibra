@@ -1070,6 +1070,16 @@ function CombosTab({ plans, isLoading, password }: { plans: Plan[]; isLoading: b
   );
 }
 
+// Texts of the /indique page (two offers: current customers and new customers)
+const REFERRAL_FIELDS: { key: string; group: "client" | "new"; label: string; placeholder?: string; multiline?: boolean }[] = [
+  { key: "referral_client_highlight", group: "client", label: "Destaque (em letra grande)", placeholder: "50%" },
+  { key: "referral_client_text", group: "client", label: "Texto da oferta", placeholder: "de desconto na sua próxima fatura a cada amigo indicado que instalar" },
+  { key: "referral_client_rules", group: "client", label: "Regras (uma por linha)", multiline: true },
+  { key: "referral_new_highlight", group: "new", label: "Destaque (em letra grande)", placeholder: "R$ 47,90" },
+  { key: "referral_new_text", group: "new", label: "Texto da oferta", placeholder: "nas duas primeiras mensalidades: instale e traga um amigo" },
+  { key: "referral_new_rules", group: "new", label: "Regras (uma por linha)", multiline: true },
+];
+
 // ─── Settings Tab ─────────────────────────────────────────────────────────────
 
 function ImageUploadCard({
@@ -1483,8 +1493,7 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
   const [facebookUrl, setFacebookUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [savingSocial, setSavingSocial] = useState(false);
-  const [referralReward, setReferralReward] = useState("");
-  const [referralRules, setReferralRules] = useState("");
+  const [referral, setReferral] = useState<Record<string, string>>({});
   const [savingReferral, setSavingReferral] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -1509,8 +1518,7 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
     if (wa) setWhatsapp(wa.value);
     setFacebookUrl(settingsList.find((s) => s.key === "facebook_url")?.value ?? "");
     setInstagramUrl(settingsList.find((s) => s.key === "instagram_url")?.value ?? "");
-    setReferralReward(settingsList.find((s) => s.key === "referral_reward")?.value ?? "");
-    setReferralRules(settingsList.find((s) => s.key === "referral_rules")?.value ?? "");
+    setReferral(Object.fromEntries(REFERRAL_FIELDS.map(({ key }) => [key, settingsList.find((s) => s.key === key)?.value ?? ""])));
   }, [settingsList]);
 
   const currentLogoUrl = settingsList.find((s) => s.key === "logo_url")?.value ?? "";
@@ -1690,26 +1698,47 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
             Textos da página <a href="/indique" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">/indique</a>. As indicações chegam no WhatsApp configurado acima.
           </p>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-5">
           {isLoading ? <div className="h-32 bg-gray-800 rounded-md animate-pulse" /> : (
             <>
-              <div className="space-y-1.5">
-                <Label htmlFor="input-referral-reward" className="text-sm text-gray-300">Recompensa</Label>
-                <Input id="input-referral-reward" data-testid="input-referral-reward" value={referralReward} onChange={(e) => setReferralReward(e.target.value)} placeholder="R$ 50 de desconto na sua próxima fatura" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
-                <p className="text-[11px] text-gray-500">Aparece em "Quando a internet dele for instalada, você ganha ..."</p>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="input-referral-rules" className="text-sm text-gray-300">Regras (uma por linha)</Label>
-                <Textarea id="input-referral-rules" data-testid="input-referral-rules" value={referralRules} onChange={(e) => setReferralRules(e.target.value)} rows={5} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
-              </div>
+              {(["client", "new"] as const).map((group) => (
+                <div key={group} className="space-y-2 rounded-lg border border-gray-800 p-3">
+                  <p className="text-sm font-semibold text-white">{group === "client" ? "Já é cliente" : "Ainda não é cliente"}</p>
+                  {REFERRAL_FIELDS.filter((f) => f.group === group).map((f) => (
+                    <div key={f.key} className="space-y-1">
+                      <Label htmlFor={`input-${f.key}`} className="text-xs text-gray-400">{f.label}</Label>
+                      {f.multiline ? (
+                        <Textarea id={`input-${f.key}`} data-testid={`input-${f.key}`} rows={4} value={referral[f.key] ?? ""} onChange={(e) => setReferral((r) => ({ ...r, [f.key]: e.target.value }))} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                      ) : (
+                        <Input id={`input-${f.key}`} data-testid={`input-${f.key}`} value={referral[f.key] ?? ""} placeholder={f.placeholder} onChange={(e) => setReferral((r) => ({ ...r, [f.key]: e.target.value }))} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
               <Button
                 data-testid="button-save-referral"
                 size="sm"
                 disabled={savingReferral}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={async () => {
-                  await saveSetting("referral_reward", referralReward.trim(), "Recompensa", setSavingReferral);
-                  await saveSetting("referral_rules", referralRules.trim(), "Regras", setSavingReferral);
+                  setSavingReferral(true);
+                  try {
+                    for (const { key } of REFERRAL_FIELDS) {
+                      const res = await fetch(`/api/admin/settings/${key}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json", "x-admin-password": password },
+                        body: JSON.stringify({ value: (referral[key] ?? "").trim() }),
+                      });
+                      if (!res.ok) throw new Error();
+                    }
+                    queryClient.invalidateQueries({ queryKey: ["/api/site-config"] });
+                    toast({ title: "Indicação atualizada!" });
+                  } catch {
+                    toast({ title: "Erro ao salvar a indicação", variant: "destructive" });
+                  } finally {
+                    setSavingReferral(false);
+                  }
                 }}
               >
                 {savingReferral ? "Salvando..." : "Salvar indicação"}

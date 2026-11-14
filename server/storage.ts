@@ -86,14 +86,28 @@ export const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "whatsapp_number", value: "5553999789222" },
   { key: "facebook_url", value: "https://www.facebook.com/3DNetworkRS" },
   { key: "instagram_url", value: "https://www.instagram.com/3dnetworkrs" },
-  { key: "referral_reward", value: "desconto na sua próxima fatura" },
+  // "Indicou, Instalou, Ganhou!" — offer for current customers
+  { key: "referral_client_highlight", value: "50%" },
+  { key: "referral_client_text", value: "de desconto na sua próxima fatura a cada amigo indicado que instalar" },
   {
-    key: "referral_rules",
+    key: "referral_client_rules",
     value: [
       "Vale para clientes 3D Fibra com a fatura em dia.",
-      "O amigo indicado precisa ser um cliente novo, em endereço com cobertura.",
-      "Você ganha quando a instalação do amigo for concluída.",
-      "Sem limite: cada amigo instalado vale um novo prêmio.",
+      "O amigo indicado precisa ser um cliente novo e instalar a 3D Fibra.",
+      "O desconto de 50% vem na sua próxima fatura depois da instalação do amigo.",
+      "A cada amigo que instalar, você ganha um novo desconto.",
+    ].join("\n"),
+  },
+  // ... and for people who are not customers yet
+  { key: "referral_new_highlight", value: "R$ 47,90" },
+  { key: "referral_new_text", value: "nas duas primeiras mensalidades: instale e traga um amigo" },
+  {
+    key: "referral_new_rules",
+    value: [
+      "Para quem ainda não é cliente 3D Fibra.",
+      "Instale a 3D Fibra e traga um amigo que também instale.",
+      "As duas primeiras mensalidades saem por R$ 47,90.",
+      "Sujeito à cobertura no endereço.",
     ].join("\n"),
   },
   { key: "logo_url", value: "" },

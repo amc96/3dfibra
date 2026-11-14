@@ -78,6 +78,11 @@ async function persistUpload(file: Express.Multer.File) {
   await storage.saveFile(rel, file.mimetype || mimeFor(file.path), fs.readFileSync(file.path));
 }
 
+const REFERRAL_KEYS = [
+  "referral_client_highlight", "referral_client_text", "referral_client_rules",
+  "referral_new_highlight", "referral_new_text", "referral_new_rules",
+];
+
 const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
 async function getActivePassword(): Promise<string> {
@@ -155,7 +160,7 @@ export async function registerRoutes(
   // ── Public: settings ───────────────────────────────────────────────────────
 
   // Only these keys may be read without the admin password (never admin_password!)
-  const PUBLIC_SETTING_KEYS = new Set(["logo_url", "favicon_url", "whatsapp_number", "facebook_url", "instagram_url", "referral_reward", "referral_rules"]);
+  const PUBLIC_SETTING_KEYS = new Set(["logo_url", "favicon_url", "whatsapp_number", "facebook_url", "instagram_url", ...REFERRAL_KEYS]);
 
   app.get("/api/settings/:key", async (req, res) => {
     if (!PUBLIC_SETTING_KEYS.has(req.params.key)) return res.status(404).json({ message: "Configuração não encontrada" });
@@ -166,19 +171,22 @@ export async function registerRoutes(
 
   // Contact and social links used across the public site
   app.get("/api/site-config", async (_req, res) => {
-    const [whatsapp, facebook, instagram, referralReward, referralRules] = await Promise.all([
+    const [whatsapp, facebook, instagram, ...ref] = await Promise.all([
       storage.getSetting("whatsapp_number"),
       storage.getSetting("facebook_url"),
       storage.getSetting("instagram_url"),
-      storage.getSetting("referral_reward"),
-      storage.getSetting("referral_rules"),
+      ...REFERRAL_KEYS.map((k) => storage.getSetting(k)),
     ]);
+    const lines = (v?: string) => (v ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+    const [cHigh, cText, cRules, nHigh, nText, nRules] = ref;
     res.json({
       whatsapp: (whatsapp ?? "").replace(/\D/g, ""),
       facebook: facebook ?? "",
       instagram: instagram ?? "",
-      referralReward: referralReward ?? "",
-      referralRules: (referralRules ?? "").split("\n").map((l) => l.trim()).filter(Boolean),
+      referral: {
+        client: { highlight: cHigh ?? "", text: cText ?? "", rules: lines(cRules) },
+        newCustomer: { highlight: nHigh ?? "", text: nText ?? "", rules: lines(nRules) },
+      },
     });
   });
 
