@@ -26,6 +26,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Início", href: "/" },
     { name: "Planos", href: "/planos" },
+    { name: "Indique e Ganhe", href: "/indique" },
   ];
 
   const LogoContent = () =>

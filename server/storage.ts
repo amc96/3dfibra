@@ -86,6 +86,16 @@ export const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "whatsapp_number", value: "5553999789222" },
   { key: "facebook_url", value: "https://www.facebook.com/3DNetworkRS" },
   { key: "instagram_url", value: "https://www.instagram.com/3dnetworkrs" },
+  { key: "referral_reward", value: "desconto na sua próxima fatura" },
+  {
+    key: "referral_rules",
+    value: [
+      "Vale para clientes 3D Fibra com a fatura em dia.",
+      "O amigo indicado precisa ser um cliente novo, em endereço com cobertura.",
+      "Você ganha quando a instalação do amigo for concluída.",
+      "Sem limite: cada amigo instalado vale um novo prêmio.",
+    ].join("\n"),
+  },
   { key: "logo_url", value: "" },
   { key: "favicon_url", value: "" },
   { key: "admin_password", value: "" },

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import Planos from "@/pages/Planos";
 import Admin from "@/pages/Admin";
+import Indique from "@/pages/Indique";
 import NotFound from "@/pages/not-found";
 import { SelectionProvider } from "@/hooks/use-selection";
 import { SelectionBar } from "@/components/SelectionBar";
@@ -41,6 +42,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/planos" component={Planos} />
+      <Route path="/indique" component={Indique} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>

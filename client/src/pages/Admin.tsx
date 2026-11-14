@@ -8,6 +8,7 @@ import { insertPlanSchema, insertTvChannelSchema, bannerSlidesSchema, type Plan,
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch as BaseSwitch } from "@/components/ui/switch";
@@ -76,6 +77,7 @@ import {
   Layers,
   Share2,
   Smartphone,
+  Gift,
   Facebook,
   Instagram,
 } from "lucide-react";
@@ -1481,6 +1483,9 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
   const [facebookUrl, setFacebookUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [savingSocial, setSavingSocial] = useState(false);
+  const [referralReward, setReferralReward] = useState("");
+  const [referralRules, setReferralRules] = useState("");
+  const [savingReferral, setSavingReferral] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingPw, setSavingPw] = useState(false);
@@ -1504,6 +1509,8 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
     if (wa) setWhatsapp(wa.value);
     setFacebookUrl(settingsList.find((s) => s.key === "facebook_url")?.value ?? "");
     setInstagramUrl(settingsList.find((s) => s.key === "instagram_url")?.value ?? "");
+    setReferralReward(settingsList.find((s) => s.key === "referral_reward")?.value ?? "");
+    setReferralRules(settingsList.find((s) => s.key === "referral_rules")?.value ?? "");
   }, [settingsList]);
 
   const currentLogoUrl = settingsList.find((s) => s.key === "logo_url")?.value ?? "";
@@ -1667,6 +1674,45 @@ function SettingsTab({ password, onPasswordChange }: { password: string; onPassw
               <p className="text-xs text-gray-500">Formato: código do país + DDD + número. Ex: <code className="text-gray-400">5553999789222</code></p>
               <Button data-testid="button-save-whatsapp" onClick={() => saveSetting("whatsapp_number", whatsapp, "WhatsApp", setSavingWa)} disabled={savingWa} size="sm" className="bg-green-600 hover:bg-green-700 text-white">
                 {savingWa ? "Salvando..." : "Salvar número"}
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gray-900 border-gray-800" data-testid="card-referral-settings">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-white text-base flex items-center gap-2">
+            <Gift className="w-5 h-5 text-purple-400" />
+            Indicou, Instalou, Ganhou
+          </CardTitle>
+          <p className="text-gray-400 text-sm">
+            Textos da página <a href="/indique" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">/indique</a>. As indicações chegam no WhatsApp configurado acima.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {isLoading ? <div className="h-32 bg-gray-800 rounded-md animate-pulse" /> : (
+            <>
+              <div className="space-y-1.5">
+                <Label htmlFor="input-referral-reward" className="text-sm text-gray-300">Recompensa</Label>
+                <Input id="input-referral-reward" data-testid="input-referral-reward" value={referralReward} onChange={(e) => setReferralReward(e.target.value)} placeholder="R$ 50 de desconto na sua próxima fatura" className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+                <p className="text-[11px] text-gray-500">Aparece em "Quando a internet dele for instalada, você ganha ..."</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="input-referral-rules" className="text-sm text-gray-300">Regras (uma por linha)</Label>
+                <Textarea id="input-referral-rules" data-testid="input-referral-rules" value={referralRules} onChange={(e) => setReferralRules(e.target.value)} rows={5} className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" />
+              </div>
+              <Button
+                data-testid="button-save-referral"
+                size="sm"
+                disabled={savingReferral}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={async () => {
+                  await saveSetting("referral_reward", referralReward.trim(), "Recompensa", setSavingReferral);
+                  await saveSetting("referral_rules", referralRules.trim(), "Regras", setSavingReferral);
+                }}
+              >
+                {savingReferral ? "Salvando..." : "Salvar indicação"}
               </Button>
             </>
           )}

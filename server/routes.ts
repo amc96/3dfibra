@@ -155,7 +155,7 @@ export async function registerRoutes(
   // ── Public: settings ───────────────────────────────────────────────────────
 
   // Only these keys may be read without the admin password (never admin_password!)
-  const PUBLIC_SETTING_KEYS = new Set(["logo_url", "favicon_url", "whatsapp_number", "facebook_url", "instagram_url"]);
+  const PUBLIC_SETTING_KEYS = new Set(["logo_url", "favicon_url", "whatsapp_number", "facebook_url", "instagram_url", "referral_reward", "referral_rules"]);
 
   app.get("/api/settings/:key", async (req, res) => {
     if (!PUBLIC_SETTING_KEYS.has(req.params.key)) return res.status(404).json({ message: "Configuração não encontrada" });
@@ -166,15 +166,19 @@ export async function registerRoutes(
 
   // Contact and social links used across the public site
   app.get("/api/site-config", async (_req, res) => {
-    const [whatsapp, facebook, instagram] = await Promise.all([
+    const [whatsapp, facebook, instagram, referralReward, referralRules] = await Promise.all([
       storage.getSetting("whatsapp_number"),
       storage.getSetting("facebook_url"),
       storage.getSetting("instagram_url"),
+      storage.getSetting("referral_reward"),
+      storage.getSetting("referral_rules"),
     ]);
     res.json({
       whatsapp: (whatsapp ?? "").replace(/\D/g, ""),
       facebook: facebook ?? "",
       instagram: instagram ?? "",
+      referralReward: referralReward ?? "",
+      referralRules: (referralRules ?? "").split("\n").map((l) => l.trim()).filter(Boolean),
     });
   });
 
