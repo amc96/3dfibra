@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { UserPlus, Wrench, Gift, ArrowDown, Send, CheckCircle2, ShieldCheck, BadgePercent, Sparkles } from "lucide-react";
+import { UserPlus, Wrench, Gift, ArrowDown, Send, CheckCircle2, ShieldCheck, BadgePercent, Sparkles, Clock } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -205,6 +205,12 @@ export default function Indique() {
                   <p className="text-muted-foreground leading-relaxed">
                     {step.text || <>Você {isNew ? "paga" : "ganha"} <span className="text-white font-semibold">{offer.highlight}</span> {offer.text}.</>}
                   </p>
+                  {!step.text && (
+                    <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold px-3 py-1.5" data-testid="note-after-install">
+                      <Clock className="w-3.5 h-3.5" />
+                      {isNew ? "Vale só depois das duas instalações" : "Vale só depois da instalação do amigo"}
+                    </p>
+                  )}
                 </motion.div>
               ))}
             </div>

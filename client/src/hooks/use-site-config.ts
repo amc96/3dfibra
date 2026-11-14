@@ -22,7 +22,7 @@ export const FALLBACK_SITE_CONFIG: SiteConfig = {
   facebook: "",
   instagram: "",
   referral: {
-    client: { highlight: "50%", text: "de desconto na sua próxima fatura a cada amigo indicado que instalar", rules: [] },
+    client: { highlight: "50%", text: "de desconto na sua próxima fatura, após a instalação de cada amigo indicado", rules: [] },
     newCustomer: { highlight: "R$ 47,90", text: "nas suas duas primeiras mensalidades", rules: [] },
   },
 };

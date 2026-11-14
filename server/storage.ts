@@ -88,7 +88,7 @@ export const DEFAULT_SETTINGS: { key: string; value: string }[] = [
   { key: "instagram_url", value: "https://www.instagram.com/3dnetworkrs" },
   // "Indicou, Instalou, Ganhou!" — offer for current customers
   { key: "referral_client_highlight", value: "50%" },
-  { key: "referral_client_text", value: "de desconto na sua próxima fatura a cada amigo indicado que instalar" },
+  { key: "referral_client_text", value: "de desconto na sua próxima fatura, após a instalação de cada amigo indicado" },
   {
     key: "referral_client_rules",
     value: [

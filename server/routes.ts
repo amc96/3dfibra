@@ -86,6 +86,11 @@ const REFERRAL_KEYS = [
 // Replaces texts that still hold an older default (never touches texts edited in the panel)
 const TEXT_UPGRADES: { key: string; from: string; to: string }[] = [
   {
+    key: "referral_client_text",
+    from: "de desconto na sua próxima fatura a cada amigo indicado que instalar",
+    to: "de desconto na sua próxima fatura, após a instalação de cada amigo indicado",
+  },
+  {
     key: "referral_new_text",
     from: "nas duas primeiras mensalidades: instale e traga um amigo",
     to: "nas suas duas primeiras mensalidades",
