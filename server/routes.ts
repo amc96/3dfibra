@@ -83,6 +83,37 @@ const REFERRAL_KEYS = [
   "referral_new_highlight", "referral_new_text", "referral_new_rules",
 ];
 
+// Replaces texts that still hold an older default (never touches texts edited in the panel)
+const TEXT_UPGRADES: { key: string; from: string; to: string }[] = [
+  {
+    key: "referral_new_text",
+    from: "nas duas primeiras mensalidades: instale e traga um amigo",
+    to: "nas suas duas primeiras mensalidades",
+  },
+  {
+    key: "referral_new_rules",
+    from: [
+      "Para quem ainda não é cliente 3D Fibra.",
+      "Instale a 3D Fibra e traga um amigo que também instale.",
+      "As duas primeiras mensalidades saem por R$ 47,90.",
+      "Sujeito à cobertura no endereço.",
+    ].join("\n"),
+    to: [
+      "Para quem ainda não é cliente 3D Fibra.",
+      "Você instala a 3D Fibra e traz um amigo que também instala.",
+      "Com as duas instalações feitas, as suas duas primeiras mensalidades saem por R$\u00A047,90.",
+      "O seu amigo paga o valor normal do plano que ele escolher.",
+      "Sujeito à cobertura nos dois endereços.",
+    ].join("\n"),
+  },
+];
+
+async function upgradeDefaultTexts() {
+  for (const { key, from, to } of TEXT_UPGRADES) {
+    if ((await storage.getSetting(key)) === from) await storage.setSetting(key, to);
+  }
+}
+
 const ENV_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
 async function getActivePassword(): Promise<string> {
@@ -128,6 +159,7 @@ export async function registerRoutes(
 
   if (storage.seedPlans) await storage.seedPlans();
   if (storage.seedSettings) await storage.seedSettings();
+  await upgradeDefaultTexts();
   if (storage.seedTvChannels) await storage.seedTvChannels();
 
   // ── Public: plans ──────────────────────────────────────────────────────────

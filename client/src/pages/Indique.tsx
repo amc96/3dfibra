@@ -33,11 +33,11 @@ const AUDIENCES: Record<Audience, { tag: string; title: string; icon: typeof Gif
   },
   newCustomer: {
     tag: "Ainda não é cliente",
-    title: "Instale e traga um amigo",
+    title: "Instale junto com um amigo",
     icon: Sparkles,
     steps: [
       "Você manda os seus dados e os de um amigo pelo formulário.",
-      "Nossa equipe faz a instalação da 3D Fibra para vocês.",
+      "Nossa equipe instala a 3D Fibra na sua casa e na do seu amigo.",
       "",
     ],
   },
