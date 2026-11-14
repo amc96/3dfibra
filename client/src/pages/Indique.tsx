@@ -164,7 +164,7 @@ export default function Indique() {
               <span className="bg-gradient-to-r from-primary via-blue-400 to-purple-500 bg-clip-text text-transparent">Ganhou!</span>
             </motion.h1>
             <motion.p {...fade(0.1)} className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Cliente ou não, trazer um amigo para a 3D Fibra vale a pena. Escolha a sua opção:
+              Cliente ou não, trazer um amigo para a 3D{"\u00A0"}Fibra vale a pena. Escolha a sua opção:
             </motion.p>
           </div>
         </section>
